@@ -18,6 +18,7 @@ public:
     Q_PROPERTY(QString federation READ federation WRITE setFederation NOTIFY federationChanged)
     Q_PROPERTY(QString chiefArbiter READ chiefArbiter WRITE setChiefArbiter NOTIFY chiefArbiterChanged)
     Q_PROPERTY(QString deputyChiefArbiter READ deputyChiefArbiter WRITE setDeputyChiefArbiter NOTIFY deputyChiefArbiterChanged)
+    Q_PROPERTY(int numberOfRounds READ numberOfRounds WRITE setNumberOfRounds NOTIFY numberOfRoundsChanged)
 
     Q_PROPERTY(QList<Player *> players READ players WRITE setPlayers NOTIFY playersChanged)
 
@@ -28,6 +29,7 @@ public:
     QString federation() const;
     QString chiefArbiter() const;
     QString deputyChiefArbiter() const;
+    int numberOfRounds();
 
     QList<Player *> players() const;
 
@@ -59,7 +61,8 @@ public Q_SLOTS:
     void setFederation(const QString &federation);
     void setChiefArbiter(const QString &chiefArbiter);
     void setDeputyChiefArbiter(const QString &deputyChiefArbiter);
-    
+    void setNumberOfRounds(int numberOfRounds);
+
     void setPlayers(QList<Player *> players);
 
 Q_SIGNALS:
@@ -68,6 +71,7 @@ Q_SIGNALS:
     void federationChanged();
     void chiefArbiterChanged();
     void deputyChiefArbiterChanged();
+    void numberOfRoundsChanged();
 
     void playersChanged();
 
@@ -77,6 +81,7 @@ private:
     QString m_federation;
     QString m_chiefArbiter;
     QString m_deputyChiefArbiter;
+    int m_numberOfRounds = 1;
 
     QList<Player *> m_players;
 };

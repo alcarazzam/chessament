@@ -25,7 +25,22 @@ Tournament* loadTournamentReport(const QUrl &fileUrl)
         auto fieldType = line.mid(0, 3);
         auto field = Tournament::getReportField(fieldType);
 
-        if (field == Tournament::ReportFields::PlayerField) {
+        if (field == Tournament::ReportFields::TournamentNameField) {
+            auto name = line.mid(4).trimmed();
+            tournament->setName(name);
+        } else if (field == Tournament::ReportFields::CityField) {
+            auto city = line.mid(4).trimmed();
+            tournament->setCity(city);
+        } else if (field == Tournament::ReportFields::FederationField) {
+            auto federation = line.mid(4).trimmed();
+            tournament->setFederation(federation);
+        } else if (field == Tournament::ReportFields::ChiefArbiterField) {
+            auto chiefArbiter = line.mid(4).trimmed();
+            tournament->setChiefArbiter(chiefArbiter);
+        } else if (field == Tournament::ReportFields::DeputyChiefArbiterField) {
+            auto deputyChiefArbiter = line.mid(4).trimmed();
+            tournament->setDeputyChiefArbiter(deputyChiefArbiter);
+        } else if (field == Tournament::ReportFields::PlayerField) {
             auto startingRank = line.sliced(4, 4).toInt();
             auto sex = line.sliced(9, 1).trimmed();
             auto title = Player::titleForString(line.sliced(10, 3).trimmed());

@@ -77,6 +77,20 @@ void Tournament::setDeputyChiefArbiter(const QString &deputyChiefArbiter)
     Q_EMIT deputyChiefArbiterChanged();
 }
 
+int Tournament::numberOfRounds()
+{
+    return m_numberOfRounds;
+}
+
+void Tournament::setNumberOfRounds(int numberOfRounds)
+{
+    if (m_numberOfRounds == numberOfRounds) {
+        return;
+    }
+    m_numberOfRounds = numberOfRounds;
+    Q_EMIT numberOfRoundsChanged();
+}
+
 QList<Player *> Tournament::players() const
 {
     return m_players;

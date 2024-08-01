@@ -5,6 +5,8 @@ import QtQuick
 
 import org.kde.kirigamiaddons.formcard as FormCard
 
+import org.kde.chessament
+
 FormCard.FormCardPage {
     id: root
 
@@ -22,6 +24,13 @@ FormCard.FormCardPage {
             label: i18n("Rounds")
             from: 1
             to: 99
+            value: TournamentController.tournament.numberOfRounds
+            onValueChanged: {
+                if (TournamentController.tournament.numberOfRounds === value) {
+                    return
+                }
+                TournamentController.tournament.numberOfRounds = value
+            }
         }
     }
 

@@ -20,6 +20,12 @@ KirigamiSettings.ConfigurationView {
             text: i18nc("@action:button", "Format")
             icon.name: "user-symbolic"
             page: () => Qt.createComponent("org.kde.chessament", "TournamentSettingsFormat")
+        },
+        KirigamiSettings.ConfigurationModule {
+            moduleId: "calendar"
+            text: i18nc("@action:button", "Calendar")
+            icon.name: "view-calendar-symbolic"
+            page: () => Qt.createComponent("org.kde.chessament", "TournamentSettingsCalendar")
         }
     ]
 }

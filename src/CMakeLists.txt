@@ -22,6 +22,7 @@ ecm_add_qml_module(chessament_static
 
         # Tournament settings
         qml/TournamentSettings.qml
+        qml/TournamentSettingsCalendar.qml
         qml/TournamentSettingsInformation.qml
         qml/TournamentSettingsFormat.qml
     DEPENDENCIES
