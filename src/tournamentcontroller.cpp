@@ -91,6 +91,8 @@ void TournamentController::importTrf(const QUrl &fileUrl)
     if (tournament != nullptr) {
         setTournament(tournament);
         setPlayers(tournament->players());
+
+        setCurrentView(QStringLiteral("players"));
     }
 }
 
@@ -116,4 +118,18 @@ void TournamentController::setPlayers(QList<Player *> players)
 {
     m_players = players;
     m_playersModel->setPlayers(m_players);
+}
+
+QString TournamentController::currentView() const
+{
+    return m_currentView;
+}
+
+void TournamentController::setCurrentView(const QString &currentView)
+{
+    if (m_currentView == currentView) {
+        return;
+    }
+    m_currentView = currentView;
+    Q_EMIT currentViewChanged();
 }
