@@ -3,6 +3,10 @@
 
 #pragma once
 
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QObject>
 #include <QString>
 
@@ -32,6 +36,7 @@ public:
     int numberOfRounds();
 
     QList<Player *> players() const;
+    void addPlayer(Player *player);
 
     enum ReportFields {
         PlayerField = 1,
@@ -53,7 +58,11 @@ public:
     Q_ENUM(ReportFields)
 
     static ReportFields getReportField(const QString &number);
-    
+
+    QJsonObject toJson() const;
+    void read(const QJsonObject &json);
+    bool loadTournament(const QString &fileName);
+    bool save(const QString &fileName);
 
 public Q_SLOTS:
     void setName(const QString &name);

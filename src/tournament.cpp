@@ -102,6 +102,11 @@ void Tournament::setPlayers(QList<Player *> players)
     Q_EMIT playersChanged();
 }
 
+void Tournament::addPlayer(Player *player)
+{
+    m_players.append(player);
+}
+
 Tournament::ReportFields Tournament::getReportField(const QString &number)
 {
     if (number == QStringLiteral("001")) {
@@ -135,4 +140,94 @@ Tournament::ReportFields Tournament::getReportField(const QString &number)
     } else {
         return Unknown;
     }
+}
+
+QJsonObject Tournament::toJson() const
+{
+    QJsonObject json;
+
+    QJsonObject tournament;
+    tournament[QStringLiteral("name")] = m_name;
+    tournament[QStringLiteral("city")] = m_city;
+    tournament[QStringLiteral("federation")] = m_federation;
+    tournament[QStringLiteral("chief_arbiter")] = m_chiefArbiter;
+    tournament[QStringLiteral("deputy_chief_arbiter")] = m_deputyChiefArbiter;
+    tournament[QStringLiteral("number_of_rounds")] = m_numberOfRounds;
+
+    QJsonArray players;
+    for (const auto &player : m_players) {
+        players << player->toJson();
+    }
+
+    json[QStringLiteral("tournament")] = tournament;
+    json[QStringLiteral("players")] = players;
+
+    return json;
+}
+
+void Tournament::read(const QJsonObject &json)
+{
+    if (auto v = json[QStringLiteral("tournament")]; v.isObject()) {
+        auto tournament = v.toObject();
+
+        if (const auto v = tournament[QStringLiteral("name")]; v.isString()) {
+            m_name = v.toString();
+        }
+        if (const auto v = tournament[QStringLiteral("city")]; v.isString()) {
+            m_city = v.toString();
+        }
+        if (const auto v = tournament[QStringLiteral("federation")]; v.isString()) {
+            m_federation = v.toString();
+        }
+        if (const auto v = tournament[QStringLiteral("chief_arbiter")]; v.isString()) {
+            m_chiefArbiter = v.toString();
+        }
+        if (const auto v = tournament[QStringLiteral("deputy_chief_arbiter")]; v.isString()) {
+            m_deputyChiefArbiter = v.toString();
+        }
+        if (const auto v = tournament[QStringLiteral("number_of_rounds")]; v.isDouble()) {
+            m_numberOfRounds = v.toInt();
+        }
+    }
+
+    if (auto v = json[QStringLiteral("players")]; v.isArray()) {
+        auto players = v.toArray();
+        m_players.clear();
+        m_players.reserve(players.size());
+        for (const auto &player : players) {
+            m_players << Player::fromJson(player.toObject());
+        }
+    }
+}
+
+bool Tournament::loadTournament(const QString &fileName)
+{
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Couldn't open tournament" << fileName;
+        return false;
+    }
+
+    auto data = file.readAll();
+    auto document = QJsonDocument::fromJson(data);
+
+    read(document.object());
+
+    return true;
+}
+
+bool Tournament::save(const QString &fileName)
+{
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        qWarning() << "Couldn't save tournament" << fileName;
+        return false;
+    }
+
+    auto tournamentObj = toJson();
+    file.write(QJsonDocument(tournamentObj).toJson());
+
+    return true;
 }

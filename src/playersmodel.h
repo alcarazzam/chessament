@@ -36,6 +36,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void setPlayers(QList<Player *> players);
+    void addPlayer(Player *player);
 
 private:
     QList<Player *> m_players;

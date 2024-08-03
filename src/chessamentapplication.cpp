@@ -17,10 +17,28 @@ void ChessamentApplication::setupActions()
 {
     AbstractKirigamiApplication::setupActions();
 
-    auto actionName = "import_trf"_L1;
+    auto actionName = "file_open"_L1;
+    if (KAuthorized::authorizeAction(actionName)) {
+        auto action = KStandardActions::open(this, &ChessamentApplication::openTournament, this);
+        mainCollection()->addAction(action->objectName(), action);
+    }
+
+    actionName = "file_save"_L1;
+    if (KAuthorized::authorizeAction(actionName)) {
+        auto action = KStandardActions::save(this, &ChessamentApplication::saveTournament, this);
+        mainCollection()->addAction(action->objectName(), action);
+    }
+
+    actionName = "file_save_as"_L1;
+    if (KAuthorized::authorizeAction(actionName)) {
+        auto action = KStandardActions::saveAs(this, &ChessamentApplication::saveTournamentAs, this);
+        mainCollection()->addAction(action->objectName(), action);
+    }
+
+    actionName = "import_trf"_L1;
     if (KAuthorized::authorizeAction(actionName)) {
         auto action = mainCollection()->addAction(actionName, this, &ChessamentApplication::importTrf);
-        action->setText(i18nc("@action:inmenu", "Import tournament report"));
+        action->setText(i18nc("@action:inmenu", "Import tournament report…"));
         action->setIcon(QIcon::fromTheme(u"document-import-symbolic"_s));
         mainCollection()->addAction(action->objectName(), action);
         mainCollection()->setDefaultShortcut(action, Qt::CTRL | Qt::Key_I);

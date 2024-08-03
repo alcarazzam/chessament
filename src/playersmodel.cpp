@@ -89,3 +89,10 @@ void PlayersModel::setPlayers(QList<Player *> players)
     m_players = players;
     endResetModel();
 }
+
+void PlayersModel::addPlayer(Player *player)
+{
+    beginInsertRows(QModelIndex(), m_players.size(), m_players.size());
+    m_players << player;
+    endInsertRows();
+}

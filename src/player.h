@@ -3,9 +3,10 @@
 
 #pragma once
 
+#include <QJsonObject>
 #include <QObject>
-#include <QString>
 #include <QQmlEngine>
+#include <QString>
 
 class Player : public QObject
 {
@@ -25,8 +26,7 @@ class Player : public QObject
     Q_PROPERTY(QString sex READ sex WRITE setSex NOTIFY sexChanged)
 
 public:
-
-    enum Title { GM, IM, FM, CM, WGM, WIM, WFM, WCM, None };
+    enum Title { None, GM, IM, FM, CM, WGM, WIM, WFM, WCM };
     Q_ENUM(Title)
 
     static QString titleString(Title title) {
@@ -81,6 +81,7 @@ public:
         return Title::None;
     }
 
+    explicit Player();
     explicit Player(int startingRank, const QString &name, int rating);
     explicit Player(int startingRank, Title title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &federation, const QString &origin, const QString &sex);
 
@@ -98,6 +99,9 @@ public:
     Q_INVOKABLE QString titleString() {
         return Player::titleString(m_title);
     };
+
+    QJsonObject toJson() const;
+    static Player *fromJson(const QJsonObject &json);
 
 public Q_SLOTS:
     void setStartingRank(int startingRank);
@@ -125,11 +129,11 @@ Q_SIGNALS:
     void sexChanged();
 
 private:
-    int m_startingRank;
+    int m_startingRank = 1;
     Title m_title;
     QString m_name;
-    int m_rating;
-    int m_nationalRating;
+    int m_rating = 0;
+    int m_nationalRating = 0;
     QString m_playerId;
     QString m_birthDate;
     QString m_federation;

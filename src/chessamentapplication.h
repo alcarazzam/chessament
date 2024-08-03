@@ -18,6 +18,9 @@ public:
     explicit ChessamentApplication(QObject *parent = nullptr);
 
 Q_SIGNALS:
+    void openTournament();
+    void saveTournament();
+    void saveTournamentAs();
     void importTrf();
 
 private:

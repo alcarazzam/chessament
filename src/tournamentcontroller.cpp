@@ -6,7 +6,6 @@
 
 TournamentController::TournamentController(QObject *parent)
     : QObject(parent)
-    , m_players({})
     , m_playersModel(new PlayersModel(this))
 {
 }
@@ -22,8 +21,12 @@ void TournamentController::setTournament(Tournament *tournament)
         return;
     }
     m_tournament = tournament;
-    Q_EMIT tournamentChanged();
+
+    setPlayers(m_tournament->players());
     setHasOpenTournament(true);
+    setCurrentPlayerByIndex(-1);
+
+    Q_EMIT tournamentChanged();
 }
 
 QString TournamentController::tournamentPath() const
@@ -65,7 +68,11 @@ void TournamentController::setCurrentPlayerByIndex(int currentPlayerIndex)
         return;
     }
     m_currentPlayerIndex = currentPlayerIndex;
-    m_currentPlayer = m_players.at(m_currentPlayerIndex);
+    if (m_currentPlayerIndex >= 0) {
+        m_currentPlayer = m_tournament->players().at(m_currentPlayerIndex);
+    } else {
+        m_currentPlayer = nullptr;
+    }
     Q_EMIT currentPlayerChanged();
 }
 
@@ -80,7 +87,7 @@ void TournamentController::setCurrentPlayer(Player *currentPlayer)
         return;
     }
     m_currentPlayer = currentPlayer;
-    m_currentPlayerIndex = m_players.indexOf(m_currentPlayer);
+    m_currentPlayerIndex = m_tournament->players().indexOf(m_currentPlayer);
     Q_EMIT currentPlayerChanged();
 }
 
@@ -90,23 +97,50 @@ void TournamentController::importTrf(const QUrl &fileUrl)
 
     if (tournament != nullptr) {
         setTournament(tournament);
-        setPlayers(tournament->players());
 
+        setTournamentPath({});
         setCurrentView(QStringLiteral("players"));
     }
 }
 
 void TournamentController::addPlayer(const QString &title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &origin, const QString &sex)
 {
-    auto player = new Player(m_players.size() + 1, Player::titleForString(title), name, rating, nationalRating, playerId, birthDate, {}, origin, sex);
+    auto startingRank = m_tournament->players().size() + 1;
+    auto player = new Player(startingRank, Player::titleForString(title), name, rating, nationalRating, playerId, birthDate, {}, origin, sex);
 
-    m_players.append(player);
-    m_playersModel->setPlayers(m_players);
+    m_tournament->addPlayer(player);
+    m_playersModel->addPlayer(player);
 }
 
 void TournamentController::savePlayer()
 {
-    m_playersModel->setPlayers(m_players);
+    m_playersModel->setPlayers(m_tournament->players());
+}
+
+void TournamentController::openTournament(const QUrl &fileUrl)
+{
+    auto tournament = new Tournament();
+    tournament->loadTournament(fileUrl.toLocalFile());
+
+    setTournament(tournament);
+    setTournamentPath(fileUrl.toLocalFile());
+    setCurrentView(QStringLiteral("players"));
+}
+
+void TournamentController::saveTournament()
+{
+    if (!m_tournamentPath.isEmpty()) {
+        m_tournament->save(m_tournamentPath);
+    } else {
+        qWarning() << "Trying to save tournament without one open";
+    }
+}
+
+void TournamentController::saveTournamentAs(const QUrl &fileUrl)
+{
+    if (m_tournament->save(fileUrl.toLocalFile())) {
+        setTournamentPath(fileUrl.toLocalFile());
+    }
 }
 
 PlayersModel* TournamentController::playersModel() const
@@ -116,8 +150,7 @@ PlayersModel* TournamentController::playersModel() const
 
 void TournamentController::setPlayers(QList<Player *> players)
 {
-    m_players = players;
-    m_playersModel->setPlayers(m_players);
+    m_playersModel->setPlayers(players);
 }
 
 QString TournamentController::currentView() const

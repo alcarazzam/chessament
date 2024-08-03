@@ -31,8 +31,20 @@ StatefulApp.StatefulWindow {
     Connections {
         target: root.application
 
+        function onOpenTournament() {
+            openTournamentFileDialog.open()
+        }
+
+        function onSaveTournament() {
+            TournamentController.saveTournament()
+        }
+
+        function onSaveTournamentAs() {
+            saveTournamentFileDialog.open()
+        }
+
         function onImportTrf(fileName) {
-            fileDialog.open()
+            importTournamentFileDialog.open()
         }
     }
 
@@ -52,7 +64,26 @@ StatefulApp.StatefulWindow {
     }
 
     FileDialog {
-        id: fileDialog
+        id: openTournamentFileDialog
+        parentWindow: root
+        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
+        onAccepted: {
+            TournamentController.openTournament(selectedFile)
+        }
+    }
+
+    FileDialog {
+        id: saveTournamentFileDialog
+        parentWindow: root
+        fileMode: FileDialog.SaveFile
+        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
+        onAccepted: {
+            TournamentController.saveTournamentAs(selectedFile)
+        }
+    }
+
+    FileDialog {
+        id: importTournamentFileDialog
         parentWindow: root
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         onAccepted: {
@@ -107,8 +138,20 @@ StatefulApp.StatefulWindow {
                             id: optionPopup
 
                             Kirigami.Action {
+                                fromQAction: root.application.action("file_open")
+                            }
+                            Kirigami.Action {
+                                fromQAction: root.application.action("file_save")
+                                enabled: TournamentController.tournamentPath
+                            }
+                            Kirigami.Action {
+                                fromQAction: root.application.action("file_save_as")
+                                enabled: TournamentController.hasOpenTournament
+                            }
+                            Kirigami.Action {
                                 fromQAction: root.application.action("import_trf")
                             }
+                            QQC2.MenuSeparator { }
                             Kirigami.Action {
                                 fromQAction: root.application.action("options_configure")
                             }

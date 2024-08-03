@@ -34,9 +34,12 @@ public:
     int currentPlayerIndex();
     Player *currentPlayer() const;
 
-    Q_INVOKABLE void importTrf(const QUrl &fileUrl);
     Q_INVOKABLE void addPlayer(const QString &title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &origin, const QString &sex);
     Q_INVOKABLE void savePlayer();
+    Q_INVOKABLE void openTournament(const QUrl &fileUrl);
+    Q_INVOKABLE void saveTournament();
+    Q_INVOKABLE void saveTournamentAs(const QUrl &fileUrl);
+    Q_INVOKABLE void importTrf(const QUrl &fileUrl);
 
     PlayersModel *playersModel() const;
 
@@ -59,12 +62,14 @@ Q_SIGNALS:
     void currentViewChanged();
 
 private:
-    QString m_tournamentPath;
     Tournament *m_tournament;
+
+    QString m_tournamentPath;
     bool m_hasOpenTournament = false;
     int m_currentPlayerIndex = -1;
+
     Player *m_currentPlayer = nullptr;
-    QList<Player *> m_players;
     PlayersModel *m_playersModel;
+
     QString m_currentView;
 };
