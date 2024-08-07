@@ -26,27 +26,27 @@ class Player : public QObject
     Q_PROPERTY(QString sex READ sex WRITE setSex NOTIFY sexChanged)
 
 public:
-    enum Title { None, GM, IM, FM, CM, WGM, WIM, WFM, WCM };
+    enum class Title { None, GM, IM, FM, CM, WGM, WIM, WFM, WCM };
     Q_ENUM(Title)
 
     static QString titleString(Title title) {
         switch (title) {
         case Title::GM:
-            return QLatin1String("GM");
+            return QStringLiteral("GM");
         case Title::IM:
-            return QLatin1String("IM");
+            return QStringLiteral("IM");
         case Title::FM:
-            return QLatin1String("FM");
+            return QStringLiteral("FM");
         case Title::CM:
-            return QLatin1String("CM");
+            return QStringLiteral("CM");
         case Title::WGM:
-            return QLatin1String("WGM");
+            return QStringLiteral("WGM");
         case Title::WIM:
-            return QLatin1String("WIM");
+            return QStringLiteral("WIM");
         case Title::WFM:
-            return QLatin1String("WFM");
+            return QStringLiteral("WFM");
         case Title::WCM:
-            return QLatin1String("WCM");
+            return QStringLiteral("WCM");
         default:
             return {};
         }

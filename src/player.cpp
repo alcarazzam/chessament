@@ -182,7 +182,7 @@ QJsonObject Player::toJson() const
     QJsonObject json;
 
     json[QStringLiteral("starting_rank")] = m_startingRank;
-    json[QStringLiteral("title")] = m_title;
+    json[QStringLiteral("title")] = Player::titleString(m_title);
     json[QStringLiteral("name")] = m_name;
     json[QStringLiteral("rating")] = m_rating;
     json[QStringLiteral("national_rating")] = m_nationalRating;
@@ -202,8 +202,8 @@ Player *Player::fromJson(const QJsonObject &json)
     if (const auto v = json[QStringLiteral("starting_rank")]; v.isDouble()) {
         player->m_startingRank = v.toInt();
     }
-    if (const auto v = json[QStringLiteral("title")]; v.isDouble()) {
-        player->m_title = Title(v.toInt());
+    if (const auto v = json[QStringLiteral("title")]; v.isString()) {
+        player->m_title = Player::titleForString(v.toString());
     }
     if (const auto v = json[QStringLiteral("name")]; v.isString()) {
         player->m_name = v.toString();

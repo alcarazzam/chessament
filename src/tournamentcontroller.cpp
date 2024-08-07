@@ -7,6 +7,7 @@
 TournamentController::TournamentController(QObject *parent)
     : QObject(parent)
     , m_playersModel(new PlayersModel(this))
+    , m_pairingModel(new PairingModel(this))
 {
 }
 
@@ -23,6 +24,7 @@ void TournamentController::setTournament(Tournament *tournament)
     m_tournament = tournament;
 
     setPlayers(m_tournament->players());
+    m_pairingModel->setPairings(m_tournament->getPairings(1));
     setHasOpenTournament(true);
     setCurrentPlayerByIndex(-1);
 
@@ -91,6 +93,21 @@ void TournamentController::setCurrentPlayer(Player *currentPlayer)
     Q_EMIT currentPlayerChanged();
 }
 
+int TournamentController::currentRound()
+{
+    return m_currentRound;
+}
+
+void TournamentController::setCurrentRound(int currentRound)
+{
+    if (m_currentRound == currentRound) {
+        return;
+    }
+    m_currentRound = currentRound;
+    m_pairingModel->setPairings(m_tournament->getPairings(currentRound));
+    Q_EMIT currentRoundChanged();
+}
+
 void TournamentController::importTrf(const QUrl &fileUrl)
 {
     auto tournament = loadTournamentReport(fileUrl);
@@ -146,6 +163,11 @@ void TournamentController::saveTournamentAs(const QUrl &fileUrl)
 PlayersModel* TournamentController::playersModel() const
 {
     return m_playersModel;
+}
+
+PairingModel *TournamentController::pairingModel() const
+{
+    return m_pairingModel;
 }
 
 void TournamentController::setPlayers(QList<Player *> players)

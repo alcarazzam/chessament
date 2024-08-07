@@ -13,7 +13,9 @@ Tournament* loadTournamentReport(const QUrl &fileUrl)
     QTextStream fileStream(&file);
     
     auto tournament = new Tournament();
-    QList<Player *> players = {};
+    QMap<int, Player *> players = {};
+    QList<Round *> rounds = {};
+    QMap<std::tuple<int, int, int>, std::pair<Pairing::PartialResult, Pairing::PartialResult>> pairingsToAdd = {};
 
     while (!fileStream.atEnd()) {
         auto line = fileStream.readLine();
@@ -51,11 +53,57 @@ Tournament* loadTournamentReport(const QUrl &fileUrl)
             auto birthDate = line.sliced(69, 10).trimmed();
 
             auto player = new Player(startingRank, title, name, rating, 0, playerId, birthDate, federation, {}, sex);
-            players << player;
+            players[startingRank] = player;
+
+            // Read round
+            auto playerRounds = line.mid(91);
+            QString round;
+
+            for (int roundNumber = 1;; roundNumber++) {
+                round = playerRounds.mid(10 * (roundNumber - 1), 8);
+                if (round.isEmpty()) {
+                    break;
+                }
+
+                auto opponent = round.first(4).toInt();
+                auto color = Pairing::colorForString(round.at(5));
+                auto result = Pairing::partialResultForString(round.at(7));
+
+                while (rounds.size() < roundNumber) {
+                    rounds << new Round();
+                }
+
+                std::tuple<int, int, int> pairing{};
+                if (color == Pairing::Color::White) {
+                    pairing = {roundNumber, startingRank, opponent};
+                } else {
+                    pairing = {roundNumber, opponent, startingRank};
+                }
+
+                auto newPairing = pairingsToAdd[pairing];
+                if (color == Pairing::Color::White) {
+                    newPairing.first = result;
+                } else {
+                    newPairing.second = result;
+                }
+                pairingsToAdd[pairing] = newPairing;
+            }
         }
     }
 
-    tournament->setPlayers(players);
+    tournament->setPlayers(players.values());
+    tournament->setRounds(rounds);
+    tournament->setNumberOfRounds(rounds.size());
+
+    for (auto pairing = pairingsToAdd.cbegin(), end = pairingsToAdd.cend(); pairing != end; ++pairing) {
+        const auto [r, w, b] = pairing.key();
+        auto whitePlayer = players.value(w);
+        auto blackPlayer = players.value(b);
+        auto result = Pairing::resultFromPartialResults(pairing.value().first, pairing.value().second);
+        auto par = new Pairing(1, whitePlayer, blackPlayer, result);
+
+        tournament->addPairing(r - 1, par);
+    }
 
     return tournament;
 }

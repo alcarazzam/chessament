@@ -29,10 +29,16 @@ ecm_add_qml_module(chessament_static
         QtCore
         QtQuick
     SOURCES
+        pairing.cpp
+        pairing.h
         player.cpp
         player.h
         playersmodel.cpp
         playersmodel.h
+        pairingmodel.cpp
+        pairingmodel.h
+        round.h
+        round.cpp
         tournament.cpp
         tournament.h
         tournamentcontroller.cpp

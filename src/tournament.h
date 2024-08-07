@@ -11,6 +11,7 @@
 #include <QString>
 
 #include "player.h"
+#include "round.h"
 
 class Tournament : public QObject
 {
@@ -25,6 +26,7 @@ public:
     Q_PROPERTY(int numberOfRounds READ numberOfRounds WRITE setNumberOfRounds NOTIFY numberOfRoundsChanged)
 
     Q_PROPERTY(QList<Player *> players READ players WRITE setPlayers NOTIFY playersChanged)
+    Q_PROPERTY(QList<Round *> rounds READ rounds WRITE setRounds NOTIFY roundsChanged)
 
     explicit Tournament();
 
@@ -37,6 +39,10 @@ public:
 
     QList<Player *> players() const;
     void addPlayer(Player *player);
+
+    QList<Round *> rounds() const;
+    void addPairing(int round, Pairing *pairing);
+    QList<Pairing *> getPairings(int round) const;
 
     enum ReportFields {
         PlayerField = 1,
@@ -73,6 +79,7 @@ public Q_SLOTS:
     void setNumberOfRounds(int numberOfRounds);
 
     void setPlayers(QList<Player *> players);
+    void setRounds(QList<Round *> rounds);
 
 Q_SIGNALS:
     void nameChanged();
@@ -83,6 +90,7 @@ Q_SIGNALS:
     void numberOfRoundsChanged();
 
     void playersChanged();
+    void roundsChanged();
 
 private:
     QString m_name;
@@ -93,4 +101,5 @@ private:
     int m_numberOfRounds = 1;
 
     QList<Player *> m_players;
+    QList<Round *> m_rounds;
 };

@@ -9,12 +9,99 @@ import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.tableview as Tables
 
 import org.kde.chessament
-import org.kde.chessament.PlayersModel
+import org.kde.chessament.PairingModel
 
 Kirigami.ScrollablePage {
     id: root
 
-    QQC2.Label {
-        text: "Pairings"
+    horizontalScrollBarPolicy: QQC2.ScrollBar.AsNeeded
+
+    actions: [
+        Kirigami.Action {
+            text: i18n("Round %1", TournamentController.currentRound)
+            onTriggered: roundDialog.open()
+        }
+    ]
+
+    Kirigami.Dialog {
+        id: roundDialog
+        title: i18nc("@title", "Select round")
+
+        ListView {
+            id: listView
+            implicitWidth: Kirigami.Units.gridUnit * 12
+            implicitHeight: Kirigami.Units.gridUnit * 16
+
+            model: TournamentController.tournament.numberOfRounds
+            delegate: QQC2.RadioDelegate {
+                required property int index
+
+                topPadding: Kirigami.Units.smallSpacing * 2
+                bottomPadding: Kirigami.Units.smallSpacing * 2
+                implicitWidth: listView.width
+                text: i18n("Round %1", index + 1)
+                checked: TournamentController.currentRound == index + 1
+                onClicked: {
+                    TournamentController.currentRound = index + 1
+                    roundDialog.close()
+                }
+            }
+        }
+    }
+
+    KSortFilterProxyModel {
+        id: proxyModel
+        sourceModel: TournamentController.pairingModel
+        sortColumn: 0
+        sortOrder: Qt.AscendingOrder
+    }
+
+    Tables.KTableView {
+        id: tableView
+        model: proxyModel
+
+        clip: true
+        sortOrder: Qt.AscendingOrder
+        selectionBehavior: TableView.SelectRows
+        selectionMode: TableView.SingleSelection
+
+        headerComponents: [
+            Tables.HeaderComponent {
+                width: 60
+                title: i18nc("@title:column", "Board")
+                textRole: "board"
+                role: PairingRoles.BoardRole
+            },
+            Tables.HeaderComponent {
+                width: 60
+                title: i18nc("@title:column", "No")
+                textRole: "whiteStartingRank"
+                role: PairingRoles.WhiteStartingRankRole
+            },
+            Tables.HeaderComponent {
+                width: 300
+                title: i18nc("@title:column", "White player")
+                textRole: "whiteName"
+                role: PairingRoles.WhiteNameRole
+            },
+            Tables.HeaderComponent {
+                width: 70
+                title: i18nc("@title:column", "Result")
+                textRole: "result"
+                role: PairingRoles.ResultRole
+            },
+            Tables.HeaderComponent {
+                width: 300
+                title: i18nc("@title:column", "Black player")
+                textRole: "blackName"
+                role: PairingRoles.BlackNameRole
+            },
+            Tables.HeaderComponent {
+                width: 60
+                title: i18nc("@title:column", "No")
+                textRole: "blackStartingRank"
+                role: PairingRoles.BlackStartingRankRole
+            }
+        ]
     }
 }

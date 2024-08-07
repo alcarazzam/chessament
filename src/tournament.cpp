@@ -107,6 +107,33 @@ void Tournament::addPlayer(Player *player)
     m_players.append(player);
 }
 
+QList<Round *> Tournament::rounds() const
+{
+    return m_rounds;
+}
+
+void Tournament::setRounds(QList<Round *> rounds)
+{
+    if (m_rounds == rounds) {
+        return;
+    }
+    m_rounds = rounds;
+    Q_EMIT roundsChanged();
+}
+
+void Tournament::addPairing(int round, Pairing *pairing)
+{
+    m_rounds.at(round)->addPairing(pairing);
+}
+
+QList<Pairing *> Tournament::getPairings(int round) const
+{
+    if (round <= m_rounds.size()) {
+        return m_rounds.at(round - 1)->pairings();
+    }
+    return {};
+}
+
 Tournament::ReportFields Tournament::getReportField(const QString &number)
 {
     if (number == QStringLiteral("001")) {

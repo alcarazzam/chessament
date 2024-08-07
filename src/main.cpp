@@ -21,6 +21,7 @@
 #include <KLocalizedString>
 
 #include "chessamentconfig.h"
+#include "pairingmodel.h"
 #include "playersmodel.h"
 
 using namespace Qt::Literals::StringLiterals;
@@ -84,6 +85,11 @@ int main(int argc, char *argv[])
 
     qml_register_types_org_kde_chessament();
     qmlRegisterUncreatableType<PlayersModel>("org.kde.chessament.PlayersModel", 1, 0, "PlayerRoles", QStringLiteral("Cannot create instances of PlayersModel"));
+    qmlRegisterUncreatableType<PairingModel>("org.kde.chessament.PairingModel",
+                                             1,
+                                             0,
+                                             "PairingRoles",
+                                             QStringLiteral("Cannot create instances of PairingModel"));
 
     QQmlApplicationEngine engine;
 
