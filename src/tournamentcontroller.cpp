@@ -110,13 +110,15 @@ void TournamentController::setCurrentRound(int currentRound)
 
 void TournamentController::importTrf(const QUrl &fileUrl)
 {
-    auto tournament = loadTournamentReport(fileUrl);
+    const auto tournament = loadTournamentReport(fileUrl);
 
-    if (tournament != nullptr) {
-        setTournament(tournament);
+    if (tournament.has_value()) {
+        setTournament(*tournament);
 
         setTournamentPath({});
         setCurrentView(QStringLiteral("players"));
+    } else {
+        setError(tournament.error());
     }
 }
 
@@ -187,4 +189,15 @@ void TournamentController::setCurrentView(const QString &currentView)
     }
     m_currentView = currentView;
     Q_EMIT currentViewChanged();
+}
+
+QString TournamentController::error() const
+{
+    return m_error;
+}
+
+void TournamentController::setError(const QString &error)
+{
+    m_error = error;
+    Q_EMIT errorChanged();
 }

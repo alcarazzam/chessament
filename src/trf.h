@@ -3,9 +3,11 @@
 
 #pragma once
 
+#include <KLocalizedString>
 #include <QFile>
 #include <QTextStream>
+#include <expected>
 
 #include "tournament.h"
 
-extern Tournament* loadTournamentReport(const QUrl &fileUrl);
+extern std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl);

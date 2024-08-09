@@ -61,6 +61,17 @@ StatefulApp.StatefulWindow {
                 root.pageStack.replace(page)
             }
         }
+
+        function onErrorChanged() {
+            errorDialog.open()
+        }
+    }
+
+    Kirigami.PromptDialog {
+        id: errorDialog
+        title: i18nc("@title", "Error")
+        subtitle: TournamentController.error
+        standardButtons: Kirigami.Dialog.Ok
     }
 
     FileDialog {

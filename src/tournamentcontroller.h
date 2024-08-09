@@ -27,6 +27,7 @@ class TournamentController : public QObject
     Q_PROPERTY(PairingModel *pairingModel READ pairingModel CONSTANT)
 
     Q_PROPERTY(QString currentView READ currentView WRITE setCurrentView NOTIFY currentViewChanged)
+    Q_PROPERTY(QString error READ error WRITE setError NOTIFY errorChanged)
 
 public:
     explicit TournamentController(QObject *parent = nullptr);
@@ -49,6 +50,7 @@ public:
     PairingModel *pairingModel() const;
 
     QString currentView() const;
+    QString error() const;
 
 public Q_SLOTS:
     void setTournament(Tournament *tournament);
@@ -59,6 +61,7 @@ public Q_SLOTS:
     void setCurrentRound(int currentRound);
     void setPlayers(QList<Player *> players);
     void setCurrentView(const QString &currentView);
+    void setError(const QString &error);
 
 Q_SIGNALS:
     void tournamentChanged();
@@ -67,6 +70,7 @@ Q_SIGNALS:
     void currentPlayerChanged();
     void currentRoundChanged();
     void currentViewChanged();
+    void errorChanged();
 
 private:
     Tournament *m_tournament;
@@ -81,4 +85,5 @@ private:
     PairingModel *m_pairingModel;
 
     QString m_currentView;
+    QString m_error;
 };

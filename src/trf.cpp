@@ -3,7 +3,7 @@
 
 #include "trf.h"
 
-Tournament* loadTournamentReport(const QUrl &fileUrl)
+std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl)
 {
     QFile file(fileUrl.toLocalFile());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -65,23 +65,35 @@ Tournament* loadTournamentReport(const QUrl &fileUrl)
                     break;
                 }
 
-                auto opponent = round.first(4).toInt();
+                if (round.size() != 8) {
+                    return std::unexpected(i18n("Invalid pairing \"%1\"", round));
+                }
+
+                bool ok;
+                auto opponent = round.first(4).toInt(&ok);
+                if (!ok) {
+                    return std::unexpected(i18n("Invalid player for pairing \"%1\"", round));
+                }
+
                 auto color = Pairing::colorForString(round.at(5));
                 auto result = Pairing::partialResultForString(round.at(7));
+                if (result == Pairing::PartialResult::Unknown) {
+                    return std::unexpected(i18n("Unknown result for pairing \"%1\"", round));
+                }
 
                 while (rounds.size() < roundNumber) {
                     rounds << new Round();
                 }
 
                 std::tuple<int, int, int> pairing{};
-                if (color == Pairing::Color::White) {
+                if (color == Pairing::Color::White || opponent == 0) {
                     pairing = {roundNumber, startingRank, opponent};
                 } else {
                     pairing = {roundNumber, opponent, startingRank};
                 }
 
                 auto newPairing = pairingsToAdd[pairing];
-                if (color == Pairing::Color::White) {
+                if (color == Pairing::Color::White || opponent == 0) {
                     newPairing.first = result;
                 } else {
                     newPairing.second = result;
@@ -97,9 +109,24 @@ Tournament* loadTournamentReport(const QUrl &fileUrl)
 
     for (auto pairing = pairingsToAdd.cbegin(), end = pairingsToAdd.cend(); pairing != end; ++pairing) {
         const auto [r, w, b] = pairing.key();
+
+        if (!players.contains(w)) {
+            return std::unexpected(i18n("Player %1 not found", w));
+        }
         auto whitePlayer = players.value(w);
-        auto blackPlayer = players.value(b);
+
+        Player *blackPlayer = nullptr;
+        if (b != 0) {
+            if (!players.contains(b)) {
+                return std::unexpected(i18n("Player %1 not found", b));
+            }
+            blackPlayer = players.value(b);
+        }
+
         auto result = Pairing::resultFromPartialResults(pairing.value().first, pairing.value().second);
+        if (result == Pairing::Result::Unknown) {
+            return std::unexpected(i18n("Unknown result on pairing %1 with %2", w, b));
+        }
         auto par = new Pairing(1, whitePlayer, blackPlayer, result);
 
         tournament->addPairing(r - 1, par);

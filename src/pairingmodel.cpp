@@ -34,8 +34,14 @@ QVariant PairingModel::data(const QModelIndex &index, int role) const
     case ResultRole:
         return Pairing::resultString(pairing->result());
     case BlackNameRole:
+        if (pairing->blackPlayer() == nullptr) {
+            return QStringLiteral("");
+        }
         return pairing->blackPlayer()->name();
     case BlackStartingRankRole:
+        if (pairing->blackPlayer() == nullptr) {
+            return QStringLiteral("");
+        }
         return pairing->blackPlayer()->startingRank();
     }
     return QVariant();
