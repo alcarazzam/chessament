@@ -25,24 +25,27 @@ std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl)
         }
 
         auto fieldType = line.mid(0, 3);
-        auto field = Tournament::getReportField(fieldType);
+        auto field = Tournament::reportFieldForString(fieldType);
 
-        if (field == Tournament::ReportFields::TournamentNameField) {
+        if (field == Tournament::ReportField::TournamentName) {
             auto name = line.mid(4).trimmed();
             tournament->setName(name);
-        } else if (field == Tournament::ReportFields::CityField) {
+        } else if (field == Tournament::ReportField::City) {
             auto city = line.mid(4).trimmed();
             tournament->setCity(city);
-        } else if (field == Tournament::ReportFields::FederationField) {
+        } else if (field == Tournament::ReportField::Federation) {
             auto federation = line.mid(4).trimmed();
             tournament->setFederation(federation);
-        } else if (field == Tournament::ReportFields::ChiefArbiterField) {
+        } else if (field == Tournament::ReportField::ChiefArbiter) {
             auto chiefArbiter = line.mid(4).trimmed();
             tournament->setChiefArbiter(chiefArbiter);
-        } else if (field == Tournament::ReportFields::DeputyChiefArbiterField) {
+        } else if (field == Tournament::ReportField::DeputyChiefArbiter) {
             auto deputyChiefArbiter = line.mid(4).trimmed();
             tournament->setDeputyChiefArbiter(deputyChiefArbiter);
-        } else if (field == Tournament::ReportFields::PlayerField) {
+        } else if (field == Tournament::ReportField::TimeControl) {
+            auto timeControl = line.mid(4).trimmed();
+            tournament->setTimeControl(timeControl);
+        } else if (field == Tournament::ReportField::Player) {
             auto startingRank = line.sliced(4, 4).toInt();
             auto sex = line.sliced(9, 1).trimmed();
             auto title = Player::titleForString(line.sliced(10, 3).trimmed());

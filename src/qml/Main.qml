@@ -43,8 +43,12 @@ StatefulApp.StatefulWindow {
             saveTournamentFileDialog.open()
         }
 
-        function onImportTrf(fileName) {
+        function onImportTrf() {
             importTournamentFileDialog.open()
+        }
+
+        function onExportTrf() {
+            exportTournamentFileDialog.open()
         }
     }
 
@@ -99,6 +103,16 @@ StatefulApp.StatefulWindow {
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         onAccepted: {
             TournamentController.importTrf(selectedFile)
+        }
+    }
+
+    FileDialog {
+        id: exportTournamentFileDialog
+        parentWindow: root
+        fileMode: FileDialog.SaveFile
+        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
+        onAccepted: {
+            TournamentController.exportTrf(selectedFile)
         }
     }
 
@@ -161,6 +175,10 @@ StatefulApp.StatefulWindow {
                             }
                             Kirigami.Action {
                                 fromQAction: root.application.action("import_trf")
+                            }
+                            Kirigami.Action {
+                                fromQAction: root.application.action("export_trf")
+                                enabled: TournamentController.hasOpenTournament
                             }
                             QQC2.MenuSeparator { }
                             Kirigami.Action {

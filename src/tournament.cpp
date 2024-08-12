@@ -77,6 +77,20 @@ void Tournament::setDeputyChiefArbiter(const QString &deputyChiefArbiter)
     Q_EMIT deputyChiefArbiterChanged();
 }
 
+QString Tournament::timeControl() const
+{
+    return m_timeControl;
+}
+
+void Tournament::setTimeControl(const QString &timeControl)
+{
+    if (m_timeControl == timeControl) {
+        return;
+    }
+    m_timeControl = timeControl;
+    Q_EMIT timeControlChanged();
+}
+
 int Tournament::numberOfRounds()
 {
     return m_numberOfRounds;
@@ -134,39 +148,16 @@ QList<Pairing *> Tournament::getPairings(int round) const
     return {};
 }
 
-Tournament::ReportFields Tournament::getReportField(const QString &number)
+int Tournament::numberOfPlayers()
 {
-    if (number == QStringLiteral("001")) {
-        return PlayerField;
-    } else if (number == QStringLiteral("012")) {
-        return TournamentNameField;
-    } else if (number == QStringLiteral("022")) {
-        return CityField;
-    } else if (number == QStringLiteral("032")) {
-        return FederationField;
-    } else if (number == QStringLiteral("042")) {
-        return StartDateField;
-    } else if (number == QStringLiteral("052")) {
-        return EndDateField;
-    } else if (number == QStringLiteral("062")) {
-        return NumberOfPlayersField;
-    } else if (number == QStringLiteral("072")) {
-        return NumberOfRatedPlayersField;
-    } else if (number == QStringLiteral("082")) {
-        return NumberOfTeamsField;
-    } else if (number == QStringLiteral("092")) {
-        return TournamentTypeField;
-    } else if (number == QStringLiteral("102")) {
-        return ChiefArbiterField;
-    } else if (number == QStringLiteral("112")) {
-        return DeputyChiefArbiterField;
-    } else if (number == QStringLiteral("122")) {
-        return TimeControlField;
-    } else if (number == QStringLiteral("132")) {
-        return CalendarField;
-    } else {
-        return Unknown;
-    }
+    return m_players.size();
+}
+
+int Tournament::numberOfRatedPlayers()
+{
+    return std::count_if(m_players.cbegin(), m_players.cend(), [](Player *p) {
+        return p->rating() > 0;
+    });
 }
 
 QJsonObject Tournament::toJson() const
@@ -179,6 +170,7 @@ QJsonObject Tournament::toJson() const
     tournament[QStringLiteral("federation")] = m_federation;
     tournament[QStringLiteral("chief_arbiter")] = m_chiefArbiter;
     tournament[QStringLiteral("deputy_chief_arbiter")] = m_deputyChiefArbiter;
+    tournament[QStringLiteral("time_control")] = m_timeControl;
     tournament[QStringLiteral("number_of_rounds")] = m_numberOfRounds;
 
     QJsonArray players;
@@ -212,6 +204,9 @@ void Tournament::read(const QJsonObject &json)
         if (const auto v = tournament[QStringLiteral("deputy_chief_arbiter")]; v.isString()) {
             m_deputyChiefArbiter = v.toString();
         }
+        if (const auto v = tournament[QStringLiteral("time_control")]; v.isString()) {
+            m_timeControl = v.toString();
+        }
         if (const auto v = tournament[QStringLiteral("number_of_rounds")]; v.isDouble()) {
             m_numberOfRounds = v.toInt();
         }
@@ -225,6 +220,53 @@ void Tournament::read(const QJsonObject &json)
             m_players << Player::fromJson(player.toObject());
         }
     }
+}
+
+QString Tournament::toTrf(TrfOptions options)
+{
+    QString result;
+    QTextStream stream(&result);
+
+    const auto space = QStringLiteral(" ");
+    const auto newLine = QLatin1Char('\n');
+
+    stream << reportFieldString(ReportField::TournamentName) << space << m_name << newLine;
+    stream << reportFieldString(ReportField::City) << space << m_city << newLine;
+    stream << reportFieldString(ReportField::Federation) << space << m_federation << newLine;
+    stream << reportFieldString(ReportField::NumberOfPlayers) << space << numberOfPlayers() << newLine;
+    stream << reportFieldString(ReportField::NumberOfRatedPlayers) << space << numberOfRatedPlayers() << newLine;
+    stream << reportFieldString(ReportField::ChiefArbiter) << space << m_chiefArbiter << newLine;
+    stream << reportFieldString(ReportField::TimeControl) << space << m_timeControl << newLine;
+
+    if (options.testAnyFlag(TrfOption::NumberOfRounds)) {
+        stream << QStringLiteral("XXR ") + QString::number(m_numberOfRounds) << newLine;
+    }
+
+    if (options.testAnyFlag(TrfOption::InitialColorWhite)) {
+        stream << QStringLiteral("XXC white1\n");
+    } else if (options.testAnyFlag(TrfOption::InitialColorBlack)) {
+        stream << QStringLiteral("XXC black1\n");
+    }
+
+    for (const auto &player : m_players) {
+        const auto title = Player::titleString(player->title()).toStdString();
+        const auto result = std::format("001 {:4} {:1}{:3} {:33} {:4} {:3} {:>11} {:10} {:4.1f} {:4}",
+                                        player->startingRank(),
+                                        player->sex().toStdString(),
+                                        title,
+                                        player->name().toStdString(),
+                                        player->rating(),
+                                        player->federation().toStdString(),
+                                        player->playerId().toStdString(),
+                                        player->birthDate().toStdString(),
+                                        0.f, // TODO: real points
+                                        player->startingRank() // TODO: real rank
+        );
+
+        stream << result.c_str() << newLine;
+    }
+
+    return result;
 }
 
 bool Tournament::loadTournament(const QString &fileName)
@@ -255,6 +297,21 @@ bool Tournament::save(const QString &fileName)
 
     auto tournamentObj = toJson();
     file.write(QJsonDocument(tournamentObj).toJson());
+
+    return true;
+}
+
+bool Tournament::exportTrf(const QString &fileName)
+{
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        qWarning() << "Couldn't export tournament report" << fileName;
+        return false;
+    }
+
+    auto trf = toTrf();
+    file.write(trf.toUtf8());
 
     return true;
 }

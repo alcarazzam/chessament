@@ -122,6 +122,13 @@ void TournamentController::importTrf(const QUrl &fileUrl)
     }
 }
 
+void TournamentController::exportTrf(const QUrl &fileUrl)
+{
+    if (!m_tournament->exportTrf(fileUrl.toLocalFile())) {
+        setError(i18n("Couldn't export tournament."));
+    }
+}
+
 void TournamentController::addPlayer(const QString &title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &origin, const QString &sex)
 {
     auto startingRank = m_tournament->players().size() + 1;

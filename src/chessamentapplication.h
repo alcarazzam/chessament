@@ -22,6 +22,7 @@ Q_SIGNALS:
     void saveTournament();
     void saveTournamentAs();
     void importTrf();
+    void exportTrf();
 
 private:
     void setupActions() override;

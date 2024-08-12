@@ -44,6 +44,14 @@ void ChessamentApplication::setupActions()
         mainCollection()->setDefaultShortcut(action, Qt::CTRL | Qt::Key_I);
     }
 
+    actionName = "export_trf"_L1;
+    if (KAuthorized::authorizeAction(actionName)) {
+        auto action = mainCollection()->addAction(actionName, this, &ChessamentApplication::exportTrf);
+        action->setText(i18nc("@action:inmenu", "Export tournament report…"));
+        action->setIcon(QIcon::fromTheme(u"document-export-symbolic"_s));
+        mainCollection()->addAction(action->objectName(), action);
+    }
+
     readSettings();
 }
 
