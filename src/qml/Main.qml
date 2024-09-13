@@ -17,6 +17,8 @@ import org.kde.chessament.settings as Settings
 StatefulApp.StatefulWindow {
     id: root
 
+    property var pageCache: Object.create(null)
+
     title: i18nc("@title:window", "Chessament")
 
     windowName: "Main"
@@ -57,13 +59,8 @@ StatefulApp.StatefulWindow {
 
         function onCurrentViewChanged() {
             const view = TournamentController.currentView
-            if (view == "players") {
-                const page = Qt.createComponent("org.kde.chessament", "PlayersPage").createObject(root)
-                root.pageStack.replace(page)
-            } else if (view == "pairings") {
-                const page = Qt.createComponent("org.kde.chessament", "PairingsPage").createObject(root)
-                root.pageStack.replace(page)
-            }
+            const page = pageForView(view)
+            root.pageStack.replace(page)
         }
 
         function onErrorChanged() {
@@ -249,4 +246,19 @@ StatefulApp.StatefulWindow {
     pageStack.defaultColumnWidth: root.width
 
     pageStack.initialPage: Qt.createComponent("org.kde.chessament", "WelcomePage")
+
+    function pageForView(view: string): var {
+        if (pageCache[view]) {
+            return pageCache[view]
+        } else {
+            let page
+            if (view == "players") {
+                page = Qt.createComponent("org.kde.chessament", "PlayersPage").createObject(root)
+            } else if (view == "pairings") {
+                page = Qt.createComponent("org.kde.chessament", "PairingsPage").createObject(root)
+            }
+            pageCache[view] = page
+            return page
+        }
+    }
 }
