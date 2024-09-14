@@ -140,7 +140,7 @@ void TournamentController::addPlayer(const QString &title, const QString &name, 
 
 void TournamentController::savePlayer()
 {
-    m_playersModel->setPlayers(m_tournament->players());
+    m_playersModel->updatePlayer(m_currentPlayerIndex, m_currentPlayer);
 }
 
 void TournamentController::openTournament(const QUrl &fileUrl)

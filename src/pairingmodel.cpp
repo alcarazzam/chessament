@@ -75,7 +75,21 @@ QVariant PairingModel::headerData(int section, Qt::Orientation orientation, int 
 
 void PairingModel::setPairings(QList<Pairing *> pairings)
 {
-    beginResetModel();
+    int rowDiff = pairings.size() - m_pairings.size();
+
+    if (rowDiff > 0) {
+        beginInsertRows({}, m_pairings.size(), m_pairings.size() + rowDiff - 1);
+    } else if (rowDiff < 0) {
+        beginRemoveRows({}, 0, rowDiff - 1);
+    }
+
     m_pairings = pairings;
-    endResetModel();
+
+    if (rowDiff > 0) {
+        endInsertRows();
+    } else if (rowDiff < 0) {
+        endRemoveRows();
+    }
+
+    Q_EMIT dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1), {});
 }

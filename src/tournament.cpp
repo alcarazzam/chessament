@@ -160,6 +160,13 @@ int Tournament::numberOfRatedPlayers()
     });
 }
 
+void Tournament::sortPairings()
+{
+    for (int i = 0; i < m_rounds.size(); i++) {
+        m_rounds.at(i)->sortPairings();
+    }
+}
+
 QJsonObject Tournament::toJson() const
 {
     QJsonObject json;

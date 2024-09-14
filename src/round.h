@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <QString>
+#include <algorithm>
 
 #include "pairing.h"
 
@@ -24,6 +25,7 @@ public:
     QList<Pairing *> pairings();
 
     void addPairing(Pairing *pairing);
+    void sortPairings();
 
 public Q_SLOTS:
     void setPairings(QList<Pairing *> pairings);

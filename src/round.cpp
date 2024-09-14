@@ -26,3 +26,13 @@ void Round::addPairing(Pairing *pairing)
 {
     m_pairings.append(pairing);
 }
+
+void Round::sortPairings()
+{
+    // TODO: sort pairings in the tournament instead
+    std::sort(m_pairings.begin(), m_pairings.end());
+
+    for (int i = 0; i < m_pairings.size(); i++) {
+        m_pairings.at(i)->setBoard(i + 1);
+    }
+}

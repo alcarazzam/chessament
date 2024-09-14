@@ -135,5 +135,7 @@ std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl)
         tournament->addPairing(r - 1, par);
     }
 
+    tournament->sortPairings();
+
     return tournament;
 }

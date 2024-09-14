@@ -67,3 +67,9 @@ void Pairing::setResult(Result result)
     m_result = result;
     Q_EMIT resultChanged();
 }
+
+bool Pairing::operator<(Pairing other)
+{
+    return std::min(m_whitePlayer->startingRank(), m_blackPlayer->startingRank())
+        < std::min(other.whitePlayer()->startingRank(), other.blackPlayer()->startingRank());
+}

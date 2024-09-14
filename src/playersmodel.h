@@ -37,6 +37,7 @@ public:
 
     void setPlayers(QList<Player *> players);
     void addPlayer(Player *player);
+    void updatePlayer(int i, Player *player);
 
 private:
     QList<Player *> m_players;

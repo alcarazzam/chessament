@@ -50,6 +50,7 @@ public:
     QList<Round *> rounds() const;
     void addPairing(int round, Pairing *pairing);
     QList<Pairing *> getPairings(int round) const;
+    void sortPairings();
 
     int numberOfPlayers();
     int numberOfRatedPlayers();

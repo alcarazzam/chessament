@@ -357,6 +357,8 @@ public:
     Player *blackPlayer();
     Result result();
 
+    bool operator<(Pairing other);
+
 public Q_SLOTS:
     void setBoard(int board);
     void setWhitePlayer(Player *whitePlayer);
