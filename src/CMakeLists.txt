@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 add_subdirectory(settings)
-# add_subdirectory(players)
 
 qt_add_library(chessament_static STATIC)
 ecm_add_qml_module(chessament_static
@@ -49,7 +48,6 @@ ecm_add_qml_module(chessament_static
         org.kde.kirigamiaddons.statefulapp
         org.kde.kirigamiaddons.tableview
         org.kde.kirigami
-#        org.kde.chessament.players
         org.kde.chessament.settings
 )
 
@@ -65,6 +63,7 @@ target_link_libraries(chessament_static PUBLIC
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::Svg
+    Qt6::Widgets
     KF6::I18n
     KF6::CoreAddons
     KF6::ConfigCore
@@ -74,25 +73,12 @@ target_link_libraries(chessament_static PUBLIC
 )
 target_include_directories(chessament_static PUBLIC ${CMAKE_BINARY_DIR})
 
-if (ANDROID)
-    kirigami_package_breeze_icons(ICONS
-        list-add
-        help-about
-        application-exit
-        applications-graphics
-    )
-else()
-    target_link_libraries(chessament_static PUBLIC Qt::Widgets)
-endif()
-
 kconfig_add_kcfg_files(chessament_static GENERATE_MOC chessamentconfig.kcfgc)
 
 add_executable(chessament main.cpp)
 target_link_libraries(chessament PRIVATE
     chessament_static
     chessament_staticplugin
-#    chessament_players
-#    chessament_playersplugin
     chessament_settings
     chessament_settingsplugin
 )
