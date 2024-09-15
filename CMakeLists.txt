@@ -28,22 +28,15 @@ include(ECMSetupVersion)
 include(ECMFindQmlModule)
 include(ECMQmlModule)
 
-if (NOT ANDROID)
-    include(KDEGitCommitHooks)
-    include(KDEClangFormat)
-endif()
+include(KDEGitCommitHooks)
+include(KDEClangFormat)
 
 ecm_setup_version(${PROJECT_VERSION}
     VARIABLE_PREFIX CHESSAMENT
     VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/src/version-chessament.h"
 )
 
-set(QT_EXTRA_COMPONENTS)
-if (NOT ANDROID)
-    list(APPEND QT_EXTRA_COMPONENTS Widgets)
-endif()
-
-find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Svg ${QT_EXTRA_COMPONENTS})
+find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Svg Widgets)
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS Kirigami CoreAddons Config I18n ItemModels)
 
 find_package(KF6KirigamiAddons ${KIRIGAMI_ADDONS_MIN_VERSION} REQUIRED)
@@ -57,10 +50,6 @@ qt_policy(SET QTP0001 NEW)
 ecm_find_qmlmodule(org.kde.kirigamiaddons.formcard)
 ecm_find_qmlmodule(org.kde.kirigamiaddons.statefulapp)
 
-if (ANDROID)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/android/version.gradle.in ${CMAKE_BINARY_DIR}/version.gradle)
-endif()
-
 add_subdirectory(src)
 
 install(FILES org.kde.chessament.desktop DESTINATION ${KDE_INSTALL_APPDIR})
@@ -69,8 +58,6 @@ ki18n_install(po)
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
-if (NOT ANDROID)
-    file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES src/*.cpp src/*.h)
-    kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
-    kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
-endif()
+file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES src/*.cpp src/*.h)
+kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
+kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)

@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: None
+# SPDX-License-Identifier: CC0-1.0
+
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  reuse:
+    runs-on: ubuntu-24.04
+    container: fsfe/reuse:4
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run reuse
+        run: reuse lint
