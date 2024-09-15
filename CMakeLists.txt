@@ -7,7 +7,7 @@ project(chessament VERSION 0.1)
 
 include(FeatureSummary)
 
-set(QT6_MIN_VERSION 6.5.0)
+set(QT6_MIN_VERSION 6.7.0)
 set(KF6_MIN_VERSION 6.5.0)
 set(KIRIGAMI_ADDONS_MIN_VERSION 1.4.0)
 
@@ -36,7 +36,7 @@ ecm_setup_version(${PROJECT_VERSION}
     VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/src/version-chessament.h"
 )
 
-find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Svg Widgets)
+find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Svg WebEngineQuick Widgets)
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS Kirigami CoreAddons Config I18n ItemModels)
 
 find_package(KF6KirigamiAddons ${KIRIGAMI_ADDONS_MIN_VERSION} REQUIRED)

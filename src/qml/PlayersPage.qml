@@ -35,7 +35,15 @@ Kirigami.ScrollablePage {
             id: settingsAction
             icon.name: "settings-configure"
             text: i18nc("@action:button", "Settings")
-            onTriggered: tournamentSettings.open() // Qt.createComponent("org.kde.chessament", "TournamentSettings").createObject(root.QQC2.ApplicationWindow.window, {}).open()
+            onTriggered: tournamentSettings.open()
+        },
+        Kirigami.Action {
+            id: printAction
+            icon.name: "document-print"
+            text: i18nc("@action:button", "Print")
+            onTriggered: {
+                applicationWindow().pageStack.push(Qt.createComponent("org.kde.chessament", "DocsPage").createObject(root))
+            }
         }
     ]
 

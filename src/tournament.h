@@ -31,7 +31,7 @@ public:
     Q_PROPERTY(QString timeControl READ timeControl WRITE setTimeControl NOTIFY timeControlChanged)
     Q_PROPERTY(int numberOfRounds READ numberOfRounds WRITE setNumberOfRounds NOTIFY numberOfRoundsChanged)
 
-    Q_PROPERTY(QList<Player *> players READ players WRITE setPlayers NOTIFY playersChanged)
+    Q_PROPERTY(QList<Player *> *players READ players WRITE setPlayers NOTIFY playersChanged)
     Q_PROPERTY(QList<Round *> rounds READ rounds WRITE setRounds NOTIFY roundsChanged)
 
     explicit Tournament();
@@ -44,7 +44,7 @@ public:
     QString timeControl() const;
     int numberOfRounds();
 
-    QList<Player *> players() const;
+    QList<Player *> *players();
     void addPlayer(Player *player);
 
     QList<Round *> rounds() const;
@@ -54,6 +54,8 @@ public:
 
     int numberOfPlayers();
     int numberOfRatedPlayers();
+
+    QString getPlayersListDocument();
 
     enum class ReportField {
         Player = 1,
@@ -163,7 +165,7 @@ public Q_SLOTS:
     void setTimeControl(const QString &timeControl);
     void setNumberOfRounds(int numberOfRounds);
 
-    void setPlayers(QList<Player *> players);
+    void setPlayers(QList<Player *> *players);
     void setRounds(QList<Round *> rounds);
 
 Q_SIGNALS:
@@ -187,7 +189,7 @@ private:
     QString m_timeControl;
     int m_numberOfRounds = 1;
 
-    QList<Player *> m_players;
+    QList<Player *> *m_players;
     QList<Round *> m_rounds;
 };
 

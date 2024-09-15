@@ -11,9 +11,10 @@
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QtQml/QQmlExtensionPlugin>
 #include <QQuickStyle>
 #include <QUrl>
+#include <QtQml/QQmlExtensionPlugin>
+#include <QtWebEngineQuick/qtwebenginequickglobal.h>
 
 #include "version-chessament.h"
 #include <KAboutData>
@@ -33,6 +34,9 @@ Q_DECL_EXPORT
 #endif
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+    QtWebEngineQuick::initialize();
+
 #ifdef Q_OS_ANDROID
     QGuiApplication app(argc, argv);
     QQuickStyle::setStyle(QStringLiteral("org.kde.breeze"));

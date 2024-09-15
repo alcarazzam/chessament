@@ -45,6 +45,11 @@ Delegates.RoundedItemDelegate {
     }
 
     TapHandler {
-        onTapped: TournamentController.currentView = viewName
+        onTapped: {
+            if (applicationWindow().pageStack.depth > 1) {
+                applicationWindow().pageStack.pop(null)
+            }
+            TournamentController.currentView = viewName
+        }
     }
 }

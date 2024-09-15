@@ -105,12 +105,12 @@ void Tournament::setNumberOfRounds(int numberOfRounds)
     Q_EMIT numberOfRoundsChanged();
 }
 
-QList<Player *> Tournament::players() const
+QList<Player *> *Tournament::players()
 {
     return m_players;
 }
 
-void Tournament::setPlayers(QList<Player *> players)
+void Tournament::setPlayers(QList<Player *> *players)
 {
     m_players = players;
     Q_EMIT playersChanged();
@@ -118,7 +118,7 @@ void Tournament::setPlayers(QList<Player *> players)
 
 void Tournament::addPlayer(Player *player)
 {
-    m_players.append(player);
+    m_players->append(player);
 }
 
 QList<Round *> Tournament::rounds() const
@@ -150,12 +150,12 @@ QList<Pairing *> Tournament::getPairings(int round) const
 
 int Tournament::numberOfPlayers()
 {
-    return m_players.size();
+    return m_players->size();
 }
 
 int Tournament::numberOfRatedPlayers()
 {
-    return std::count_if(m_players.cbegin(), m_players.cend(), [](Player *p) {
+    return std::count_if(m_players->cbegin(), m_players->cend(), [](Player *p) {
         return p->rating() > 0;
     });
 }
@@ -181,7 +181,7 @@ QJsonObject Tournament::toJson() const
     tournament[QStringLiteral("number_of_rounds")] = m_numberOfRounds;
 
     QJsonArray players;
-    for (const auto &player : m_players) {
+    for (const auto &player : *m_players) {
         players << player->toJson();
     }
 
@@ -221,10 +221,10 @@ void Tournament::read(const QJsonObject &json)
 
     if (auto v = json[QStringLiteral("players")]; v.isArray()) {
         auto players = v.toArray();
-        m_players.clear();
-        m_players.reserve(players.size());
+        m_players->clear();
+        m_players->reserve(players.size());
         for (const auto &player : players) {
-            m_players << Player::fromJson(player.toObject());
+            *m_players << Player::fromJson(player.toObject());
         }
     }
 }
@@ -255,7 +255,7 @@ QString Tournament::toTrf(TrfOptions options)
         stream << QStringLiteral("XXC black1\n");
     }
 
-    for (const auto &player : m_players) {
+    for (const auto &player : *m_players) {
         const auto title = Player::titleString(player->title()).toStdString();
         const auto result = std::format("001 {:4} {:1}{:3} {:33} {:4} {:3} {:>11} {:10} {:4.1f} {:4}",
                                         player->startingRank(),

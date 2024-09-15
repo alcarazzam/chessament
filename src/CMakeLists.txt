@@ -12,6 +12,7 @@ ecm_add_qml_module(chessament_static
     QML_FILES
         qml/Main.qml
         qml/AddPlayerDialog.qml
+        qml/DocsPage.qml
         qml/NavigationButtonDelegate.qml
         qml/PairingsPage.qml
         qml/PlayerDetails.qml
@@ -28,6 +29,7 @@ ecm_add_qml_module(chessament_static
         QtCore
         QtQuick
     SOURCES
+        documents.cpp
         pairing.cpp
         pairing.h
         player.cpp
@@ -63,6 +65,7 @@ target_link_libraries(chessament_static PUBLIC
     Qt6::Quick
     Qt6::QuickControls2
     Qt6::Svg
+    Qt6::WebEngineQuick
     Qt6::Widgets
     KF6::I18n
     KF6::CoreAddons

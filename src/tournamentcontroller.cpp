@@ -23,7 +23,7 @@ void TournamentController::setTournament(Tournament *tournament)
     }
     m_tournament = tournament;
 
-    setPlayers(m_tournament->players());
+    m_playersModel->setPlayers(m_tournament->players());
     m_pairingModel->setPairings(m_tournament->getPairings(1));
     setHasOpenTournament(true);
     setCurrentPlayerByIndex(-1);
@@ -71,7 +71,7 @@ void TournamentController::setCurrentPlayerByIndex(int currentPlayerIndex)
     }
     m_currentPlayerIndex = currentPlayerIndex;
     if (m_currentPlayerIndex >= 0) {
-        m_currentPlayer = m_tournament->players().at(m_currentPlayerIndex);
+        m_currentPlayer = m_tournament->players()->at(m_currentPlayerIndex);
     } else {
         m_currentPlayer = nullptr;
     }
@@ -89,7 +89,7 @@ void TournamentController::setCurrentPlayer(Player *currentPlayer)
         return;
     }
     m_currentPlayer = currentPlayer;
-    m_currentPlayerIndex = m_tournament->players().indexOf(m_currentPlayer);
+    m_currentPlayerIndex = m_tournament->players()->indexOf(m_currentPlayer);
     Q_EMIT currentPlayerChanged();
 }
 
@@ -129,9 +129,14 @@ void TournamentController::exportTrf(const QUrl &fileUrl)
     }
 }
 
+QString TournamentController::getPlayersListDocument()
+{
+    return m_tournament->getPlayersListDocument();
+}
+
 void TournamentController::addPlayer(const QString &title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &origin, const QString &sex)
 {
-    auto startingRank = m_tournament->players().size() + 1;
+    auto startingRank = m_tournament->players()->size() + 1;
     auto player = new Player(startingRank, Player::titleForString(title), name, rating, nationalRating, playerId, birthDate, {}, origin, sex);
 
     m_tournament->addPlayer(player);
@@ -177,11 +182,6 @@ PlayersModel* TournamentController::playersModel() const
 PairingModel *TournamentController::pairingModel() const
 {
     return m_pairingModel;
-}
-
-void TournamentController::setPlayers(QList<Player *> players)
-{
-    m_playersModel->setPlayers(players);
 }
 
 QString TournamentController::currentView() const

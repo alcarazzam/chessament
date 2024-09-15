@@ -10,7 +10,7 @@ PlayersModel::PlayersModel(QObject *parent)
 
 int PlayersModel::rowCount(const QModelIndex &) const
 {
-    return m_players.size();
+    return m_players->size();
 }
 
 int PlayersModel::columnCount(const QModelIndex &) const
@@ -22,7 +22,7 @@ QVariant PlayersModel::data(const QModelIndex &index, int role) const
 {
     Q_UNUSED(role)
 
-    auto player = m_players.at(index.row());
+    auto player = m_players->at(index.row());
 
     switch (index.column()) {
     case StartingRankRole:
@@ -83,7 +83,7 @@ QVariant PlayersModel::headerData(int section, Qt::Orientation orientation, int 
     return QVariant();
 }
 
-void PlayersModel::setPlayers(QList<Player *> players)
+void PlayersModel::setPlayers(QList<Player *> *players)
 {
     beginResetModel();
     m_players = players;
@@ -92,13 +92,13 @@ void PlayersModel::setPlayers(QList<Player *> players)
 
 void PlayersModel::addPlayer(Player *player)
 {
-    beginInsertRows({}, m_players.size(), m_players.size());
-    m_players << player;
+    beginInsertRows({}, m_players->size(), m_players->size());
+    // m_players << player;
     endInsertRows();
 }
 
 void PlayersModel::updatePlayer(int i, Player *player)
 {
-    m_players[i] = player;
+    // m_players[i] = player;
     Q_EMIT dataChanged(index(i, 0), index(i, columnCount() - 1), {});
 }

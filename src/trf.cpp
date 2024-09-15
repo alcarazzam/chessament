@@ -106,7 +106,7 @@ std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl)
         }
     }
 
-    tournament->setPlayers(players.values());
+    tournament->setPlayers(new QList(players.values()));
     tournament->setRounds(rounds);
     tournament->setNumberOfRounds(rounds.size());
 

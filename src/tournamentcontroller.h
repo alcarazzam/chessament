@@ -47,6 +47,8 @@ public:
     Q_INVOKABLE void importTrf(const QUrl &fileUrl);
     Q_INVOKABLE void exportTrf(const QUrl &fileUrl);
 
+    Q_INVOKABLE QString getPlayersListDocument();
+
     PlayersModel *playersModel() const;
     PairingModel *pairingModel() const;
 
@@ -60,7 +62,6 @@ public Q_SLOTS:
     void setCurrentPlayer(Player *currentPlayer);
     void setCurrentPlayerByIndex(int currentPlayer);
     void setCurrentRound(int currentRound);
-    void setPlayers(QList<Player *> players);
     void setCurrentView(const QString &currentView);
     void setError(const QString &error);
 

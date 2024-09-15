@@ -35,10 +35,10 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    void setPlayers(QList<Player *> players);
+    void setPlayers(QList<Player *> *players);
     void addPlayer(Player *player);
     void updatePlayer(int i, Player *player);
 
 private:
-    QList<Player *> m_players;
+    QList<Player *> *m_players;
 };

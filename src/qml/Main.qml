@@ -3,8 +3,8 @@
 
 import QtCore
 import QtQuick
-import QtQuick.Dialogs
 import QtQuick.Controls as QQC2
+import QtQuick.Dialogs
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
