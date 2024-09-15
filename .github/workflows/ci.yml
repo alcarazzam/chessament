@@ -21,3 +21,17 @@ jobs:
       
       - name: Run reuse
         run: reuse lint
+
+  build:
+    runs-on: ubuntu-24.04
+    container: alcarazzam/kde
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure project
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON
+
+      - name: Build
+        run: cmake --build build --parallel
+
