@@ -222,27 +222,6 @@ StatefulApp.StatefulWindow {
         }
     }
 
-    contextDrawer: PlayerDrawer {
-        id: contextDrawer
-
-        modal: false
-        enabled: TournamentController.currentPlayerIndex >= 0
-        onEnabledChanged: drawerOpen = enabled
-        handleVisible: false
-
-        Connections {
-            target: TournamentController
-
-            function onCurrentPlayerChanged(player) {
-                contextDrawer.drawerOpen = TournamentController.currentPlayerIndex >= 0
-            }
-
-            function onCurrentViewChanged() {
-                contextDrawer.drawerOpen = contextDrawer.drawerOpen && TournamentController.currentView == "players"
-            }
-        }
-    }
-
     pageStack.defaultColumnWidth: root.width
 
     pageStack.initialPage: Qt.createComponent("org.kde.chessament", "WelcomePage")

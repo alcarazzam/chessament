@@ -15,8 +15,6 @@ ecm_add_qml_module(chessament_static
         qml/DocsPage.qml
         qml/NavigationButtonDelegate.qml
         qml/PairingsPage.qml
-        qml/PlayerDetails.qml
-        qml/PlayerDrawer.qml
         qml/PlayersPage.qml
         qml/WelcomePage.qml
 
