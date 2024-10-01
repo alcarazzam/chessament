@@ -3,11 +3,13 @@
 
 import QtQuick
 import QtQuick.Controls as QQC2
+import Qt.labs.qmlmodels as Labs
 
 import org.kde.kitemmodels
 import org.kde.kirigami as Kirigami
 
 import org.kde.chessament
+import org.kde.chessament.PlayersModel
 
 Kirigami.Page {
     id: root
@@ -129,16 +131,38 @@ Kirigami.Page {
                     tableView.edit(tableView.model.index(row, column))
                 }
 
-                TableView.editDelegate: QQC2.TextField {
-                    anchors.fill: parent
-                    text: display
-                    horizontalAlignment: TextInput.AlignHCenter
-                    verticalAlignment: TextInput.AlignVCenter
+                TableView.editDelegate: Labs.DelegateChooser {
+                    Labs.DelegateChoice {
+                        column: PlayerRoles.RatingRole
 
-                    Component.onCompleted: selectAll()
+                        QQC2.TextField {
+                            anchors.fill: parent
+                            text: display
+                            horizontalAlignment: TextInput.AlignHCenter
+                            verticalAlignment: TextInput.AlignVCenter
+                            validator: IntValidator { bottom: 0; top: 4000; }
 
-                    TableView.onCommit: {
-                        display = text
+                            Component.onCompleted: selectAll()
+
+                            TableView.onCommit: {
+                                display = text
+                            }
+                        }
+                    }
+
+                    Labs.DelegateChoice {
+                        QQC2.TextField {
+                            anchors.fill: parent
+                            text: display
+                            horizontalAlignment: TextInput.AlignHCenter
+                            verticalAlignment: TextInput.AlignVCenter
+
+                            Component.onCompleted: selectAll()
+
+                            TableView.onCommit: {
+                                display = text
+                            }
+                        }
                     }
                 }
             }
