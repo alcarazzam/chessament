@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <KLocalizedString>
 #include <QFile>
 #include <QFlags>
 #include <QJsonArray>
@@ -13,6 +14,7 @@
 #include <QTextStream>
 
 #include <algorithm>
+#include <expected>
 #include <format>
 
 #include "player.h"
@@ -150,10 +152,13 @@ public:
     Q_DECLARE_FLAGS(TrfOptions, TrfOption)
 
     QJsonObject toJson() const;
-    QString toTrf(TrfOptions options = {});
     void read(const QJsonObject &json);
     bool loadTournament(const QString &fileName);
     bool save(const QString &fileName);
+
+    QString toTrf(TrfOptions options = {});
+    std::expected<bool, QString> readTrf(QTextStream trf);
+    std::expected<bool, QString> loadTrf(const QString &filename);
     bool exportTrf(const QString &fileName);
 
 public Q_SLOTS:

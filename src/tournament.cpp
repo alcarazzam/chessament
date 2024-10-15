@@ -308,6 +308,17 @@ bool Tournament::save(const QString &fileName)
     return true;
 }
 
+std::expected<bool, QString> Tournament::loadTrf(const QString &filename)
+{
+    QFile file(filename);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return std::unexpected(i18n("Couldn't open file"));
+    }
+
+    return readTrf(QTextStream(&file));
+}
+
 bool Tournament::exportTrf(const QString &fileName)
 {
     QFile file(fileName);

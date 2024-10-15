@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "controller.h"
-#include "trf.h"
 
 Controller::Controller(QObject *parent)
     : QObject(parent)
@@ -110,15 +109,16 @@ void Controller::setCurrentRound(int currentRound)
 
 void Controller::importTrf(const QUrl &fileUrl)
 {
-    const auto tournament = loadTournamentReport(fileUrl);
+    auto tournament = new Tournament();
+    auto error = tournament->loadTrf(fileUrl.toLocalFile());
 
-    if (tournament.has_value()) {
-        setTournament(*tournament);
-
+    if (error.has_value()) {
+        setTournament(tournament);
         setTournamentPath({});
+
         setCurrentView(QStringLiteral("players"));
     } else {
-        setError(tournament.error());
+        setError(error.error());
     }
 }
 

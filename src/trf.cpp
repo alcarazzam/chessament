@@ -1,24 +1,16 @@
 // SPDX-FileCopyrightText: 2024 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "trf.h"
+#include "tournament.h"
 
-std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl)
+std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
 {
-    QFile file(fileUrl.toLocalFile());
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return nullptr;
-    }
-
-    QTextStream fileStream(&file);
-    
-    auto tournament = new Tournament();
     QMap<int, Player *> players = {};
     QList<Round *> rounds = {};
     QMap<std::tuple<int, int, int>, std::pair<Pairing::PartialResult, Pairing::PartialResult>> pairingsToAdd = {};
 
-    while (!fileStream.atEnd()) {
-        auto line = fileStream.readLine();
+    while (!trf.atEnd()) {
+        auto line = trf.readLine();
 
         if (line.isEmpty()) {
             continue;
@@ -29,22 +21,22 @@ std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl)
 
         if (field == Tournament::ReportField::TournamentName) {
             auto name = line.mid(4).trimmed();
-            tournament->setName(name);
+            setName(name);
         } else if (field == Tournament::ReportField::City) {
             auto city = line.mid(4).trimmed();
-            tournament->setCity(city);
+            setCity(city);
         } else if (field == Tournament::ReportField::Federation) {
             auto federation = line.mid(4).trimmed();
-            tournament->setFederation(federation);
+            setFederation(federation);
         } else if (field == Tournament::ReportField::ChiefArbiter) {
             auto chiefArbiter = line.mid(4).trimmed();
-            tournament->setChiefArbiter(chiefArbiter);
+            setChiefArbiter(chiefArbiter);
         } else if (field == Tournament::ReportField::DeputyChiefArbiter) {
             auto deputyChiefArbiter = line.mid(4).trimmed();
-            tournament->setDeputyChiefArbiter(deputyChiefArbiter);
+            setDeputyChiefArbiter(deputyChiefArbiter);
         } else if (field == Tournament::ReportField::TimeControl) {
             auto timeControl = line.mid(4).trimmed();
-            tournament->setTimeControl(timeControl);
+            setTimeControl(timeControl);
         } else if (field == Tournament::ReportField::Player) {
             auto startingRank = line.sliced(4, 4).toInt();
             auto sex = line.sliced(9, 1).trimmed();
@@ -106,9 +98,9 @@ std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl)
         }
     }
 
-    tournament->setPlayers(new QList(players.values()));
-    tournament->setRounds(rounds);
-    tournament->setNumberOfRounds(rounds.size());
+    setPlayers(new QList(players.values()));
+    setRounds(rounds);
+    setNumberOfRounds(rounds.size());
 
     for (auto pairing = pairingsToAdd.cbegin(), end = pairingsToAdd.cend(); pairing != end; ++pairing) {
         const auto [r, w, b] = pairing.key();
@@ -132,10 +124,10 @@ std::expected<Tournament *, QString> loadTournamentReport(const QUrl &fileUrl)
         }
         auto par = new Pairing(1, whitePlayer, blackPlayer, result);
 
-        tournament->addPairing(r - 1, par);
+        addPairing(r - 1, par);
     }
 
-    tournament->sortPairings();
+    sortPairings();
 
-    return tournament;
+    return true;
 }
