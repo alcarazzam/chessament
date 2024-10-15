@@ -4,7 +4,7 @@
 import QtCore
 import QtQuick
 import QtQuick.Controls as QQC2
-import QtQuick.Dialogs
+import QtQuick.Dialogs as Dialogs
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
@@ -42,7 +42,11 @@ StatefulApp.StatefulWindow {
         }
 
         function onOpenTournament() {
-            openTournamentFileDialog.open()
+            const dialog = fileDialog.createObject(QQC2.Overlay.overlay)
+            dialog.accepted.connect(() => {
+                Controller.openTournament(dialog.selectedFile)
+            })
+            dialog.open()
         }
 
         function onSaveTournament() {
@@ -50,15 +54,29 @@ StatefulApp.StatefulWindow {
         }
 
         function onSaveTournamentAs() {
-            saveTournamentFileDialog.open()
+            const dialog = fileDialog.createObject(QQC2.Overlay.overlay)
+            dialog.fileMode = Dialogs.FileDialog.SaveFile
+            dialog.accepted.connect(() => {
+                Controller.saveTournamentAs(dialog.selectedFile)
+            })
+            dialog.open()
         }
 
         function onImportTrf() {
-            importTournamentFileDialog.open()
+            const dialog = fileDialog.createObject(QQC2.Overlay.overlay)
+            dialog.accepted.connect(() => {
+                Controller.importTrf(dialog.selectedFile)
+            })
+            dialog.open()
         }
 
         function onExportTrf() {
-            exportTournamentFileDialog.open()
+            const dialog = fileDialog.createObject(QQC2.Overlay.overlay)
+            dialog.fileMode = Dialogs.FileDialog.SaveFile
+            dialog.accepted.connect(() => {
+                Controller.exportTrf(dialog.selectedFile)
+            })
+            dialog.open()
         }
     }
 
@@ -81,44 +99,6 @@ StatefulApp.StatefulWindow {
         title: i18nc("@title", "Error")
         subtitle: Controller.error
         standardButtons: Kirigami.Dialog.Ok
-    }
-
-    FileDialog {
-        id: openTournamentFileDialog
-        parentWindow: root
-        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
-        onAccepted: {
-            Controller.openTournament(selectedFile)
-        }
-    }
-
-    FileDialog {
-        id: saveTournamentFileDialog
-        parentWindow: root
-        fileMode: FileDialog.SaveFile
-        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
-        onAccepted: {
-            Controller.saveTournamentAs(selectedFile)
-        }
-    }
-
-    FileDialog {
-        id: importTournamentFileDialog
-        parentWindow: root
-        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
-        onAccepted: {
-            Controller.importTrf(selectedFile)
-        }
-    }
-
-    FileDialog {
-        id: exportTournamentFileDialog
-        parentWindow: root
-        fileMode: FileDialog.SaveFile
-        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
-        onAccepted: {
-            Controller.exportTrf(selectedFile)
-        }
     }
 
     globalDrawer: Kirigami.OverlayDrawer {
@@ -249,6 +229,14 @@ StatefulApp.StatefulWindow {
             }
             pageCache[view] = page
             return page
+        }
+    }
+
+    Component {
+        id: fileDialog
+
+        Dialogs.FileDialog {
+            currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         }
     }
 }
