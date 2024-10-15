@@ -19,45 +19,45 @@ FormCard.FormCardPage {
         FormCard.FormTextFieldDelegate {
             id: name
             label: i18nc("@label:textbox", "Tournament name")
-            text: TournamentController.tournament.name
+            text: Controller.tournament.name
             onEditingFinished: {
-                TournamentController.tournament.name = text
+                Controller.tournament.name = text
             }
         }
         
         FormCard.FormTextFieldDelegate {
             id: city
             label: i18nc("@label:textbox", "City")
-            text: TournamentController.tournament.city
+            text: Controller.tournament.city
             onEditingFinished: {
-                TournamentController.tournament.city = text
+                Controller.tournament.city = text
             }
         }
 
         FormCard.FormTextFieldDelegate {
             id: federation
             label: i18nc("@label:textbox", "Federation")
-            text: TournamentController.tournament.federation
+            text: Controller.tournament.federation
             onEditingFinished: {
-                TournamentController.tournament.federation = text
+                Controller.tournament.federation = text
             }
         }
 
         FormCard.FormTextFieldDelegate {
             id: chiefArbiter
             label: i18nc("@label:textbox", "Chief arbiter")
-            text: TournamentController.tournament.chiefArbiter
+            text: Controller.tournament.chiefArbiter
             onEditingFinished: {
-                TournamentController.tournament.chiefArbiter = text
+                Controller.tournament.chiefArbiter = text
             }
         }
 
         FormCard.FormTextFieldDelegate {
             id: deputyChiefArbiter
             label: i18nc("@label:textbox", "Deputy chief arbiter")
-            text: TournamentController.tournament.deputyChiefArbiter
+            text: Controller.tournament.deputyChiefArbiter
             onEditingFinished: {
-                TournamentController.tournament.deputyChiefArbiter = text
+                Controller.tournament.deputyChiefArbiter = text
             }
         }
     }

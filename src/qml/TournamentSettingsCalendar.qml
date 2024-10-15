@@ -14,7 +14,7 @@ FormCard.FormCardPage {
     title: i18nc("@title", "Calendar")
 
     Repeater {
-        model: TournamentController.tournament.numberOfRounds
+        model: Controller.tournament.numberOfRounds
 
         ColumnLayout {
             required property int index

@@ -21,7 +21,7 @@ Delegates.RoundedItemDelegate {
 
     icon.name: iconName
     text: name
-    highlighted: TournamentController.currentView == viewName
+    highlighted: Controller.currentView == viewName
     activeFocusOnTab: true
 
     Layout.fillWidth: true
@@ -49,7 +49,7 @@ Delegates.RoundedItemDelegate {
             if (applicationWindow().pageStack.depth > 1) {
                 applicationWindow().pageStack.pop(null)
             }
-            TournamentController.currentView = viewName
+            Controller.currentView = viewName
         }
     }
 }

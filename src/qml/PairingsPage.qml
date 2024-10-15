@@ -18,7 +18,7 @@ Kirigami.ScrollablePage {
 
     actions: [
         Kirigami.Action {
-            text: i18n("Round %1", TournamentController.currentRound)
+            text: i18n("Round %1", Controller.currentRound)
             onTriggered: roundDialog.open()
         }
     ]
@@ -32,7 +32,7 @@ Kirigami.ScrollablePage {
             implicitWidth: Kirigami.Units.gridUnit * 12
             implicitHeight: Kirigami.Units.gridUnit * 16
 
-            model: TournamentController.tournament.numberOfRounds
+            model: Controller.tournament.numberOfRounds
             delegate: QQC2.RadioDelegate {
                 required property int index
 
@@ -40,9 +40,9 @@ Kirigami.ScrollablePage {
                 bottomPadding: Kirigami.Units.smallSpacing * 2
                 implicitWidth: listView.width
                 text: i18n("Round %1", index + 1)
-                checked: TournamentController.currentRound == index + 1
+                checked: Controller.currentRound == index + 1
                 onClicked: {
-                    TournamentController.currentRound = index + 1
+                    Controller.currentRound = index + 1
                     roundDialog.close()
                 }
             }
@@ -51,7 +51,7 @@ Kirigami.ScrollablePage {
 
     KSortFilterProxyModel {
         id: proxyModel
-        sourceModel: TournamentController.pairingModel
+        sourceModel: Controller.pairingModel
         sortColumn: 0
         sortOrder: Qt.AscendingOrder
     }

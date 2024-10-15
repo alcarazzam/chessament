@@ -49,7 +49,7 @@ Kirigami.Page {
 
     KSortFilterProxyModel {
         id: proxyModel
-        sourceModel: TournamentController.playersModel
+        sourceModel: Controller.playersModel
         sortColumn: 0
         sortOrder: Qt.AscendingOrder
     }
@@ -108,7 +108,7 @@ Kirigami.Page {
                 target: tableView.selectionModel
 
                 function onCurrentChanged(current, previous) {
-                    TournamentController.setCurrentPlayerByIndex(current.row)
+                    Controller.setCurrentPlayerByIndex(current.row)
                 }
             }
 

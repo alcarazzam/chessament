@@ -27,6 +27,7 @@ ecm_add_qml_module(chessament_static
         QtCore
         QtQuick
     SOURCES
+        controller.cpp
         documents.cpp
         pairing.cpp
         pairing.h
@@ -40,13 +41,11 @@ ecm_add_qml_module(chessament_static
         round.cpp
         tournament.cpp
         tournament.h
-        tournamentcontroller.cpp
         trf.cpp
         trf.h
     IMPORTS
         org.kde.kirigamiaddons.formcard
         org.kde.kirigamiaddons.statefulapp
-        org.kde.kirigamiaddons.tableview
         org.kde.kirigami
         org.kde.chessament.settings
 )

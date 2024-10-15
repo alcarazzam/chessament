@@ -42,6 +42,6 @@ Kirigami.Page {
     }
 
     Component.onCompleted: {
-        webView.loadHtml(TournamentController.getPlayersListDocument(), "http://localhost")
+        webView.loadHtml(Controller.getPlayersListDocument(), "http://localhost")
     }
 }

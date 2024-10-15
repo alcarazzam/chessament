@@ -24,12 +24,12 @@ FormCard.FormCardPage {
             label: i18n("Rounds")
             from: 1
             to: 99
-            value: TournamentController.tournament.numberOfRounds
+            value: Controller.tournament.numberOfRounds
             onValueChanged: {
-                if (TournamentController.tournament.numberOfRounds === value) {
+                if (Controller.tournament.numberOfRounds === value) {
                     return
                 }
-                TournamentController.tournament.numberOfRounds = value
+                Controller.tournament.numberOfRounds = value
             }
         }
     }

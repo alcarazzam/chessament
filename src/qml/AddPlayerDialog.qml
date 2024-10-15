@@ -19,7 +19,7 @@ Kirigami.Dialog {
 
 
     onAccepted: {
-        TournamentController.addPlayer(titleField.currentText, nameField.text, ratingField.value, nationalRatingField.value, playerIdField.text, birthDateField.text, originField.text, sexField.text)
+        Controller.addPlayer(titleField.currentText, nameField.text, ratingField.value, nationalRatingField.value, playerIdField.text, birthDateField.text, originField.text, sexField.text)
     }
 
     ColumnLayout {

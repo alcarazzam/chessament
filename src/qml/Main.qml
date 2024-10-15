@@ -38,7 +38,7 @@ StatefulApp.StatefulWindow {
         }
 
         function onSaveTournament() {
-            TournamentController.saveTournament()
+            Controller.saveTournament()
         }
 
         function onSaveTournamentAs() {
@@ -55,10 +55,10 @@ StatefulApp.StatefulWindow {
     }
 
     Connections {
-        target: TournamentController
+        target: Controller
 
         function onCurrentViewChanged() {
-            const view = TournamentController.currentView
+            const view = Controller.currentView
             const page = pageForView(view)
             root.pageStack.replace(page)
         }
@@ -71,7 +71,7 @@ StatefulApp.StatefulWindow {
     Kirigami.PromptDialog {
         id: errorDialog
         title: i18nc("@title", "Error")
-        subtitle: TournamentController.error
+        subtitle: Controller.error
         standardButtons: Kirigami.Dialog.Ok
     }
 
@@ -80,7 +80,7 @@ StatefulApp.StatefulWindow {
         parentWindow: root
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         onAccepted: {
-            TournamentController.openTournament(selectedFile)
+            Controller.openTournament(selectedFile)
         }
     }
 
@@ -90,7 +90,7 @@ StatefulApp.StatefulWindow {
         fileMode: FileDialog.SaveFile
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         onAccepted: {
-            TournamentController.saveTournamentAs(selectedFile)
+            Controller.saveTournamentAs(selectedFile)
         }
     }
 
@@ -99,7 +99,7 @@ StatefulApp.StatefulWindow {
         parentWindow: root
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         onAccepted: {
-            TournamentController.importTrf(selectedFile)
+            Controller.importTrf(selectedFile)
         }
     }
 
@@ -109,7 +109,7 @@ StatefulApp.StatefulWindow {
         fileMode: FileDialog.SaveFile
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         onAccepted: {
-            TournamentController.exportTrf(selectedFile)
+            Controller.exportTrf(selectedFile)
         }
     }
 
@@ -164,18 +164,18 @@ StatefulApp.StatefulWindow {
                             }
                             Kirigami.Action {
                                 fromQAction: root.application.action("file_save")
-                                enabled: TournamentController.tournamentPath
+                                enabled: Controller.tournamentPath
                             }
                             Kirigami.Action {
                                 fromQAction: root.application.action("file_save_as")
-                                enabled: TournamentController.hasOpenTournament
+                                enabled: Controller.hasOpenTournament
                             }
                             Kirigami.Action {
                                 fromQAction: root.application.action("import_trf")
                             }
                             Kirigami.Action {
                                 fromQAction: root.application.action("export_trf")
-                                enabled: TournamentController.hasOpenTournament
+                                enabled: Controller.hasOpenTournament
                             }
                             QQC2.MenuSeparator { }
                             Kirigami.Action {
@@ -201,7 +201,7 @@ StatefulApp.StatefulWindow {
         }
 
         QQC2.ScrollView {
-            visible: TournamentController.hasOpenTournament
+            visible: Controller.hasOpenTournament
             Layout.fillHeight: true
             Layout.fillWidth: true
 
@@ -218,7 +218,7 @@ StatefulApp.StatefulWindow {
 
         // HACK: make the toolbar be at the top even when there's no navigation buttons.
         ColumnLayout {
-            visible: !TournamentController.hasOpenTournament
+            visible: !Controller.hasOpenTournament
         }
     }
 

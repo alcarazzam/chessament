@@ -1,22 +1,22 @@
 // SPDX-FileCopyrightText: 2024 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "tournamentcontroller.h"
+#include "controller.h"
 #include "trf.h"
 
-TournamentController::TournamentController(QObject *parent)
+Controller::Controller(QObject *parent)
     : QObject(parent)
     , m_playersModel(new PlayersModel(this))
     , m_pairingModel(new PairingModel(this))
 {
 }
 
-Tournament* TournamentController::tournament() const
+Tournament *Controller::tournament() const
 {
     return m_tournament;
 }
 
-void TournamentController::setTournament(Tournament *tournament)
+void Controller::setTournament(Tournament *tournament)
 {
     if (m_tournament == tournament) {
         return;
@@ -31,12 +31,12 @@ void TournamentController::setTournament(Tournament *tournament)
     Q_EMIT tournamentChanged();
 }
 
-QString TournamentController::tournamentPath() const
+QString Controller::tournamentPath() const
 {
     return m_tournamentPath;
 }
 
-void TournamentController::setTournamentPath(const QString &tournamentPath)
+void Controller::setTournamentPath(const QString &tournamentPath)
 {
     if (m_tournamentPath == tournamentPath) {
         return;
@@ -45,12 +45,12 @@ void TournamentController::setTournamentPath(const QString &tournamentPath)
     Q_EMIT tournamentPathChanged();
 }
 
-bool TournamentController::hasOpenTournament()
+bool Controller::hasOpenTournament()
 {
     return m_hasOpenTournament;
 }
 
-void TournamentController::setHasOpenTournament(bool hasOpenTournament)
+void Controller::setHasOpenTournament(bool hasOpenTournament)
 {
     if (m_hasOpenTournament == hasOpenTournament) {
         return;
@@ -59,12 +59,12 @@ void TournamentController::setHasOpenTournament(bool hasOpenTournament)
     Q_EMIT hasOpenTournamentChanged();
 }
 
-int TournamentController::currentPlayerIndex()
+int Controller::currentPlayerIndex()
 {
     return m_currentPlayerIndex;
 }
 
-void TournamentController::setCurrentPlayerByIndex(int currentPlayerIndex)
+void Controller::setCurrentPlayerByIndex(int currentPlayerIndex)
 {
     if (m_currentPlayerIndex == currentPlayerIndex) {
         return;
@@ -78,12 +78,12 @@ void TournamentController::setCurrentPlayerByIndex(int currentPlayerIndex)
     Q_EMIT currentPlayerChanged();
 }
 
-Player* TournamentController::currentPlayer() const
+Player *Controller::currentPlayer() const
 {
     return m_currentPlayer;
 }
 
-void TournamentController::setCurrentPlayer(Player *currentPlayer)
+void Controller::setCurrentPlayer(Player *currentPlayer)
 {
     if (m_currentPlayer == currentPlayer) {
         return;
@@ -93,12 +93,12 @@ void TournamentController::setCurrentPlayer(Player *currentPlayer)
     Q_EMIT currentPlayerChanged();
 }
 
-int TournamentController::currentRound()
+int Controller::currentRound()
 {
     return m_currentRound;
 }
 
-void TournamentController::setCurrentRound(int currentRound)
+void Controller::setCurrentRound(int currentRound)
 {
     if (m_currentRound == currentRound) {
         return;
@@ -108,7 +108,7 @@ void TournamentController::setCurrentRound(int currentRound)
     Q_EMIT currentRoundChanged();
 }
 
-void TournamentController::importTrf(const QUrl &fileUrl)
+void Controller::importTrf(const QUrl &fileUrl)
 {
     const auto tournament = loadTournamentReport(fileUrl);
 
@@ -122,19 +122,26 @@ void TournamentController::importTrf(const QUrl &fileUrl)
     }
 }
 
-void TournamentController::exportTrf(const QUrl &fileUrl)
+void Controller::exportTrf(const QUrl &fileUrl)
 {
     if (!m_tournament->exportTrf(fileUrl.toLocalFile())) {
         setError(i18n("Couldn't export tournament."));
     }
 }
 
-QString TournamentController::getPlayersListDocument()
+QString Controller::getPlayersListDocument()
 {
     return m_tournament->getPlayersListDocument();
 }
 
-void TournamentController::addPlayer(const QString &title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &origin, const QString &sex)
+void Controller::addPlayer(const QString &title,
+                           const QString &name,
+                           int rating,
+                           int nationalRating,
+                           const QString &playerId,
+                           const QString &birthDate,
+                           const QString &origin,
+                           const QString &sex)
 {
     auto startingRank = m_tournament->players()->size() + 1;
     auto player = new Player(startingRank, Player::titleForString(title), name, rating, nationalRating, playerId, birthDate, {}, origin, sex);
@@ -143,12 +150,12 @@ void TournamentController::addPlayer(const QString &title, const QString &name, 
     m_playersModel->addPlayer(player);
 }
 
-void TournamentController::savePlayer()
+void Controller::savePlayer()
 {
     m_playersModel->updatePlayer(m_currentPlayerIndex, m_currentPlayer);
 }
 
-void TournamentController::openTournament(const QUrl &fileUrl)
+void Controller::openTournament(const QUrl &fileUrl)
 {
     auto tournament = new Tournament();
     tournament->loadTournament(fileUrl.toLocalFile());
@@ -158,7 +165,7 @@ void TournamentController::openTournament(const QUrl &fileUrl)
     setCurrentView(QStringLiteral("players"));
 }
 
-void TournamentController::saveTournament()
+void Controller::saveTournament()
 {
     if (!m_tournamentPath.isEmpty()) {
         m_tournament->save(m_tournamentPath);
@@ -167,29 +174,29 @@ void TournamentController::saveTournament()
     }
 }
 
-void TournamentController::saveTournamentAs(const QUrl &fileUrl)
+void Controller::saveTournamentAs(const QUrl &fileUrl)
 {
     if (m_tournament->save(fileUrl.toLocalFile())) {
         setTournamentPath(fileUrl.toLocalFile());
     }
 }
 
-PlayersModel* TournamentController::playersModel() const
+PlayersModel *Controller::playersModel() const
 {
     return m_playersModel;
 }
 
-PairingModel *TournamentController::pairingModel() const
+PairingModel *Controller::pairingModel() const
 {
     return m_pairingModel;
 }
 
-QString TournamentController::currentView() const
+QString Controller::currentView() const
 {
     return m_currentView;
 }
 
-void TournamentController::setCurrentView(const QString &currentView)
+void Controller::setCurrentView(const QString &currentView)
 {
     if (m_currentView == currentView) {
         return;
@@ -198,12 +205,12 @@ void TournamentController::setCurrentView(const QString &currentView)
     Q_EMIT currentViewChanged();
 }
 
-QString TournamentController::error() const
+QString Controller::error() const
 {
     return m_error;
 }
 
-void TournamentController::setError(const QString &error)
+void Controller::setError(const QString &error)
 {
     m_error = error;
     Q_EMIT errorChanged();

@@ -10,7 +10,7 @@
 #include "playersmodel.h"
 #include "tournament.h"
 
-class TournamentController : public QObject
+class Controller : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
@@ -30,16 +30,23 @@ class TournamentController : public QObject
     Q_PROPERTY(QString error READ error WRITE setError NOTIFY errorChanged)
 
 public:
-    explicit TournamentController(QObject *parent = nullptr);
+    explicit Controller(QObject *parent = nullptr);
 
-    Tournament* tournament() const;
+    Tournament *tournament() const;
     QString tournamentPath() const;
     bool hasOpenTournament();
     int currentPlayerIndex();
     Player *currentPlayer() const;
     int currentRound();
 
-    Q_INVOKABLE void addPlayer(const QString &title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &origin, const QString &sex);
+    Q_INVOKABLE void addPlayer(const QString &title,
+                               const QString &name,
+                               int rating,
+                               int nationalRating,
+                               const QString &playerId,
+                               const QString &birthDate,
+                               const QString &origin,
+                               const QString &sex);
     Q_INVOKABLE void savePlayer();
     Q_INVOKABLE void openTournament(const QUrl &fileUrl);
     Q_INVOKABLE void saveTournament();
