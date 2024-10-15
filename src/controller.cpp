@@ -155,6 +155,19 @@ void Controller::savePlayer()
     m_playersModel->updatePlayer(m_currentPlayerIndex, m_currentPlayer);
 }
 
+void Controller::newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds)
+{
+    auto tournament = new Tournament();
+    tournament->setName(name);
+    tournament->setNumberOfRounds(numberOfRounds);
+
+    setTournament(tournament);
+    setTournamentPath(fileUrl.toLocalFile());
+    setCurrentView(QStringLiteral("players"));
+
+    saveTournament();
+}
+
 void Controller::openTournament(const QUrl &fileUrl)
 {
     auto tournament = new Tournament();

@@ -17,7 +17,16 @@ void ChessamentApplication::setupActions()
 {
     AbstractKirigamiApplication::setupActions();
 
-    auto actionName = "file_open"_L1;
+    auto actionName = "file_new"_L1;
+    if (KAuthorized::authorizeAction(actionName)) {
+        auto action = mainCollection()->addAction(actionName, this, &ChessamentApplication::newTournament);
+        action->setText(i18nc("@action:inmenu", "New tournament…"));
+        action->setIcon(QIcon::fromTheme(u"document-new-symbolic"_s));
+        mainCollection()->addAction(action->objectName(), action);
+        mainCollection()->setDefaultShortcut(action, Qt::Key_New);
+    }
+
+    actionName = "file_open"_L1;
     if (KAuthorized::authorizeAction(actionName)) {
         auto action = KStandardActions::open(this, &ChessamentApplication::openTournament, this);
         mainCollection()->addAction(action->objectName(), action);

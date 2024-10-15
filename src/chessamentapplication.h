@@ -4,8 +4,8 @@
 #pragma once
 
 #include <AbstractKirigamiApplication>
-#include <QQmlEngine>
 #include <QFileDialog>
+#include <QQmlEngine>
 
 using namespace Qt::StringLiterals;
 
@@ -18,6 +18,7 @@ public:
     explicit ChessamentApplication(QObject *parent = nullptr);
 
 Q_SIGNALS:
+    void newTournament();
     void openTournament();
     void saveTournament();
     void saveTournamentAs();

@@ -4,6 +4,8 @@
 #include "tournament.h"
 
 Tournament::Tournament()
+    : m_players(new QList<Player *>())
+    , m_rounds(QList<Round *>())
 {
 }
 

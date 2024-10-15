@@ -33,6 +33,14 @@ StatefulApp.StatefulWindow {
     Connections {
         target: root.application
 
+        function onNewTournament() {
+            let dialog = Qt.createComponent("org.kde.chessament", "NewTournamentDialog").createObject(root)
+            dialog.create.connect((fileUrl, name, rounds) => {
+                Controller.newTournament(fileUrl, name, rounds)
+            })
+            dialog.open()
+        }
+
         function onOpenTournament() {
             openTournamentFileDialog.open()
         }
@@ -159,6 +167,9 @@ StatefulApp.StatefulWindow {
                         QQC2.Menu {
                             id: optionPopup
 
+                            Kirigami.Action {
+                                fromQAction: root.application.action("file_new")
+                            }
                             Kirigami.Action {
                                 fromQAction: root.application.action("file_open")
                             }
