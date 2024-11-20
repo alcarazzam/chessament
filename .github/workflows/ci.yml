@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: CC0-1.0
 
-name: Build
+name: Build & Test
 
 on:
   push:
@@ -34,4 +34,8 @@ jobs:
 
       - name: Build
         run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest -T Test --output-on-failure --no-compress-output -j 4
+        working-directory: build
 

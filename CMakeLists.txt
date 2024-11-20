@@ -23,6 +23,7 @@ include(FeatureSummary)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
+include(ECMAddTests)
 
 include(ECMSetupVersion)
 include(ECMFindQmlModule)
@@ -51,6 +52,11 @@ ecm_find_qmlmodule(org.kde.kirigamiaddons.formcard)
 ecm_find_qmlmodule(org.kde.kirigamiaddons.statefulapp)
 
 add_subdirectory(src)
+
+if(BUILD_TESTING)
+    find_package(Qt6 ${QT_MIN_VERSION} NO_MODULE COMPONENTS Test)
+    add_subdirectory(autotests)
+endif()
 
 install(FILES org.kde.chessament.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES org.kde.chessament.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
