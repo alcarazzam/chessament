@@ -7,7 +7,6 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <QString>
-#include <algorithm>
 
 #include "pairing.h"
 

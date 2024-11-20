@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tournament.h"
+#include "player.h"
 
 Tournament::Tournament()
     : m_players(new QList<Player *>())
@@ -105,6 +106,20 @@ void Tournament::setNumberOfRounds(int numberOfRounds)
     }
     m_numberOfRounds = numberOfRounds;
     Q_EMIT numberOfRoundsChanged();
+}
+
+int Tournament::currentRound()
+{
+    return m_currentRound;
+}
+
+void Tournament::setCurrentRound(int currentRound)
+{
+    if (m_currentRound == currentRound) {
+        return;
+    }
+    m_currentRound = currentRound;
+    Q_EMIT currentRoundChanged();
 }
 
 QList<Player *> *Tournament::players()

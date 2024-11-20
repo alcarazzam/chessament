@@ -13,9 +13,7 @@
 #include <QString>
 #include <QTextStream>
 
-#include <algorithm>
 #include <expected>
-#include <format>
 
 #include "player.h"
 #include "round.h"
@@ -32,6 +30,7 @@ public:
     Q_PROPERTY(QString deputyChiefArbiter READ deputyChiefArbiter WRITE setDeputyChiefArbiter NOTIFY deputyChiefArbiterChanged)
     Q_PROPERTY(QString timeControl READ timeControl WRITE setTimeControl NOTIFY timeControlChanged)
     Q_PROPERTY(int numberOfRounds READ numberOfRounds WRITE setNumberOfRounds NOTIFY numberOfRoundsChanged)
+    Q_PROPERTY(int currentRound READ currentRound WRITE setCurrentRound NOTIFY currentRoundChanged)
 
     Q_PROPERTY(QList<Player *> *players READ players WRITE setPlayers NOTIFY playersChanged)
     Q_PROPERTY(QList<Round *> rounds READ rounds WRITE setRounds NOTIFY roundsChanged)
@@ -45,6 +44,7 @@ public:
     QString deputyChiefArbiter() const;
     QString timeControl() const;
     int numberOfRounds();
+    int currentRound();
 
     QList<Player *> *players();
     void addPlayer(Player *player);
@@ -148,7 +148,11 @@ public:
         return ReportField::Unknown;
     }
 
-    enum class TrfOption { NumberOfRounds = 1, InitialColorWhite, InitialColorBlack };
+    enum class TrfOption {
+        NumberOfRounds = 1,
+        InitialColorWhite,
+        InitialColorBlack
+    };
     Q_DECLARE_FLAGS(TrfOptions, TrfOption)
 
     QJsonObject toJson() const;
@@ -169,6 +173,7 @@ public Q_SLOTS:
     void setDeputyChiefArbiter(const QString &deputyChiefArbiter);
     void setTimeControl(const QString &timeControl);
     void setNumberOfRounds(int numberOfRounds);
+    void setCurrentRound(int currentRound);
 
     void setPlayers(QList<Player *> *players);
     void setRounds(QList<Round *> rounds);
@@ -181,6 +186,7 @@ Q_SIGNALS:
     void deputyChiefArbiterChanged();
     void timeControlChanged();
     void numberOfRoundsChanged();
+    void currentRoundChanged();
 
     void playersChanged();
     void roundsChanged();
@@ -193,6 +199,7 @@ private:
     QString m_deputyChiefArbiter;
     QString m_timeControl;
     int m_numberOfRounds = 1;
+    int m_currentRound = 0;
 
     QList<Player *> *m_players;
     QList<Round *> m_rounds;
