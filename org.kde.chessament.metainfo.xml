@@ -5,6 +5,9 @@
  -->
 <component type="desktop-application">
   <id>org.kde.chessament</id>
+  <provides>
+    <binary>chessament</binary>
+  </provides>
   <name>Chessament</name>
   <summary>A chess tournament manager</summary>
   <metadata_license>CC0-1.0</metadata_license>
@@ -22,4 +25,6 @@
     </ul>
     <p>Keep in mind to XML-escape characters, and that this is not HTML markup.</p>
   </description>
+  <url type="homepage">https://alcarazzam.dev/chessament/</url>
+  <launchable type="desktop-id">org.kde.chessament.desktop</launchable>
 </component>
