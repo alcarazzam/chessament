@@ -58,8 +58,8 @@ if(BUILD_TESTING)
     add_subdirectory(autotests)
 endif()
 
-install(FILES org.kde.chessament.desktop DESTINATION ${KDE_INSTALL_APPDIR})
-install(FILES org.kde.chessament.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+install(FILES dev.alcarazzam.chessament.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+install(FILES dev.alcarazzam.chessament.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 ki18n_install(po)
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

@@ -5,7 +5,7 @@ import QtQuick
 
 import org.kde.kirigamiaddons.formcard as FormCard
 
-import org.kde.chessament
+import dev.alcarazzam.chessament
 
 FormCard.FormCardPage {
     id: root

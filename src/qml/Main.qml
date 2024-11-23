@@ -11,8 +11,8 @@ import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.statefulapp as StatefulApp
 import org.kde.kirigamiaddons.formcard as FormCard
 
-import org.kde.chessament
-import org.kde.chessament.settings as Settings
+import dev.alcarazzam.chessament
+import dev.alcarazzam.chessament.settings as Settings
 
 StatefulApp.StatefulWindow {
     id: root
@@ -34,7 +34,7 @@ StatefulApp.StatefulWindow {
         target: root.application
 
         function onNewTournament() {
-            let dialog = Qt.createComponent("org.kde.chessament", "NewTournamentDialog").createObject(root)
+            let dialog = Qt.createComponent("dev.alcarazzam.chessament", "NewTournamentDialog").createObject(root)
             dialog.create.connect((fileUrl, name, rounds) => {
                 Controller.newTournament(fileUrl, name, rounds)
             })
@@ -215,7 +215,7 @@ StatefulApp.StatefulWindow {
 
     pageStack.defaultColumnWidth: root.width
 
-    pageStack.initialPage: Qt.createComponent("org.kde.chessament", "WelcomePage")
+    pageStack.initialPage: Qt.createComponent("dev.alcarazzam.chessament", "WelcomePage")
 
     function pageForView(view: string): var {
         if (pageCache[view]) {
@@ -223,9 +223,9 @@ StatefulApp.StatefulWindow {
         } else {
             let page
             if (view == "players") {
-                page = Qt.createComponent("org.kde.chessament", "PlayersPage").createObject(root)
+                page = Qt.createComponent("dev.alcarazzam.chessament", "PlayersPage").createObject(root)
             } else if (view == "pairings") {
-                page = Qt.createComponent("org.kde.chessament", "PairingsPage").createObject(root)
+                page = Qt.createComponent("dev.alcarazzam.chessament", "PairingsPage").createObject(root)
             }
             pageCache[view] = page
             return page

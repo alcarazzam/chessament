@@ -14,7 +14,7 @@ KirigamiSettings.ConfigurationView {
             moduleId: "general"
             text: i18nc("@action:button", "General")
             icon.name: "preferences-system-symbolic"
-            page: () => Qt.createComponent("org.kde.chessament.settings", "GeneralPage")
+            page: () => Qt.createComponent("dev.alcarazzam.chessament.settings", "GeneralPage")
         }
     ]
 }

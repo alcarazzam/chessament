@@ -27,7 +27,7 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-void qml_register_types_org_kde_chessament();
+void qml_register_types_dev_alcarazzam_chessament();
 
 #ifdef Q_OS_ANDROID
 Q_DECL_EXPORT
@@ -62,7 +62,6 @@ int main(int argc, char *argv[])
 #endif
 
     KLocalizedString::setApplicationDomain("chessament");
-    QCoreApplication::setOrganizationName(u"KDE"_s);
 
     KAboutData aboutData(
         // The program name used internally.
@@ -72,7 +71,7 @@ int main(int argc, char *argv[])
         // The program version string.
         QStringLiteral(CHESSAMENT_VERSION_STRING),
         // Short description of what the app does.
-        i18n("Chess tournament manager"),
+        i18n("Chess Tournament Manager"),
         // The license this code is released under.
         KAboutLicense::GPL_V3,
         // Copyright Statement.
@@ -83,13 +82,17 @@ int main(int argc, char *argv[])
                         u"https://alcarazzam.dev"_s);
     aboutData.setTranslator(i18nc("NAME OF TRANSLATORS", "Your names"), i18nc("EMAIL OF TRANSLATORS", "Your emails"));
     KAboutData::setApplicationData(aboutData);
-    QGuiApplication::setWindowIcon(QIcon::fromTheme(u"org.kde.chessament"_s));
+    QGuiApplication::setWindowIcon(QIcon::fromTheme(u"dev.alcarazzam.chessament"_s));
 
-    Q_IMPORT_QML_PLUGIN(org_kde_chessament_settingsPlugin)
+    Q_IMPORT_QML_PLUGIN(dev_alcarazzam_chessament_settingsPlugin)
 
-    qml_register_types_org_kde_chessament();
-    qmlRegisterUncreatableType<PlayersModel>("org.kde.chessament.PlayersModel", 1, 0, "PlayerRoles", QStringLiteral("Cannot create instances of PlayersModel"));
-    qmlRegisterUncreatableType<PairingModel>("org.kde.chessament.PairingModel",
+    qml_register_types_dev_alcarazzam_chessament();
+    qmlRegisterUncreatableType<PlayersModel>("dev.alcarazzam.chessament.PlayersModel",
+                                             1,
+                                             0,
+                                             "PlayerRoles",
+                                             QStringLiteral("Cannot create instances of PlayersModel"));
+    qmlRegisterUncreatableType<PairingModel>("dev.alcarazzam.chessament.PairingModel",
                                              1,
                                              0,
                                              "PairingRoles",
@@ -99,10 +102,10 @@ int main(int argc, char *argv[])
 
     auto config = ChessamentConfig::self();
 
-    qmlRegisterSingletonInstance("org.kde.chessament.private", 1, 0, "Config", config);
+    qmlRegisterSingletonInstance("dev.alcarazzam.chessament.private", 1, 0, "Config", config);
 
     engine.rootContext()->setContextObject(new KLocalizedContext(&engine));
-    engine.loadFromModule("org.kde.chessament", u"Main"_s);
+    engine.loadFromModule("dev.alcarazzam.chessament", u"Main"_s);
 
     if (engine.rootObjects().isEmpty()) {
         return -1;

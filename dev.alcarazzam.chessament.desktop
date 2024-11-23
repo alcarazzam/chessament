@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: CC0-1.0
 [Desktop Entry]
 Name=Chessament
-Comment=Chessament Kirigami Application
+Comment=Chess Tournament Manager
 Version=1.0
 Exec=chessament
 Icon=applications-development
@@ -10,4 +10,4 @@ Type=Application
 Terminal=false
 # Add an actual main category here (and possibly applicable additional ones)
 #   https://specifications.freedesktop.org/menu-spec/latest/apa.html#main-category-registry
-Categories=Qt;KDE;
+Categories=Office;

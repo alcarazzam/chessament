@@ -8,8 +8,8 @@ import Qt.labs.qmlmodels as Labs
 import org.kde.kitemmodels
 import org.kde.kirigami as Kirigami
 
-import org.kde.chessament
-import org.kde.chessament.PlayersModel
+import dev.alcarazzam.chessament
+import dev.alcarazzam.chessament.PlayersModel
 
 Kirigami.Page {
     id: root
@@ -42,7 +42,7 @@ Kirigami.Page {
             icon.name: "document-print"
             text: i18nc("@action:button", "Print")
             onTriggered: {
-                applicationWindow().pageStack.push(Qt.createComponent("org.kde.chessament", "DocsPage").createObject(root))
+                applicationWindow().pageStack.push(Qt.createComponent("dev.alcarazzam.chessament", "DocsPage").createObject(root))
             }
         }
     ]

@@ -8,8 +8,8 @@ import org.kde.kitemmodels
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.tableview as Tables
 
-import org.kde.chessament
-import org.kde.chessament.PairingModel
+import dev.alcarazzam.chessament
+import dev.alcarazzam.chessament.PairingModel
 
 Kirigami.ScrollablePage {
     id: root

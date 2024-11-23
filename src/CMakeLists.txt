@@ -5,8 +5,8 @@ add_subdirectory(settings)
 
 qt_add_library(chessament_static STATIC)
 ecm_add_qml_module(chessament_static
-    URI org.kde.chessament
-    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/org/kde/chessament
+    URI dev.alcarazzam.chessament
+    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/src/dev/alcarazzam/chessament
     GENERATE_PLUGIN_SOURCE
     VERSION 1.0
     QML_FILES
@@ -47,7 +47,7 @@ ecm_add_qml_module(chessament_static
         org.kde.kirigamiaddons.formcard
         org.kde.kirigamiaddons.statefulapp
         org.kde.kirigami
-        org.kde.chessament.settings
+        dev.alcarazzam.chessament.settings
 )
 
 target_sources(chessament_static PUBLIC

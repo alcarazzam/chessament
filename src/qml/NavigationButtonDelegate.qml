@@ -9,7 +9,7 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.delegates as Delegates
 
-import org.kde.chessament
+import dev.alcarazzam.chessament
 
 Delegates.RoundedItemDelegate {
     id: root
