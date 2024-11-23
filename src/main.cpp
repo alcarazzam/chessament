@@ -1,12 +1,8 @@
 // SPDX-FileCopyrightText: 2024 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <QtGlobal>
-#ifdef Q_OS_ANDROID
-#include <QGuiApplication>
-#else
 #include <QApplication>
-#endif
+#include <QtGlobal>
 
 #include <QIcon>
 #include <QQmlApplicationEngine>
@@ -29,25 +25,17 @@ using namespace Qt::Literals::StringLiterals;
 
 void qml_register_types_dev_alcarazzam_chessament();
 
-#ifdef Q_OS_ANDROID
-Q_DECL_EXPORT
-#endif
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
     QtWebEngineQuick::initialize();
 
-#ifdef Q_OS_ANDROID
-    QGuiApplication app(argc, argv);
-    QQuickStyle::setStyle(QStringLiteral("org.kde.breeze"));
-#else
     QApplication app(argc, argv);
 
     // Default to org.kde.desktop style unless the user forces another style
     if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
         QQuickStyle::setStyle(u"org.kde.desktop"_s);
     }
-#endif
 
 #ifdef Q_OS_WINDOWS
     if (AttachConsole(ATTACH_PARENT_PROCESS)) {
