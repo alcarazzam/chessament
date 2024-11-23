@@ -20,6 +20,10 @@ Kirigami.ScrollablePage {
         Kirigami.Action {
             text: i18n("Round %1", Controller.currentRound)
             onTriggered: roundDialog.open()
+        },
+        Kirigami.Action {
+            text: i18n("Pair round")
+            onTriggered: Controller.pairRound()
         }
     ]
 

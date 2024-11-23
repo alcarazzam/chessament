@@ -32,6 +32,8 @@ ecm_add_qml_module(chessament_static
         documents.cpp
         pairing.cpp
         pairing.h
+        pairingengine.cpp
+        pairingengine.h
         player.cpp
         player.h
         playersmodel.cpp
@@ -70,6 +72,7 @@ target_link_libraries(chessament_static PUBLIC
     KF6::ConfigGui
     KF6::ItemModels
     KirigamiAddonsStatefulApp
+    QCoro6::Core
 )
 target_include_directories(chessament_static PUBLIC ${CMAKE_BINARY_DIR})
 

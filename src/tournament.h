@@ -4,6 +4,7 @@
 #pragma once
 
 #include <KLocalizedString>
+#include <QCoroTask>
 #include <QFile>
 #include <QFlags>
 #include <QJsonArray>
@@ -15,6 +16,7 @@
 
 #include <expected>
 
+#include "pairingengine.h"
 #include "player.h"
 #include "round.h"
 
@@ -48,11 +50,13 @@ public:
 
     QList<Player *> *players();
     void addPlayer(Player *player);
+    QMap<uint, Player *> getPlayersByStartingRank();
 
     QList<Round *> rounds() const;
     void addPairing(int round, Pairing *pairing);
     QList<Pairing *> getPairings(int round) const;
     void sortPairings();
+    QCoro::Task<std::expected<bool, QString>> pairRound(int round);
 
     int numberOfPlayers();
     int numberOfRatedPlayers();
