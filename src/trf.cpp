@@ -76,10 +76,6 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
                     return std::unexpected(i18n("Unknown result for pairing \"%1\"", round));
                 }
 
-                while (rounds.size() < roundNumber) {
-                    rounds << new Round();
-                }
-
                 std::tuple<int, int, int> pairing{};
                 if (color == Pairing::Color::White || opponent == 0) {
                     pairing = {roundNumber, startingRank, opponent};
@@ -124,7 +120,7 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
         }
         auto par = new Pairing(1, whitePlayer, blackPlayer, result);
 
-        addPairing(r - 1, par);
+        addPairing(r, par);
     }
 
     sortPairings();

@@ -54,6 +54,7 @@ public:
     Q_INVOKABLE void saveTournamentAs(const QUrl &fileUrl);
     Q_INVOKABLE void importTrf(const QUrl &fileUrl);
     Q_INVOKABLE void exportTrf(const QUrl &fileUrl);
+    Q_INVOKABLE QCoro::Task<void> pairRound();
 
     Q_INVOKABLE QString getPlayersListDocument();
 

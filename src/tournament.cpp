@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tournament.h"
-#include "player.h"
 
 Tournament::Tournament()
     : m_players(new QList<Player *>())
@@ -138,6 +137,17 @@ void Tournament::addPlayer(Player *player)
     m_players->append(player);
 }
 
+QMap<uint, Player *> Tournament::getPlayersByStartingRank()
+{
+    QMap<uint, Player *> players;
+
+    for (const auto &player : *m_players) {
+        players[player->startingRank()] = player;
+    }
+
+    return players;
+}
+
 QList<Round *> Tournament::rounds() const
 {
     return m_rounds;
@@ -154,7 +164,10 @@ void Tournament::setRounds(QList<Round *> rounds)
 
 void Tournament::addPairing(int round, Pairing *pairing)
 {
-    m_rounds.at(round)->addPairing(pairing);
+    while (m_rounds.size() < round) {
+        m_rounds << new Round();
+    }
+    m_rounds.at(round - 1)->addPairing(pairing);
 }
 
 QList<Pairing *> Tournament::getPairings(int round) const
@@ -182,6 +195,22 @@ void Tournament::sortPairings()
     for (int i = 0; i < m_rounds.size(); i++) {
         m_rounds.at(i)->sortPairings();
     }
+}
+
+QCoro::Task<std::expected<bool, QString>> Tournament::pairRound(int round)
+{
+    auto engine = new PairingEngine();
+    const auto pairings = co_await engine->pair(5, this);
+
+    if (!pairings.has_value()) {
+        co_return std::unexpected(pairings.error());
+    }
+
+    for (const auto &pairing : *pairings) {
+        addPairing(round, pairing);
+    }
+
+    co_return true;
 }
 
 QJsonObject Tournament::toJson() const
