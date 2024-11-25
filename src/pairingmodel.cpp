@@ -78,9 +78,9 @@ void PairingModel::setPairings(QList<Pairing *> pairings)
     int rowDiff = pairings.size() - m_pairings.size();
 
     if (rowDiff > 0) {
-        beginInsertRows({}, m_pairings.size(), m_pairings.size() + rowDiff - 1);
+        beginInsertRows({}, m_pairings.size(), pairings.size() - 1);
     } else if (rowDiff < 0) {
-        beginRemoveRows({}, 0, rowDiff - 1);
+        beginRemoveRows({}, pairings.size(), m_pairings.size() - 1);
     }
 
     m_pairings = pairings;

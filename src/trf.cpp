@@ -6,7 +6,6 @@
 std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
 {
     QMap<int, Player *> players = {};
-    QList<Round *> rounds = {};
     QMap<std::tuple<int, int, int>, std::pair<Pairing::PartialResult, Pairing::PartialResult>> pairingsToAdd = {};
 
     while (!trf.atEnd()) {
@@ -95,8 +94,6 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
     }
 
     setPlayers(new QList(players.values()));
-    setRounds(rounds);
-    setNumberOfRounds(rounds.size());
 
     for (auto pairing = pairingsToAdd.cbegin(), end = pairingsToAdd.cend(); pairing != end; ++pairing) {
         const auto [r, w, b] = pairing.key();
@@ -122,6 +119,8 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
 
         addPairing(r, par);
     }
+
+    setNumberOfRounds(m_rounds.size());
 
     sortPairings();
 
