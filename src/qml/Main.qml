@@ -126,6 +126,11 @@ StatefulApp.StatefulWindow {
                 viewName: "pairings"
                 iconName: "system-users-symbolic"
             }
+            ListElement {
+                name: "Standings"
+                viewName: "standings"
+                iconName: "system-users-symbolic"
+            }
         }
 
         contentItem: ColumnLayout {
@@ -226,6 +231,8 @@ StatefulApp.StatefulWindow {
                 page = Qt.createComponent("dev.alcarazzam.chessament", "PlayersPage").createObject(root)
             } else if (view == "pairings") {
                 page = Qt.createComponent("dev.alcarazzam.chessament", "PairingsPage").createObject(root)
+            } else if (view == "standings") {
+                page = Qt.createComponent("dev.alcarazzam.chessament", "StandingsPage").createObject(root)
             }
             pageCache[view] = page
             return page

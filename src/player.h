@@ -26,10 +26,21 @@ class Player : public QObject
     Q_PROPERTY(QString sex READ sex WRITE setSex NOTIFY sexChanged)
 
 public:
-    enum class Title { None, GM, IM, FM, CM, WGM, WIM, WFM, WCM };
+    enum class Title {
+        None,
+        GM,
+        IM,
+        FM,
+        CM,
+        WGM,
+        WIM,
+        WFM,
+        WCM
+    };
     Q_ENUM(Title)
 
-    static QString titleString(Title title) {
+    static QString titleString(Title title)
+    {
         switch (title) {
         case Title::GM:
             return QStringLiteral("GM");
@@ -52,7 +63,8 @@ public:
         }
     };
 
-    static Title titleForString(const QString &title) {
+    static Title titleForString(const QString &title)
+    {
         auto t = title.toLower();
         if (t == QStringLiteral("gm")) {
             return Title::GM;
@@ -83,7 +95,16 @@ public:
 
     explicit Player();
     explicit Player(int startingRank, const QString &name, int rating);
-    explicit Player(int startingRank, Title title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &federation, const QString &origin, const QString &sex);
+    explicit Player(int startingRank,
+                    Title title,
+                    const QString &name,
+                    int rating,
+                    int nationalRating,
+                    const QString &playerId,
+                    const QString &birthDate,
+                    const QString &federation,
+                    const QString &origin,
+                    const QString &sex);
 
     int startingRank();
     Title title() const;
@@ -96,12 +117,15 @@ public:
     QString origin() const;
     QString sex() const;
 
-    Q_INVOKABLE QString titleString() {
+    Q_INVOKABLE QString titleString()
+    {
         return Player::titleString(m_title);
     };
 
     QJsonObject toJson() const;
     static Player *fromJson(const QJsonObject &json);
+
+    friend QDebug operator<<(QDebug dbg, const Player &player);
 
 public Q_SLOTS:
     void setStartingRank(int startingRank);

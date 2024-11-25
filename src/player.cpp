@@ -16,7 +16,16 @@ Player::Player(int startingRank, const QString &name, int rating)
     setRating(rating);
 }
 
-Player::Player(int startingRank, Title title, const QString &name, int rating, int nationalRating, const QString &playerId, const QString &birthDate, const QString &federation, const QString &origin, const QString &sex)
+Player::Player(int startingRank,
+               Title title,
+               const QString &name,
+               int rating,
+               int nationalRating,
+               const QString &playerId,
+               const QString &birthDate,
+               const QString &federation,
+               const QString &origin,
+               const QString &sex)
     : QObject()
 {
     setStartingRank(startingRank);
@@ -231,4 +240,10 @@ Player *Player::fromJson(const QJsonObject &json)
     }
 
     return player;
+}
+
+QDebug operator<<(QDebug dbg, const Player &player)
+{
+    dbg.nospace() << "Player(" << player.name() << ")";
+    return dbg;
 }

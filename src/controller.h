@@ -8,6 +8,7 @@
 
 #include "pairingmodel.h"
 #include "playersmodel.h"
+#include "standingsmodel.h"
 #include "tournament.h"
 
 class Controller : public QObject
@@ -25,6 +26,7 @@ class Controller : public QObject
 
     Q_PROPERTY(PlayersModel *playersModel READ playersModel CONSTANT)
     Q_PROPERTY(PairingModel *pairingModel READ pairingModel CONSTANT)
+    Q_PROPERTY(StandingsModel *standingsModel READ standingsModel CONSTANT)
 
     Q_PROPERTY(QString currentView READ currentView WRITE setCurrentView NOTIFY currentViewChanged)
     Q_PROPERTY(QString error READ error WRITE setError NOTIFY errorChanged)
@@ -60,6 +62,7 @@ public:
 
     PlayersModel *playersModel() const;
     PairingModel *pairingModel() const;
+    StandingsModel *standingsModel() const;
 
     QString currentView() const;
     QString error() const;
@@ -94,6 +97,7 @@ private:
     Player *m_currentPlayer = nullptr;
     PlayersModel *m_playersModel;
     PairingModel *m_pairingModel;
+    StandingsModel *m_standingsModel;
 
     QString m_currentView;
     QString m_error;

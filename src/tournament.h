@@ -14,11 +14,15 @@
 #include <QString>
 #include <QTextStream>
 
+#include <algorithm>
 #include <expected>
 
 #include "pairingengine.h"
 #include "player.h"
 #include "round.h"
+#include "tiebreak.h"
+#include "tiebreaks.h"
+#include "tournamentstate.h"
 
 class Tournament : public QObject
 {
@@ -33,6 +37,7 @@ public:
     Q_PROPERTY(QString timeControl READ timeControl WRITE setTimeControl NOTIFY timeControlChanged)
     Q_PROPERTY(int numberOfRounds READ numberOfRounds WRITE setNumberOfRounds NOTIFY numberOfRoundsChanged)
     Q_PROPERTY(int currentRound READ currentRound WRITE setCurrentRound NOTIFY currentRoundChanged)
+    Q_PROPERTY(QList<Tiebreak *> tiebreaks READ tiebreaks WRITE setTiebreaks NOTIFY tiebreaksChanged)
 
     Q_PROPERTY(QList<Player *> *players READ players WRITE setPlayers NOTIFY playersChanged)
     Q_PROPERTY(QList<Round *> rounds READ rounds WRITE setRounds NOTIFY roundsChanged)
@@ -47,10 +52,13 @@ public:
     QString timeControl() const;
     int numberOfRounds();
     int currentRound();
+    QList<Tiebreak *> tiebreaks();
 
     QList<Player *> *players();
     void addPlayer(Player *player);
     QMap<uint, Player *> getPlayersByStartingRank();
+    QMap<Player *, QList<Pairing *>> getPairingsByPlayer(uint maxRound = 0);
+    QList<PlayerTiebreaks> getStandings(uint round = 0);
 
     QList<Round *> rounds() const;
     void addPairing(int round, Pairing *pairing);
@@ -178,6 +186,7 @@ public Q_SLOTS:
     void setTimeControl(const QString &timeControl);
     void setNumberOfRounds(int numberOfRounds);
     void setCurrentRound(int currentRound);
+    void setTiebreaks(QList<Tiebreak *> tiebreaks);
 
     void setPlayers(QList<Player *> *players);
     void setRounds(QList<Round *> rounds);
@@ -191,6 +200,7 @@ Q_SIGNALS:
     void timeControlChanged();
     void numberOfRoundsChanged();
     void currentRoundChanged();
+    void tiebreaksChanged();
 
     void playersChanged();
     void roundsChanged();
@@ -204,6 +214,7 @@ private:
     QString m_timeControl;
     int m_numberOfRounds = 1;
     int m_currentRound = 0;
+    QList<Tiebreak *> m_tiebreaks;
 
     QList<Player *> *m_players;
     QList<Round *> m_rounds;

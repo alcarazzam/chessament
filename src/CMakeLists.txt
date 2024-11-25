@@ -15,6 +15,7 @@ ecm_add_qml_module(chessament_static
         qml/DocsPage.qml
         qml/NavigationButtonDelegate.qml
         qml/NewTournamentDialog.qml
+        qml/StandingsPage.qml
         qml/PairingsPage.qml
         qml/PlayersPage.qml
         qml/WelcomePage.qml
@@ -42,8 +43,15 @@ ecm_add_qml_module(chessament_static
         pairingmodel.h
         round.h
         round.cpp
+        standingsmodel.cpp
+        standingsmodel.h
+        tiebreak.h
+        tiebreaks.cpp
+        tiebreaks.h
         tournament.cpp
         tournament.h
+        tournamentstate.cpp
+        tournamentstate.h
         trf.cpp
     IMPORTS
         org.kde.kirigamiaddons.formcard
