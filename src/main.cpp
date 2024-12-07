@@ -20,6 +20,7 @@
 #include "chessamentconfig.h"
 #include "pairingmodel.h"
 #include "playersmodel.h"
+#include "standingsmodel.h"
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -85,6 +86,11 @@ int main(int argc, char *argv[])
                                              0,
                                              "PairingRoles",
                                              QStringLiteral("Cannot create instances of PairingModel"));
+    qmlRegisterUncreatableType<StandingsModel>("dev.alcarazzam.chessament.StandingsModel",
+                                               1,
+                                               0,
+                                               "StandingsRoles",
+                                               QStringLiteral("Cannot create instances of StandingsModel"));
 
     QQmlApplicationEngine engine;
 

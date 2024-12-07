@@ -7,6 +7,7 @@ Controller::Controller(QObject *parent)
     : QObject(parent)
     , m_playersModel(new PlayersModel(this))
     , m_pairingModel(new PairingModel(this))
+    , m_standingsModel(new StandingsModel(this))
 {
 }
 
@@ -24,6 +25,8 @@ void Controller::setTournament(Tournament *tournament)
 
     m_playersModel->setPlayers(m_tournament->players());
     m_pairingModel->setPairings(m_tournament->getPairings(1));
+    m_standingsModel->setTournament(m_tournament);
+
     setHasOpenTournament(true);
     setCurrentPlayerByIndex(-1);
 
@@ -211,6 +214,11 @@ PlayersModel *Controller::playersModel() const
 PairingModel *Controller::pairingModel() const
 {
     return m_pairingModel;
+}
+
+StandingsModel *Controller::standingsModel() const
+{
+    return m_standingsModel;
 }
 
 QString Controller::currentView() const

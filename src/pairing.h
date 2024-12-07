@@ -22,7 +22,11 @@ class Pairing : public QObject
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
 
 public:
-    enum class Color { Unknown, White, Black };
+    enum class Color {
+        Unknown,
+        White,
+        Black
+    };
     Q_ENUM(Color)
 
     static QString colorString(Color color)
@@ -229,10 +233,77 @@ public:
         case Result::ZeroBye:
             return 0;
         case Result::PairingBye:
-            return 10; // TODO
+            return 10; // TODO: by tournament
         default:
             return 0;
         }
+    }
+
+    static int blackPointsForResult(Result result)
+    {
+        switch (result) {
+        case Result::WhiteWins:
+            return 0;
+        case Result::BlackWins:
+            return 10;
+        case Result::Draw:
+            return 5;
+        case Result::BothLost:
+            return 0;
+        case Result::WhiteWinsForfeit:
+            return 0;
+        case Result::BlackWinsForfeit:
+            return 10;
+        case Result::BothForfeit:
+            return 0;
+        case Result::WhiteDraws:
+            return 5;
+        case Result::BlackDraws:
+            return 5;
+        case Result::WhiteWinsUnrated:
+            return 0;
+        case Result::BlackWinsUnrated:
+            return 10;
+        case Result::DrawUnrated:
+            return 5;
+        case Result::HalfBye:
+            return 5;
+        case Result::FullBye:
+            return 10;
+        case Result::ZeroBye:
+            return 0;
+        case Result::PairingBye:
+            return 10; // TODO: by tournament
+        default:
+            return 0;
+        }
+    }
+
+    static bool isUnplayed(Result result)
+    {
+        switch (result) {
+        case Result::WhiteWinsForfeit:
+        case Result::BlackWinsForfeit:
+        case Result::BothForfeit:
+        case Result::HalfBye:
+        case Result::FullBye:
+        case Result::ZeroBye:
+        case Result::PairingBye:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    inline uint getPointsOfPlayer(Player *p)
+    {
+        if (p == m_whitePlayer) {
+            return Pairing::whitePointsForResult(m_result);
+        } else if (p == m_blackPlayer) {
+            return Pairing::blackPointsForResult(m_result);
+        }
+        Q_ASSERT(false); // unreachable
+        return -100000;
     }
 
     enum class PartialResult {

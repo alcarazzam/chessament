@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tournament.h"
+#include "player.h"
+#include <qtmetamacros.h>
 
 Tournament::Tournament()
     : m_players(new QList<Player *>())
     , m_rounds(QList<Round *>())
 {
+    m_tiebreaks = {new Points(), new Buchholz()};
 }
 
 QString Tournament::name() const
@@ -121,6 +124,20 @@ void Tournament::setCurrentRound(int currentRound)
     Q_EMIT currentRoundChanged();
 }
 
+QList<Tiebreak *> Tournament::tiebreaks()
+{
+    return m_tiebreaks;
+}
+
+void Tournament::setTiebreaks(QList<Tiebreak *> tiebreaks)
+{
+    if (m_tiebreaks == tiebreaks) {
+        return;
+    }
+    m_tiebreaks = tiebreaks;
+    Q_EMIT tiebreaksChanged();
+}
+
 QList<Player *> *Tournament::players()
 {
     return m_players;
@@ -146,6 +163,101 @@ QMap<uint, Player *> Tournament::getPlayersByStartingRank()
     }
 
     return players;
+}
+
+QMap<Player *, QList<Pairing *>> Tournament::getPairingsByPlayer(uint maxRound)
+{
+    QMap<Player *, QList<Pairing *>> pairings;
+
+    auto r = maxRound == 0 ? m_rounds.size() : maxRound;
+    for (int i = 0; i < r; i++) {
+        const auto round = m_rounds.at(i);
+        for (const auto &pairing : round->pairings()) {
+            pairings[pairing->whitePlayer()] << pairing;
+            if (pairing->blackPlayer() != nullptr) {
+                pairings[pairing->blackPlayer()] << pairing;
+            }
+        }
+    }
+
+    return pairings;
+}
+
+QList<PlayerTiebreaks> Tournament::getStandings(uint round)
+{
+    TournamentState state(this);
+    QList<PlayerTiebreaks> standings;
+
+    // Sort by tiebreaks
+    auto sortStandings = [&standings]() {
+        std::sort(standings.begin(), standings.end(), [](PlayerTiebreaks p1, PlayerTiebreaks p2) {
+            for (int i = 0; i < p1.second.size(); i++) {
+                if (p1.second.at(i) == p2.second.at(i)) {
+                    continue;
+                }
+                return p1.second.at(i) > p2.second.at(i);
+            }
+            return p1.first->startingRank() < p2.first->startingRank();
+        });
+    };
+
+    for (auto player = m_players->cbegin(), end = m_players->cend(); player != end; player++) {
+        standings << std::make_pair(*player, Tiebreaks{});
+    }
+
+    // Calculate tiebreaks
+    QList<Player *> players;
+    for (const auto &tiebreak : m_tiebreaks) {
+        int i = 0;
+        players.clear();
+        while (i < m_players->size()) {
+            if (players.isEmpty()) {
+                players << standings.at(i).first;
+                i++;
+                continue;
+            }
+            if (standings.at(i - 1).second == standings.at(i).second) {
+                players << standings.at(i).first;
+                i++;
+            } else {
+                for (int j = 0; j < players.size(); j++) {
+                    for (const auto &p : players) {
+                        qDebug() << p->name();
+                    }
+                    qDebug() << "Player" << j << "is" << players.at(j)->name();
+                    qDebug() << "SPlayer" << j << "is" << standings.at(i - players.size() + j).first->name();
+                    qDebug() << "--";
+                    standings[i - players.size() + j].second << tiebreak->calculate(this, state, players, players.at(j));
+                }
+                players.clear();
+                players << standings.at(i).first;
+                i++;
+            }
+        }
+        for (int j = 0; j < players.size(); j++) {
+            for (const auto &p : players) {
+                qDebug() << p->name();
+            }
+            qDebug() << "Player" << j << "is" << players.at(j)->name();
+            qDebug() << "SPlayer" << j << "is" << standings.at(i - players.size() + j).first->name();
+            qDebug() << "--";
+            standings[i - players.size() + j].second << tiebreak->calculate(this, state, players, players.at(j));
+        }
+        sortStandings();
+    }
+
+    // Print standings for debugging
+    for (int i = 0; i < standings.size(); i++) {
+        const auto s = standings.at(i);
+        QString t;
+        for (const auto x : s.second) {
+            t += QString::number(x);
+            t += QStringLiteral(" ");
+        }
+        qDebug() << i + 1 << s.first->name() << t;
+    }
+
+    return standings;
 }
 
 QList<Round *> Tournament::rounds() const
