@@ -7,9 +7,9 @@ project(chessament VERSION 0.1)
 
 include(FeatureSummary)
 
-set(QT6_MIN_VERSION 6.7.0)
-set(KF6_MIN_VERSION 6.5.0)
-set(KIRIGAMI_ADDONS_MIN_VERSION 1.4.0)
+set(QT6_MIN_VERSION 6.8.0)
+set(KF6_MIN_VERSION 6.8.0)
+set(KIRIGAMI_ADDONS_MIN_VERSION 1.6.0)
 
 find_package(ECM ${KF6_MIN_VERSION} REQUIRED NO_MODULE)
 
@@ -21,13 +21,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FeatureSummary)
 
 include(KDEInstallDirs)
-include(KDECMakeSettings)
+include(KDECMakeSettings NO_POLICY_SCOPE)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
 
 include(ECMSetupVersion)
 include(ECMFindQmlModule)
 include(ECMQmlModule)
+include(ECMDeprecationSettings)
 
 include(KDEGitCommitHooks)
 include(KDEClangFormat)
@@ -35,6 +36,11 @@ include(KDEClangFormat)
 ecm_setup_version(${PROJECT_VERSION}
     VARIABLE_PREFIX CHESSAMENT
     VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/src/version-chessament.h"
+)
+
+ecm_set_disabled_deprecation_versions(
+    QT ${QT6_MIN_VERSION}
+    KF ${KF6_MIN_VERSION}
 )
 
 find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Svg WebEngineQuick Widgets)

@@ -75,6 +75,7 @@ target_link_libraries(chessament_static PUBLIC
     Qt6::WebEngineQuick
     Qt6::Widgets
     KF6::I18n
+    KF6::I18nQml
     KF6::CoreAddons
     KF6::ConfigCore
     KF6::ConfigGui
