@@ -52,7 +52,6 @@ public:
     Q_INVOKABLE void savePlayer();
     Q_INVOKABLE void newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds);
     Q_INVOKABLE void openTournament(const QUrl &fileUrl);
-    Q_INVOKABLE void saveTournament();
     Q_INVOKABLE void saveTournamentAs(const QUrl &fileUrl);
     Q_INVOKABLE void importTrf(const QUrl &fileUrl);
     Q_INVOKABLE void exportTrf(const QUrl &fileUrl);

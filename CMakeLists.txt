@@ -43,7 +43,7 @@ ecm_set_disabled_deprecation_versions(
     KF ${KF6_MIN_VERSION}
 )
 
-find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Svg WebEngineQuick Widgets)
+find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Sql Svg WebEngineQuick Widgets)
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS Kirigami CoreAddons Config I18n ItemModels)
 
 find_package(QCoro6 REQUIRED COMPONENTS Core)

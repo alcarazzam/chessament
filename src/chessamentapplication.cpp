@@ -32,12 +32,6 @@ void ChessamentApplication::setupActions()
         mainCollection()->addAction(action->objectName(), action);
     }
 
-    actionName = "file_save"_L1;
-    if (KAuthorized::authorizeAction(actionName)) {
-        auto action = KStandardActions::save(this, &ChessamentApplication::saveTournament, this);
-        mainCollection()->addAction(action->objectName(), action);
-    }
-
     actionName = "file_save_as"_L1;
     if (KAuthorized::authorizeAction(actionName)) {
         auto action = KStandardActions::saveAs(this, &ChessamentApplication::saveTournamentAs, this);

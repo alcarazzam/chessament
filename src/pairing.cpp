@@ -12,6 +12,20 @@ Pairing::Pairing(int board, Player *whitePlayer, Player *blackPlayer, Result res
     m_result = result;
 }
 
+int Pairing::id()
+{
+    return m_id;
+}
+
+void Pairing::setId(int id)
+{
+    if (m_id == id) {
+        return;
+    }
+    m_id = id;
+    Q_EMIT idChanged();
+}
+
 int Pairing::board()
 {
     return m_board;
@@ -72,4 +86,10 @@ bool Pairing::operator<(Pairing other)
 {
     return std::min(m_whitePlayer->startingRank(), m_blackPlayer->startingRank())
         < std::min(other.whitePlayer()->startingRank(), other.blackPlayer()->startingRank());
+}
+
+QDebug operator<<(QDebug dbg, Pairing &pairing)
+{
+    dbg.nospace() << "Pairing(" << pairing.board() << "," << *pairing.whitePlayer() << "," << pairing.blackPlayer() << ")";
+    return dbg;
 }

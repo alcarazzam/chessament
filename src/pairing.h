@@ -16,6 +16,7 @@ class Pairing : public QObject
     QML_ELEMENT
     QML_UNCREATABLE("")
 
+    Q_PROPERTY(int id READ id NOTIFY idChanged)
     Q_PROPERTY(int board READ board NOTIFY boardChanged)
     Q_PROPERTY(Player *whitePlayer READ whitePlayer NOTIFY whitePlayerChanged)
     Q_PROPERTY(Player *blackPlayer READ blackPlayer NOTIFY blackPlayerChanged)
@@ -423,6 +424,7 @@ public:
 
     explicit Pairing(int board, Player *whitePlayer, Player *blackPlayer, Result result);
 
+    int id();
     int board();
     Player *whitePlayer();
     Player *blackPlayer();
@@ -430,19 +432,24 @@ public:
 
     bool operator<(Pairing other);
 
+    friend QDebug operator<<(QDebug dbg, Pairing &pairing);
+
 public Q_SLOTS:
+    void setId(int id);
     void setBoard(int board);
     void setWhitePlayer(Player *whitePlayer);
     void setBlackPlayer(Player *blackPlayer);
     void setResult(Result result);
 
 Q_SIGNALS:
+    void idChanged();
     void boardChanged();
     void whitePlayerChanged();
     void blackPlayerChanged();
     void resultChanged();
 
 private:
+    int m_id = 0;
     int m_board;
     Player *m_whitePlayer;
     Player *m_blackPlayer;

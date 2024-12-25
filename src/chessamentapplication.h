@@ -20,7 +20,6 @@ public:
 Q_SIGNALS:
     void newTournament();
     void openTournament();
-    void saveTournament();
     void saveTournamentAs();
     void importTrf();
     void exportTrf();

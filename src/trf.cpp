@@ -93,7 +93,9 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
         }
     }
 
-    setPlayers(new QList(players.values()));
+    for (const auto &player : players) {
+        addPlayer(player);
+    }
 
     for (auto pairing = pairingsToAdd.cbegin(), end = pairingsToAdd.cend(); pairing != end; ++pairing) {
         const auto [r, w, b] = pairing.key();

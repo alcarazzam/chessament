@@ -11,18 +11,25 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QObject>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlRecord>
 #include <QString>
 #include <QTextStream>
 
 #include <algorithm>
 #include <expected>
 
+#include "db.h"
 #include "pairingengine.h"
 #include "player.h"
 #include "round.h"
 #include "tiebreak.h"
 #include "tiebreaks.h"
 #include "tournamentstate.h"
+
+using namespace Qt::StringLiterals;
 
 class Tournament : public QObject
 {
@@ -44,7 +51,8 @@ public:
     Q_PROPERTY(QList<Player *> *players READ players WRITE setPlayers NOTIFY playersChanged)
     Q_PROPERTY(QList<Round *> rounds READ rounds WRITE setRounds NOTIFY roundsChanged)
 
-    explicit Tournament();
+    explicit Tournament(const QString &fileName = u""_s);
+    ~Tournament();
 
     QString name() const;
     QString city() const;
@@ -58,12 +66,15 @@ public:
 
     QList<Player *> *players();
     void addPlayer(Player *player);
+    void savePlayer(Player *player);
     QMap<uint, Player *> getPlayersByStartingRank();
+    QMap<uint, Player *> getPlayersById();
     QMap<Player *, QList<Pairing *>> getPairingsByPlayer(uint maxRound = 0);
     QList<PlayerTiebreaks> getStandings(uint round = 0);
 
     QList<Round *> rounds() const;
     void addPairing(int round, Pairing *pairing);
+    void savePairing(Pairing *pairing);
     QList<Pairing *> getPairings(int round) const;
     void sortPairings();
     QCoro::Task<std::expected<bool, QString>> pairRound(int round);
@@ -169,10 +180,12 @@ public:
     };
     Q_DECLARE_FLAGS(TrfOptions, TrfOption)
 
+    QVariant getOption(const QString &name);
+    void setOption(const QString &name, QVariant value);
+
     QJsonObject toJson() const;
     void read(const QJsonObject &json);
-    bool loadTournament(const QString &fileName);
-    bool save(const QString &fileName);
+    void saveCopy(const QString &fileName);
 
     QString toTrf(TrfOptions options = {});
     std::expected<bool, QString> readTrf(QTextStream trf);
@@ -208,6 +221,18 @@ Q_SIGNALS:
     void roundsChanged();
 
 private:
+    bool openDatabase(const QString &fileName = u""_s);
+    bool loadTournament();
+    QSqlDatabase getDB();
+    int getDBVersion();
+    void setDBVersion(int version);
+    void createTables();
+    void loadOptions();
+    void loadPlayers();
+    void loadPairings();
+
+    QString m_connName;
+
     QString m_name;
     QString m_city;
     QString m_federation;

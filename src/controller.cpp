@@ -9,6 +9,9 @@ Controller::Controller(QObject *parent)
     , m_pairingModel(new PairingModel(this))
     , m_standingsModel(new StandingsModel(this))
 {
+    connect(m_playersModel, &PlayersModel::playerChanged, this, [this](Player *player) {
+        m_tournament->savePlayer(player);
+    });
 }
 
 Tournament *Controller::tournament() const
@@ -169,41 +172,28 @@ void Controller::savePlayer()
 
 void Controller::newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds)
 {
-    auto tournament = new Tournament();
+    auto tournament = new Tournament(fileUrl.toLocalFile());
     tournament->setName(name);
     tournament->setNumberOfRounds(numberOfRounds);
 
     setTournament(tournament);
     setTournamentPath(fileUrl.toLocalFile());
-    setCurrentView(QStringLiteral("players"));
-
-    saveTournament();
+    setCurrentView(QStringLiteral("PlayersPage"));
 }
 
 void Controller::openTournament(const QUrl &fileUrl)
 {
-    auto tournament = new Tournament();
-    tournament->loadTournament(fileUrl.toLocalFile());
+    auto tournament = new Tournament(fileUrl.toLocalFile());
 
     setTournament(tournament);
     setTournamentPath(fileUrl.toLocalFile());
-    setCurrentView(QStringLiteral("players"));
-}
-
-void Controller::saveTournament()
-{
-    if (!m_tournamentPath.isEmpty()) {
-        m_tournament->save(m_tournamentPath);
-    } else {
-        qWarning() << "Trying to save tournament without one open";
-    }
+    setCurrentView(QStringLiteral("PlayersPage"));
 }
 
 void Controller::saveTournamentAs(const QUrl &fileUrl)
 {
-    if (m_tournament->save(fileUrl.toLocalFile())) {
-        setTournamentPath(fileUrl.toLocalFile());
-    }
+    m_tournament->saveCopy(fileUrl.toLocalFile());
+    openTournament(fileUrl);
 }
 
 PlayersModel *Controller::playersModel() const

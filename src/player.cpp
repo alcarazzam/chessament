@@ -40,6 +40,20 @@ Player::Player(int startingRank,
     setSex(sex);
 }
 
+int Player::id()
+{
+    return m_id;
+}
+
+void Player::setId(int id)
+{
+    if (m_id == id) {
+        return;
+    }
+    m_id = id;
+    Q_EMIT idChanged();
+}
+
 int Player::startingRank()
 {
     return m_startingRank;

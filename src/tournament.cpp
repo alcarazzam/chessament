@@ -2,14 +2,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tournament.h"
-#include "player.h"
-#include <qtmetamacros.h>
 
-Tournament::Tournament()
+Tournament::Tournament(const QString &fileName)
     : m_players(new QList<Player *>())
     , m_rounds(QList<Round *>())
 {
     m_tiebreaks = {new Points(), new Buchholz()};
+
+    openDatabase(fileName);
+
+    if (!fileName.isEmpty()) {
+        loadTournament();
+    }
+}
+
+Tournament::~Tournament()
+{
+    qDebug() << "delete tournament";
 }
 
 QString Tournament::name() const
@@ -23,6 +32,7 @@ void Tournament::setName(const QString &name)
         return;
     }
     m_name = name;
+    setOption(u"name"_s, name);
     Q_EMIT nameChanged();
 }
 
@@ -37,6 +47,7 @@ void Tournament::setCity(const QString &city)
         return;
     }
     m_city = city;
+    setOption(u"city"_s, city);
     Q_EMIT cityChanged();
 }
 
@@ -51,6 +62,7 @@ void Tournament::setFederation(const QString &federation)
         return;
     }
     m_federation = federation;
+    setOption(u"federation"_s, federation);
     Q_EMIT federationChanged();
 }
 
@@ -65,6 +77,7 @@ void Tournament::setChiefArbiter(const QString &chiefArbiter)
         return;
     }
     m_chiefArbiter = chiefArbiter;
+    setOption(u"chief_arbiter"_s, chiefArbiter);
     Q_EMIT chiefArbiterChanged();
 }
 
@@ -79,6 +92,7 @@ void Tournament::setDeputyChiefArbiter(const QString &deputyChiefArbiter)
         return;
     }
     m_deputyChiefArbiter = deputyChiefArbiter;
+    setOption(u"deputy_chief_arbiter"_s, deputyChiefArbiter);
     Q_EMIT deputyChiefArbiterChanged();
 }
 
@@ -93,6 +107,7 @@ void Tournament::setTimeControl(const QString &timeControl)
         return;
     }
     m_timeControl = timeControl;
+    setOption(u"time_control"_s, timeControl);
     Q_EMIT timeControlChanged();
 }
 
@@ -107,6 +122,7 @@ void Tournament::setNumberOfRounds(int numberOfRounds)
         return;
     }
     m_numberOfRounds = numberOfRounds;
+    setOption(u"number_of_rounds"_s, numberOfRounds);
     Q_EMIT numberOfRoundsChanged();
 }
 
@@ -121,6 +137,7 @@ void Tournament::setCurrentRound(int currentRound)
         return;
     }
     m_currentRound = currentRound;
+    setOption(u"current_round"_s, currentRound);
     Q_EMIT currentRoundChanged();
 }
 
@@ -152,6 +169,48 @@ void Tournament::setPlayers(QList<Player *> *players)
 void Tournament::addPlayer(Player *player)
 {
     m_players->append(player);
+
+    QSqlQuery query(getDB());
+    query.prepare(ADD_PLAYER_QUERY);
+    query.bindValue(u":startingRank"_s, player->startingRank());
+    query.bindValue(u":title"_s, Player::titleString(player->title()));
+    query.bindValue(u":name"_s, player->name());
+    query.bindValue(u":rating"_s, player->rating());
+    query.bindValue(u":nationalRating"_s, player->nationalRating());
+    query.bindValue(u":playerId"_s, player->playerId());
+    query.bindValue(u":birthDate"_s, player->birthDate());
+    query.bindValue(u":federation"_s, player->federation());
+    query.bindValue(u":origin"_s, player->origin());
+    query.bindValue(u":sex"_s, player->sex());
+    query.exec();
+
+    if (query.lastError().isValid()) {
+        qDebug() << "add player" << *player << query.lastError();
+    }
+
+    player->setId(query.lastInsertId().toInt());
+}
+
+void Tournament::savePlayer(Player *player)
+{
+    QSqlQuery query(getDB());
+    query.prepare(UPDATE_PLAYER_QUERY);
+    query.bindValue(u":id"_s, player->id());
+    query.bindValue(u":startingRank"_s, player->startingRank());
+    query.bindValue(u":title"_s, Player::titleString(player->title()));
+    query.bindValue(u":name"_s, player->name());
+    query.bindValue(u":rating"_s, player->rating());
+    query.bindValue(u":nationalRating"_s, player->nationalRating());
+    query.bindValue(u":playerId"_s, player->playerId());
+    query.bindValue(u":birthDate"_s, player->birthDate());
+    query.bindValue(u":federation"_s, player->federation());
+    query.bindValue(u":origin"_s, player->origin());
+    query.bindValue(u":sex"_s, player->sex());
+    query.exec();
+
+    if (query.lastError().isValid()) {
+        qDebug() << "save player" << *player << query.lastError();
+    }
 }
 
 QMap<uint, Player *> Tournament::getPlayersByStartingRank()
@@ -160,6 +219,17 @@ QMap<uint, Player *> Tournament::getPlayersByStartingRank()
 
     for (const auto &player : *m_players) {
         players[player->startingRank()] = player;
+    }
+
+    return players;
+}
+
+QMap<uint, Player *> Tournament::getPlayersById()
+{
+    QMap<uint, Player *> players;
+
+    for (const auto &player : *m_players) {
+        players[player->id()] = player;
     }
 
     return players;
@@ -223,12 +293,12 @@ QList<PlayerTiebreaks> Tournament::getStandings(uint round)
                 i++;
             } else {
                 for (int j = 0; j < players.size(); j++) {
-                    for (const auto &p : players) {
+                    /*for (const auto &p : players) {
                         qDebug() << p->name();
                     }
                     qDebug() << "Player" << j << "is" << players.at(j)->name();
                     qDebug() << "SPlayer" << j << "is" << standings.at(i - players.size() + j).first->name();
-                    qDebug() << "--";
+                    qDebug() << "--";*/
                     standings[i - players.size() + j].second << tiebreak->calculate(this, state, players, players.at(j));
                 }
                 players.clear();
@@ -237,19 +307,19 @@ QList<PlayerTiebreaks> Tournament::getStandings(uint round)
             }
         }
         for (int j = 0; j < players.size(); j++) {
-            for (const auto &p : players) {
+            /*for (const auto &p : players) {
                 qDebug() << p->name();
             }
             qDebug() << "Player" << j << "is" << players.at(j)->name();
             qDebug() << "SPlayer" << j << "is" << standings.at(i - players.size() + j).first->name();
-            qDebug() << "--";
+            qDebug() << "--";*/
             standings[i - players.size() + j].second << tiebreak->calculate(this, state, players, players.at(j));
         }
         sortStandings();
     }
 
     // Print standings for debugging
-    for (int i = 0; i < standings.size(); i++) {
+    /*for (int i = 0; i < standings.size(); i++) {
         const auto s = standings.at(i);
         QString t;
         for (const auto x : s.second) {
@@ -257,7 +327,7 @@ QList<PlayerTiebreaks> Tournament::getStandings(uint round)
             t += QStringLiteral(" ");
         }
         qDebug() << i + 1 << s.first->name() << t;
-    }
+    }*/
 
     return standings;
 }
@@ -282,6 +352,54 @@ void Tournament::addPairing(int round, Pairing *pairing)
         m_rounds << new Round();
     }
     m_rounds.at(round - 1)->addPairing(pairing);
+
+    QSqlQuery query(getDB());
+    query.prepare(ADD_ROUND_QUERY);
+    query.bindValue(u":id"_s, round);
+    query.exec();
+
+    if (query.lastError().isValid()) {
+        qDebug() << "add pairing : round" << query.lastError();
+    }
+
+    query = QSqlQuery(getDB());
+    query.prepare(ADD_PAIRING_QUERY);
+    query.bindValue(u":board"_s, pairing->board());
+    query.bindValue(u":whitePlayer"_s, pairing->whitePlayer()->id());
+    if (pairing->blackPlayer() != nullptr) {
+        query.bindValue(u":blackPlayer"_s, pairing->blackPlayer()->id());
+    } else {
+        query.bindValue(u":blackPlayer"_s, QVariant(QMetaType::fromType<int>()));
+    }
+    query.bindValue(u":result"_s, std::to_underlying(pairing->result()));
+    query.bindValue(u":round"_s, round);
+    query.exec();
+
+    if (query.lastError().isValid()) {
+        qDebug() << "add pairing : pairing" << query.lastError();
+    }
+
+    pairing->setId(query.lastInsertId().toInt());
+}
+
+void Tournament::savePairing(Pairing *pairing)
+{
+    QSqlQuery query(getDB());
+    query.prepare(UPDATE_PAIRING_QUERY);
+    query.bindValue(u":id"_s, pairing->id());
+    query.bindValue(u":board"_s, pairing->board());
+    query.bindValue(u":whitePlayer"_s, pairing->whitePlayer()->id());
+    if (pairing->blackPlayer() != nullptr) {
+        query.bindValue(u":blackPlayer"_s, pairing->blackPlayer()->id());
+    } else {
+        query.bindValue(u":blackPlayer"_s, QVariant(QMetaType::fromType<int>()));
+    }
+    query.bindValue(u":result"_s, std::to_underlying(pairing->result()));
+    query.exec();
+
+    if (query.lastError().isValid()) {
+        qDebug() << "save pairing" << query.lastError();
+    }
 }
 
 QList<Pairing *> Tournament::getPairings(int round) const
@@ -308,6 +426,10 @@ void Tournament::sortPairings()
 {
     for (int i = 0; i < m_rounds.size(); i++) {
         m_rounds.at(i)->sortPairings();
+
+        for (const auto &pairing : m_rounds.at(i)->pairings()) {
+            savePairing(pairing);
+        }
     }
 }
 
@@ -325,6 +447,37 @@ QCoro::Task<std::expected<bool, QString>> Tournament::pairRound(int round)
     }
 
     co_return true;
+}
+
+QVariant Tournament::getOption(const QString &name)
+{
+    QSqlQuery query(getDB());
+    query.prepare(u"SELECT value FROM options WHERE name = :name LIMIT 1;"_s);
+    query.bindValue(u":name"_s, name);
+    query.exec();
+
+    if (query.lastError().isValid()) {
+        qDebug() << "get option" << query.lastError();
+    }
+
+    query.next();
+    if (!query.isValid()) {
+        return {};
+    }
+    return query.value(0);
+}
+
+void Tournament::setOption(const QString &name, QVariant value)
+{
+    QSqlQuery query(getDB());
+    query.prepare(u"INSERT OR REPLACE INTO options(name, value) VALUES (:name, :value);"_s);
+    query.bindValue(u":name"_s, name);
+    query.bindValue(u":value"_s, value);
+    query.exec();
+
+    if (query.lastError().isValid()) {
+        qDebug() << "set option" << query.lastError();
+    }
 }
 
 QJsonObject Tournament::toJson() const
@@ -436,36 +589,16 @@ QString Tournament::toTrf(TrfOptions options)
     return result;
 }
 
-bool Tournament::loadTournament(const QString &fileName)
+void Tournament::saveCopy(const QString &fileName)
 {
-    QFile file(fileName);
+    QSqlQuery query(getDB());
+    query.prepare(u"VACUUM INTO :fileName;"_s);
+    query.bindValue(u":fileName"_s, fileName);
+    query.exec();
 
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Couldn't open tournament" << fileName;
-        return false;
+    if (query.lastError().isValid()) {
+        qDebug() << "save copy" << query.lastError();
     }
-
-    auto data = file.readAll();
-    auto document = QJsonDocument::fromJson(data);
-
-    read(document.object());
-
-    return true;
-}
-
-bool Tournament::save(const QString &fileName)
-{
-    QFile file(fileName);
-
-    if (!file.open(QIODevice::WriteOnly)) {
-        qWarning() << "Couldn't save tournament" << fileName;
-        return false;
-    }
-
-    auto tournamentObj = toJson();
-    file.write(QJsonDocument(tournamentObj).toJson());
-
-    return true;
 }
 
 std::expected<bool, QString> Tournament::loadTrf(const QString &filename)
@@ -492,4 +625,157 @@ bool Tournament::exportTrf(const QString &fileName)
     file.write(trf.toUtf8());
 
     return true;
+}
+
+bool Tournament::openDatabase(const QString &fileName)
+{
+    QString dbName;
+
+    if (fileName.isEmpty()) {
+        m_connName = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        dbName = u":memory:"_s;
+    } else {
+        m_connName = fileName;
+        dbName = fileName;
+    }
+    qDebug() << m_connName;
+
+    auto db = QSqlDatabase::addDatabase(u"QSQLITE"_s, m_connName);
+    db.setDatabaseName(dbName);
+
+    if (!db.open()) {
+        qDebug() << "error while opening database";
+        return false;
+    }
+
+    createTables();
+
+    return true;
+}
+
+bool Tournament::loadTournament()
+{
+    loadOptions();
+    loadPlayers();
+    loadPairings();
+
+    return true;
+}
+
+QSqlDatabase Tournament::getDB()
+{
+    return QSqlDatabase::database(m_connName);
+}
+
+int Tournament::getDBVersion()
+{
+    QSqlQuery query(u"PRAGMA user_version;"_s, getDB());
+    return query.value(0).toInt();
+}
+
+void Tournament::setDBVersion(int version)
+{
+    QSqlQuery query(getDB());
+    query.prepare(u"PRAGMA user_version = %1;"_s.arg(version)); // Can't bind in a PRAGMA statement
+    query.exec();
+
+    if (query.lastError().isValid()) {
+        qDebug() << "set db version" << query.lastError();
+    }
+}
+
+void Tournament::createTables()
+{
+    QSqlQuery query(u"PRAGMA foreign_keys = ON;"_s, getDB());
+
+    query = QSqlQuery(getDB());
+    query.prepare(OPTIONS_TABLE_SCHEMA);
+    query.exec();
+
+    query = QSqlQuery(getDB());
+    query.prepare(PLAYERS_TABLE_SCHEMA);
+    query.exec();
+
+    query = QSqlQuery(getDB());
+    query.prepare(ROUNDS_TABLE_SCHEMA);
+    query.exec();
+
+    query = QSqlQuery(getDB());
+    query.prepare(PAIRINGS_TABLE_SCHEMA);
+    query.exec();
+
+    setDBVersion(1);
+}
+
+void Tournament::loadOptions()
+{
+    setName(getOption(u"name"_s).toString());
+    setCity(getOption(u"city"_s).toString());
+    setFederation(getOption(u"federation"_s).toString());
+    setChiefArbiter(getOption(u"chief_arbiter"_s).toString());
+    setDeputyChiefArbiter(getOption(u"deputy_chief_arbiter"_s).toString());
+    setTimeControl(getOption(u"time_control"_s).toString());
+    setNumberOfRounds(getOption(u"number_of_rounds"_s).toInt());
+    setCurrentRound(getOption(u"current_round"_s).toInt());
+}
+
+void Tournament::loadPlayers()
+{
+    m_players->clear();
+
+    QSqlQuery query(GET_PLAYERS_QUERY, getDB());
+
+    int idNo = query.record().indexOf("id");
+    int stRankNo = query.record().indexOf("startingRank");
+    int titleNo = query.record().indexOf("title");
+    int nameNo = query.record().indexOf("name");
+    int ratingNo = query.record().indexOf("rating");
+    int nationalRatingNo = query.record().indexOf("nationalRating");
+    int playerIdNo = query.record().indexOf("playerId");
+    int birthDateNo = query.record().indexOf("birthDate");
+    int federationNo = query.record().indexOf("federation");
+    int originNo = query.record().indexOf("origin");
+    int sexNo = query.record().indexOf("sex");
+
+    while (query.next()) {
+        auto player = new Player(query.value(stRankNo).toInt(),
+                                 Player::titleForString(query.value(titleNo).toString()),
+                                 query.value(nameNo).toString(),
+                                 query.value(ratingNo).toInt(),
+                                 query.value(nationalRatingNo).toInt(),
+                                 query.value(playerIdNo).toString(),
+                                 query.value(birthDateNo).toString(),
+                                 query.value(federationNo).toString(),
+                                 query.value(originNo).toString(),
+                                 query.value(sexNo).toString());
+        player->setId(query.value(idNo).toInt());
+        m_players->append(player);
+    }
+}
+
+void Tournament::loadPairings()
+{
+    auto players = getPlayersById();
+
+    QSqlQuery query(GET_PAIRINGS_QUERY, getDB());
+
+    int idNo = query.record().indexOf("id");
+    int boardNo = query.record().indexOf("board");
+    int whitePlayerNo = query.record().indexOf("whitePlayer");
+    int blackPlayerNo = query.record().indexOf("blackPlayer");
+    int resultNo = query.record().indexOf("result");
+    int roundNo = query.record().indexOf("round");
+
+    while (query.next()) {
+        auto round = query.value(roundNo).toInt();
+        auto pairing = new Pairing(query.value(boardNo).toInt(),
+                                   players.value(query.value(whitePlayerNo).toInt()),
+                                   players.value(query.value(blackPlayerNo).toInt()),
+                                   Pairing::Result(query.value(resultNo).toInt()));
+        pairing->setId(query.value(idNo).toInt());
+        while (m_rounds.size() < round) {
+            m_rounds << new Round();
+        }
+        m_rounds.at(round - 1)->addPairing(pairing);
+    }
 }

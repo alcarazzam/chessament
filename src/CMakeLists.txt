@@ -29,6 +29,7 @@ ecm_add_qml_module(chessament_static
         QtCore
         QtQuick
     SOURCES
+        db.h
         controller.cpp
         documents.cpp
         pairing.cpp
@@ -71,6 +72,7 @@ target_link_libraries(chessament_static PUBLIC
     Qt6::Qml
     Qt6::Quick
     Qt6::QuickControls2
+    Qt6::Sql
     Qt6::Svg
     Qt6::WebEngineQuick
     Qt6::Widgets

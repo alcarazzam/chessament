@@ -33,49 +33,45 @@ StatefulApp.StatefulWindow {
         target: root.application
 
         function onNewTournament() {
-            let dialog = Qt.createComponent("dev.alcarazzam.chessament", "NewTournamentDialog").createObject(root)
+            let dialog = Qt.createComponent("dev.alcarazzam.chessament", "NewTournamentDialog").createObject(root);
             dialog.create.connect((fileUrl, name, rounds) => {
-                Controller.newTournament(fileUrl, name, rounds)
-            })
-            dialog.open()
+                Controller.newTournament(fileUrl, name, rounds);
+            });
+            dialog.open();
         }
 
         function onOpenTournament() {
-            const dialog = fileDialog.createObject(QQC2.Overlay.overlay)
+            const dialog = fileDialog.createObject(QQC2.Overlay.overlay);
             dialog.accepted.connect(() => {
-                Controller.openTournament(dialog.selectedFile)
-            })
-            dialog.open()
-        }
-
-        function onSaveTournament() {
-            Controller.saveTournament()
+                Controller.openTournament(dialog.selectedFile);
+            });
+            dialog.open();
         }
 
         function onSaveTournamentAs() {
-            const dialog = fileDialog.createObject(QQC2.Overlay.overlay)
-            dialog.fileMode = Dialogs.FileDialog.SaveFile
+            const dialog = fileDialog.createObject(QQC2.Overlay.overlay);
+            dialog.fileMode = Dialogs.FileDialog.SaveFile;
             dialog.accepted.connect(() => {
-                Controller.saveTournamentAs(dialog.selectedFile)
-            })
-            dialog.open()
+                Controller.saveTournamentAs(dialog.selectedFile);
+            });
+            dialog.open();
         }
 
         function onImportTrf() {
-            const dialog = fileDialog.createObject(QQC2.Overlay.overlay)
+            const dialog = fileDialog.createObject(QQC2.Overlay.overlay);
             dialog.accepted.connect(() => {
-                Controller.importTrf(dialog.selectedFile)
-            })
-            dialog.open()
+                Controller.importTrf(dialog.selectedFile);
+            });
+            dialog.open();
         }
 
         function onExportTrf() {
-            const dialog = fileDialog.createObject(QQC2.Overlay.overlay)
-            dialog.fileMode = Dialogs.FileDialog.SaveFile
+            const dialog = fileDialog.createObject(QQC2.Overlay.overlay);
+            dialog.fileMode = Dialogs.FileDialog.SaveFile;
             dialog.accepted.connect(() => {
-                Controller.exportTrf(dialog.selectedFile)
-            })
-            dialog.open()
+                Controller.exportTrf(dialog.selectedFile);
+            });
+            dialog.open();
         }
     }
 
@@ -83,13 +79,13 @@ StatefulApp.StatefulWindow {
         target: Controller
 
         function onCurrentViewChanged() {
-            const view = Controller.currentView
-            const page = root.pageForView(view)
-            root.pageStack.replace(page)
+            const view = Controller.currentView;
+            const page = root.pageForView(view);
+            root.pageStack.replace(page);
         }
 
         function onErrorChanged() {
-            errorDialog.open()
+            errorDialog.open();
         }
     }
 
@@ -158,10 +154,6 @@ StatefulApp.StatefulWindow {
                                 fromQAction: root.application.action("file_open")
                             }
                             Kirigami.Action {
-                                fromQAction: root.application.action("file_save")
-                                enabled: Controller.tournamentPath
-                            }
-                            Kirigami.Action {
                                 fromQAction: root.application.action("file_save_as")
                                 enabled: Controller.hasOpenTournament
                             }
@@ -172,14 +164,14 @@ StatefulApp.StatefulWindow {
                                 fromQAction: root.application.action("export_trf")
                                 enabled: Controller.hasOpenTournament
                             }
-                            QQC2.MenuSeparator { }
+                            QQC2.MenuSeparator {}
                             Kirigami.Action {
                                 fromQAction: root.application.action("options_configure")
                             }
                             Kirigami.Action {
                                 fromQAction: root.application.action("options_configure_keybinding")
                             }
-                            QQC2.MenuSeparator { }
+                            QQC2.MenuSeparator {}
                             Kirigami.Action {
                                 fromQAction: root.application.action("open_about_page")
                             }
@@ -207,7 +199,7 @@ StatefulApp.StatefulWindow {
                 clip: true
 
                 model: navigationModel
-                delegate: NavigationButtonDelegate { }
+                delegate: NavigationButtonDelegate {}
             }
         }
 
@@ -223,9 +215,9 @@ StatefulApp.StatefulWindow {
 
     function pageForView(view: string): var {
         if (!pageCache[view]) {
-            pageCache[view] = Qt.createComponent("dev.alcarazzam.chessament", view).createObject(root)
+            pageCache[view] = Qt.createComponent("dev.alcarazzam.chessament", view).createObject(root);
         }
-        return pageCache[view]
+        return pageCache[view];
     }
 
     Component {

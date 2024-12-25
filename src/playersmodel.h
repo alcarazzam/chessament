@@ -43,6 +43,9 @@ public:
     void addPlayer(Player *player);
     void updatePlayer(int i, Player *player);
 
+Q_SIGNALS:
+    void playerChanged(Player *player);
+
 private:
     QList<Player *> *m_players;
 };

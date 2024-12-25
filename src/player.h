@@ -8,12 +8,15 @@
 #include <QQmlEngine>
 #include <QString>
 
+using namespace Qt::StringLiterals;
+
 class Player : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
     QML_UNCREATABLE("")
 
+    Q_PROPERTY(int id READ id NOTIFY idChanged)
     Q_PROPERTY(int startingRank READ startingRank NOTIFY startingRankChanged)
     Q_PROPERTY(Title title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
@@ -106,6 +109,7 @@ public:
                     const QString &origin,
                     const QString &sex);
 
+    int id();
     int startingRank();
     Title title() const;
     QString name() const;
@@ -128,6 +132,7 @@ public:
     friend QDebug operator<<(QDebug dbg, const Player &player);
 
 public Q_SLOTS:
+    void setId(int id);
     void setStartingRank(int startingRank);
     void setTitle(Title title);
     void setTitle(const QString &titleString);
@@ -141,6 +146,7 @@ public Q_SLOTS:
     void setSex(const QString &sex);
 
 Q_SIGNALS:
+    void idChanged();
     void startingRankChanged();
     void titleChanged();
     void nameChanged();
@@ -153,6 +159,7 @@ Q_SIGNALS:
     void sexChanged();
 
 private:
+    int m_id = 0;
     int m_startingRank = 1;
     Title m_title;
     QString m_name;
