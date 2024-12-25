@@ -119,7 +119,7 @@ void Controller::importTrf(const QUrl &fileUrl)
         setTournament(tournament);
         setTournamentPath({});
 
-        setCurrentView(QStringLiteral("players"));
+        setCurrentView(QStringLiteral("PlayersPage"));
     } else {
         setError(error.error());
     }

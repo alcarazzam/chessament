@@ -185,6 +185,8 @@ QMap<Player *, QList<Pairing *>> Tournament::getPairingsByPlayer(uint maxRound)
 
 QList<PlayerTiebreaks> Tournament::getStandings(uint round)
 {
+    Q_UNUSED(round) // TODO: round
+
     TournamentState state(this);
     QList<PlayerTiebreaks> standings;
 

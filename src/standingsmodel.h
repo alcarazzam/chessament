@@ -11,6 +11,8 @@
 class StandingsModel : public QAbstractTableModel
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_UNCREATABLE("")
 
 public:
     enum StandingRoles {

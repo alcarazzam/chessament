@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2024 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
+pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls as QQC2
-import Qt.labs.qmlmodels as Labs
 
-import org.kde.kitemmodels
 import org.kde.kirigami as Kirigami
 
 import dev.alcarazzam.chessament

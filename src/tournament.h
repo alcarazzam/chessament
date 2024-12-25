@@ -27,6 +27,8 @@
 class Tournament : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_UNCREATABLE("")
 
 public:
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)

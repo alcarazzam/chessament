@@ -9,7 +9,6 @@ import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.statefulapp as StatefulApp
-import org.kde.kirigamiaddons.formcard as FormCard
 
 import dev.alcarazzam.chessament
 import dev.alcarazzam.chessament.settings as Settings
@@ -85,7 +84,7 @@ StatefulApp.StatefulWindow {
 
         function onCurrentViewChanged() {
             const view = Controller.currentView
-            const page = pageForView(view)
+            const page = root.pageForView(view)
             root.pageStack.replace(page)
         }
 
@@ -118,17 +117,17 @@ StatefulApp.StatefulWindow {
 
             ListElement {
                 name: "Players"
-                viewName: "players"
+                viewName: "PlayersPage"
                 iconName: "user-symbolic"
             }
             ListElement {
                 name: "Pairings"
-                viewName: "pairings"
+                viewName: "PairingsPage"
                 iconName: "system-users-symbolic"
             }
             ListElement {
                 name: "Standings"
-                viewName: "standings"
+                viewName: "StandingsPage"
                 iconName: "system-users-symbolic"
             }
         }
@@ -223,20 +222,10 @@ StatefulApp.StatefulWindow {
     pageStack.initialPage: Qt.createComponent("dev.alcarazzam.chessament", "WelcomePage")
 
     function pageForView(view: string): var {
-        if (pageCache[view]) {
-            return pageCache[view]
-        } else {
-            let page
-            if (view == "players") {
-                page = Qt.createComponent("dev.alcarazzam.chessament", "PlayersPage").createObject(root)
-            } else if (view == "pairings") {
-                page = Qt.createComponent("dev.alcarazzam.chessament", "PairingsPage").createObject(root)
-            } else if (view == "standings") {
-                page = Qt.createComponent("dev.alcarazzam.chessament", "StandingsPage").createObject(root)
-            }
-            pageCache[view] = page
-            return page
+        if (!pageCache[view]) {
+            pageCache[view] = Qt.createComponent("dev.alcarazzam.chessament", view).createObject(root)
         }
+        return pageCache[view]
     }
 
     Component {

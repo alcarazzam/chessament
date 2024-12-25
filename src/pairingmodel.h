@@ -11,6 +11,8 @@
 class PairingModel : public QAbstractTableModel
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_UNCREATABLE("")
 
 public:
     enum PairingRoles {
