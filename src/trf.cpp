@@ -125,6 +125,7 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
     }
 
     setNumberOfRounds(m_rounds.size());
+    setCurrentRound(m_rounds.size()); // TODO: really calculate?
 
     sortPairings();
 

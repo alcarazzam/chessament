@@ -69,6 +69,7 @@ public:
     void savePairing(Pairing *pairing);
     QList<Pairing *> getPairings(int round) const;
     void sortPairings();
+    Q_INVOKABLE bool isRoundFinished(int round);
     QCoro::Task<std::expected<bool, QString>> pairRound(int round);
 
     int numberOfPlayers();

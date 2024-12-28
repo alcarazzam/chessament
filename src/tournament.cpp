@@ -444,10 +444,22 @@ void Tournament::sortPairings()
     }
 }
 
+bool Tournament::isRoundFinished(int round)
+{
+    qDebug() << "is round finished" << round;
+    auto pairings = m_rounds.value(round - 1)->pairings();
+
+    auto finished = std::count_if(pairings.cbegin(), pairings.cend(), [](Pairing *p) {
+        return p->result() != Pairing::Result::Unknown;
+    });
+
+    return finished == pairings.size();
+}
+
 QCoro::Task<std::expected<bool, QString>> Tournament::pairRound(int round)
 {
     auto engine = new PairingEngine();
-    const auto pairings = co_await engine->pair(5, this);
+    const auto pairings = co_await engine->pair(m_currentRound + 1, this);
 
     if (!pairings.has_value()) {
         co_return std::unexpected(pairings.error());

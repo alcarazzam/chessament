@@ -142,6 +142,8 @@ QCoro::Task<void> Controller::pairRound()
     if (!pairings.has_value()) {
         setError(pairings.error());
     }
+
+    setCurrentRound(m_tournament->currentRound() + 1);
 }
 
 QString Controller::getPlayersListDocument()

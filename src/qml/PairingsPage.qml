@@ -19,12 +19,13 @@ Kirigami.ScrollablePage {
 
     actions: [
         Kirigami.Action {
-            text: i18n("Round %1", Controller.currentRound)
-            onTriggered: roundDialog.open()
+            text: i18n("Pair round %1", Controller.tournament.currentRound + 1)
+            visible: (Controller.tournament.currentRound + 1 <= Controller.tournament.numberOfRounds) && Controller.tournament.isRoundFinished(Controller.tournament.currentRound)
+            onTriggered: Controller.pairRound()
         },
         Kirigami.Action {
-            text: i18n("Pair round")
-            onTriggered: Controller.pairRound()
+            text: i18n("Round %1", Controller.currentRound)
+            onTriggered: roundDialog.open()
         }
     ]
 
