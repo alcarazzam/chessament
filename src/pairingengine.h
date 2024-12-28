@@ -6,8 +6,6 @@
 #include <QCoroProcess>
 #include <QList>
 #include <QObject>
-#include <QProcess>
-#include <QTemporaryFile>
 
 #include <expected>
 

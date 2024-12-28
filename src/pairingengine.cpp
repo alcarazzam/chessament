@@ -4,6 +4,9 @@
 #include "pairingengine.h"
 #include "pairing.h"
 
+#include <QProcess>
+#include <QTemporaryFile>
+
 PairingEngine::PairingEngine()
     : QObject()
 {

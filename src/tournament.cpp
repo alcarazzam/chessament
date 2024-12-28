@@ -3,6 +3,17 @@
 
 #include "tournament.h"
 
+#include <KLocalizedString>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlRecord>
+
+#include <algorithm>
+
+#include "db.h"
+#include "tiebreaks.h"
+#include "tournamentstate.h"
+
 Tournament::Tournament(const QString &fileName)
     : m_players(new QList<Player *>())
     , m_rounds(QList<Round *>())

@@ -3,6 +3,8 @@
 
 #include "tournament.h"
 
+#include <KLocalizedString>
+
 std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
 {
     QMap<int, Player *> players = {};

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <KLocalizedString>
 #include <QCoroTask>
 #include <QFile>
 #include <QFlags>
@@ -12,22 +11,15 @@
 #include <QJsonObject>
 #include <QObject>
 #include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QSqlRecord>
 #include <QString>
 #include <QTextStream>
 
-#include <algorithm>
 #include <expected>
 
-#include "db.h"
 #include "pairingengine.h"
 #include "player.h"
 #include "round.h"
 #include "tiebreak.h"
-#include "tiebreaks.h"
-#include "tournamentstate.h"
 
 using namespace Qt::StringLiterals;
 

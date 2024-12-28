@@ -4,7 +4,6 @@
 #pragma once
 
 #include <QAbstractTableModel>
-#include <klocalizedstring.h>
 
 #include "player.h"
 

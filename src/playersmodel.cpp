@@ -3,6 +3,8 @@
 
 #include "playersmodel.h"
 
+#include <KLocalizedString>
+
 PlayersModel::PlayersModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
