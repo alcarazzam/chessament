@@ -137,7 +137,7 @@ void Controller::exportTrf(const QUrl &fileUrl)
 
 QCoro::Task<void> Controller::pairRound()
 {
-    const auto pairings = co_await m_tournament->pairRound(m_tournament->currentRound() + 1);
+    const auto pairings = co_await m_tournament->pairNextRound();
 
     if (!pairings.has_value()) {
         setError(pairings.error());

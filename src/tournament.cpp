@@ -246,11 +246,11 @@ QMap<uint, Player *> Tournament::getPlayersById()
     return players;
 }
 
-QMap<Player *, QList<Pairing *>> Tournament::getPairingsByPlayer(uint maxRound)
+QMap<Player *, QList<Pairing *>> Tournament::getPairingsByPlayer(int maxRound)
 {
     QMap<Player *, QList<Pairing *>> pairings;
 
-    auto r = maxRound == 0 ? m_rounds.size() : maxRound;
+    auto r = maxRound < 0 ? m_rounds.size() : maxRound;
     for (int i = 0; i < r; i++) {
         const auto round = m_rounds.at(i);
         for (const auto &pairing : round->pairings()) {
@@ -456,17 +456,24 @@ bool Tournament::isRoundFinished(int round)
     return finished == pairings.size();
 }
 
-QCoro::Task<std::expected<bool, QString>> Tournament::pairRound(int round)
+QCoro::Task<std::expected<QList<Pairing *>, QString>> Tournament::calculatePairings(int round)
 {
     auto engine = new PairingEngine();
-    const auto pairings = co_await engine->pair(m_currentRound + 1, this);
+    const auto pairings = co_await engine->pair(round, this);
 
     if (!pairings.has_value()) {
         co_return std::unexpected(pairings.error());
     }
 
+    co_return pairings;
+}
+
+QCoro::Task<std::expected<bool, QString>> Tournament::pairNextRound()
+{
+    const auto pairings = co_await calculatePairings(m_currentRound + 1);
+
     for (const auto &pairing : *pairings) {
-        addPairing(round, pairing);
+        addPairing(m_currentRound + 1, pairing);
     }
 
     co_return true;
@@ -565,12 +572,12 @@ void Tournament::read(const QJsonObject &json)
     }
 }
 
-QString Tournament::toTrf(TrfOptions options)
+QString Tournament::toTrf(TrfOptions options, int maxRound)
 {
     QString result;
     QTextStream stream(&result);
 
-    const auto space = QStringLiteral(" ");
+    const auto space = u" "_s;
     const auto newLine = QLatin1Char('\n');
 
     stream << reportFieldString(ReportField::TournamentName) << space << m_name << newLine;
@@ -582,14 +589,16 @@ QString Tournament::toTrf(TrfOptions options)
     stream << reportFieldString(ReportField::TimeControl) << space << m_timeControl << newLine;
 
     if (options.testAnyFlag(TrfOption::NumberOfRounds)) {
-        stream << QStringLiteral("XXR ") + QString::number(m_numberOfRounds) << newLine;
+        stream << u"XXR "_s + QString::number(m_numberOfRounds) << newLine;
     }
 
     if (options.testAnyFlag(TrfOption::InitialColorWhite)) {
-        stream << QStringLiteral("XXC white1\n");
+        stream << u"XXC white1\n"_s;
     } else if (options.testAnyFlag(TrfOption::InitialColorBlack)) {
-        stream << QStringLiteral("XXC black1\n");
+        stream << u"XXC black1\n"_s;
     }
+
+    const auto pairings = getPairingsByPlayer(maxRound);
 
     for (const auto &player : *m_players) {
         const auto title = Player::titleString(player->title()).toStdString();
@@ -606,7 +615,13 @@ QString Tournament::toTrf(TrfOptions options)
                                         player->startingRank() // TODO: real rank
         );
 
-        stream << result.c_str() << newLine;
+        stream << result.c_str();
+
+        for (const auto pairing : pairings.value(player)) {
+            stream << pairing->toTrf(player);
+        }
+
+        stream << newLine;
     }
 
     return result;

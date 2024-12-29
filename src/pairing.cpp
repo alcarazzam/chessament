@@ -82,6 +82,31 @@ void Pairing::setResult(Result result)
     Q_EMIT resultChanged();
 }
 
+QString Pairing::toTrf(Player *player)
+{
+    int opponent = 0;
+    QString color;
+    QString r = u" "_s;
+
+    if (m_whitePlayer == player) {
+        if (m_blackPlayer == nullptr) {
+            color = Pairing::colorString(Pairing::Color::Unknown);
+        } else {
+            opponent = m_blackPlayer->startingRank();
+            color = Pairing::colorString(Pairing::Color::White);
+        }
+        r = Pairing::whiteResultString(m_result);
+    } else if (m_blackPlayer == player) {
+        opponent = m_whitePlayer->startingRank();
+        color = Pairing::colorString(Pairing::Color::Black);
+        r = Pairing::blackResultString(m_result);
+    }
+
+    auto result = QString::fromStdString(std::format("  {:04} {} {}", opponent, color.toStdString(), r.toStdString()));
+
+    return result;
+}
+
 bool Pairing::operator<(Pairing other)
 {
     return std::min(m_whitePlayer->startingRank(), m_blackPlayer->startingRank())

@@ -14,7 +14,6 @@ PairingEngine::PairingEngine()
 
 QCoro::Task<std::expected<QList<Pairing *>, QString>> PairingEngine::pair(int round, Tournament *tournament)
 {
-    Q_UNUSED(round)
     QProcess process;
     auto proc = qCoro(process);
 
@@ -22,16 +21,15 @@ QCoro::Task<std::expected<QList<Pairing *>, QString>> PairingEngine::pair(int ro
     file.open();
 
     // TODO: initial color
-    // TODO: round number
-    auto trf = tournament->toTrf(Tournament::TrfOption::NumberOfRounds | Tournament::TrfOption::InitialColorWhite);
+    auto trf = tournament->toTrf(Tournament::TrfOption::NumberOfRounds | Tournament::TrfOption::InitialColorWhite, round);
     file.write(trf.toUtf8());
     file.flush();
 
-    co_await proc.start(QStringLiteral("bbpPairings.exe"), {QStringLiteral("--dutch"), file.fileName(), QStringLiteral("-p")});
+    co_await proc.start(u"bbpPairings.exe"_s, {u"--dutch"_s, file.fileName(), u"-p"_s});
     co_await proc.waitForFinished();
 
     if (process.exitCode() != 0) {
-        co_return std::unexpected(QStringLiteral("Non zero exit code"));
+        co_return std::unexpected(u"Non zero exit code"_s);
     }
 
     QList<Pairing *> pairings;
@@ -48,7 +46,7 @@ QCoro::Task<std::expected<QList<Pairing *>, QString>> PairingEngine::pair(int ro
         const auto playerIds = line.split(u' ');
 
         if (playerIds.size() != 2) {
-            co_return std::unexpected(QStringLiteral("Invalid pairing: ") + line);
+            co_return std::unexpected(u"Invalid pairing: "_s + line);
         }
 
         // TODO: check for multiple byes

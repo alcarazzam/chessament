@@ -61,7 +61,7 @@ public:
     void savePlayer(Player *player);
     QMap<uint, Player *> getPlayersByStartingRank();
     QMap<uint, Player *> getPlayersById();
-    QMap<Player *, QList<Pairing *>> getPairingsByPlayer(uint maxRound = 0);
+    QMap<Player *, QList<Pairing *>> getPairingsByPlayer(int maxRound = -1);
     QList<PlayerTiebreaks> getStandings(uint round = 0);
 
     QList<Round *> rounds() const;
@@ -70,7 +70,8 @@ public:
     QList<Pairing *> getPairings(int round) const;
     void sortPairings();
     Q_INVOKABLE bool isRoundFinished(int round);
-    QCoro::Task<std::expected<bool, QString>> pairRound(int round);
+    QCoro::Task<std::expected<QList<Pairing *>, QString>> calculatePairings(int round);
+    QCoro::Task<std::expected<bool, QString>> pairNextRound();
 
     int numberOfPlayers();
     int numberOfRatedPlayers();
@@ -180,7 +181,7 @@ public:
     void read(const QJsonObject &json);
     void saveCopy(const QString &fileName);
 
-    QString toTrf(TrfOptions options = {});
+    QString toTrf(TrfOptions options = {}, int maxRound = -1);
     std::expected<bool, QString> readTrf(QTextStream trf);
     std::expected<bool, QString> loadTrf(const QString &filename);
     bool exportTrf(const QString &fileName);
