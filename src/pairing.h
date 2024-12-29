@@ -34,12 +34,13 @@ public:
     {
         switch (color) {
         case Color::White:
-            return QStringLiteral("w");
+            return u"w"_s;
         case Color::Black:
-            return QStringLiteral("b");
+            return u"b"_s;
         case Color::Unknown:
-            return {};
+            return u"-"_s;
         }
+        return {};
     }
 
     static Color colorForString(const QString &color)
@@ -429,6 +430,8 @@ public:
     Player *whitePlayer();
     Player *blackPlayer();
     Result result();
+
+    QString toTrf(Player *player);
 
     bool operator<(Pairing other);
 

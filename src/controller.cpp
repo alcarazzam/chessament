@@ -137,13 +137,14 @@ void Controller::exportTrf(const QUrl &fileUrl)
 
 QCoro::Task<void> Controller::pairRound()
 {
-    const auto pairings = co_await m_tournament->pairRound(m_tournament->currentRound() + 1);
+    const auto pairings = co_await m_tournament->pairNextRound();
 
     if (!pairings.has_value()) {
         setError(pairings.error());
     }
 
-    setCurrentRound(m_tournament->currentRound() + 1);
+    setCurrentRound(m_tournament->currentRound());
+    m_pairingModel->setPairings(m_tournament->getPairings(m_currentRound));
 }
 
 QString Controller::getPlayersListDocument()
