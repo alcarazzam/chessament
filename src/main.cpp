@@ -22,6 +22,10 @@
 #include "playersmodel.h"
 #include "standingsmodel.h"
 
+#ifdef Q_OS_WINDOWS
+#include <Windows.h>
+#endif
+
 using namespace Qt::Literals::StringLiterals;
 
 void qml_register_types_dev_alcarazzam_chessament();
