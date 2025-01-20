@@ -14,6 +14,7 @@
 
 #include "version-chessament.h"
 #include <KAboutData>
+#include <KIconTheme>
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
 
@@ -35,6 +36,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
     QtWebEngineQuick::initialize();
 
+    KIconTheme::initTheme();
     QIcon::setFallbackThemeName("breeze"_L1);
     QApplication app(argc, argv);
 

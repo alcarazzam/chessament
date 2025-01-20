@@ -81,6 +81,7 @@ target_link_libraries(chessament_static PUBLIC
     KF6::CoreAddons
     KF6::ConfigCore
     KF6::ConfigGui
+    KF6::IconThemes
     KF6::ItemModels
     KirigamiAddonsStatefulApp
     QCoro6::Core
