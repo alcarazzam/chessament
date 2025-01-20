@@ -24,6 +24,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings NO_POLICY_SCOPE)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
+include(ECMAddAppIcon)
 
 include(ECMSetupVersion)
 include(ECMFindQmlModule)
@@ -69,6 +70,7 @@ endif()
 
 install(FILES dev.alcarazzam.chessament.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 install(FILES dev.alcarazzam.chessament.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+install(FILES dev.alcarazzam.chessament.svg DESTINATION ${KDE_INSTALL_FULL_ICONDIR}/hicolor/scalable/apps)
 ki18n_install(po)
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

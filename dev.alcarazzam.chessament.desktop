@@ -5,9 +5,7 @@ Name=Chessament
 Comment=Chess Tournament Manager
 Version=1.0
 Exec=chessament
-Icon=applications-development
+Icon=dev.alcarazzam.chessament
 Type=Application
 Terminal=false
-# Add an actual main category here (and possibly applicable additional ones)
-#   https://specifications.freedesktop.org/menu-spec/latest/apa.html#main-category-registry
 Categories=Office;
