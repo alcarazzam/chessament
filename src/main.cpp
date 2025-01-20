@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
     QtWebEngineQuick::initialize();
 
+    QIcon::setFallbackThemeName("breeze"_L1);
     QApplication app(argc, argv);
 
     // Default to org.kde.desktop style unless the user forces another style
@@ -49,8 +50,9 @@ int main(int argc, char *argv[])
     }
 
     QApplication::setStyle(QStringLiteral("breeze"));
-    auto font = app.font();
+    QFont font(u"Segoe UI Emoji"_s);
     font.setPointSize(10);
+    font.setHintingPreference(QFont::PreferNoHinting);
     app.setFont(font);
 #endif
 
