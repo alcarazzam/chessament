@@ -47,7 +47,7 @@ ecm_set_disabled_deprecation_versions(
 find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Sql Svg WebEngineQuick Widgets)
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS Kirigami CoreAddons Config IconThemes I18n ItemModels)
 
-find_package(QCoro6 REQUIRED COMPONENTS Core)
+find_package(QCoro6 0.11 REQUIRED COMPONENTS Core)
 qcoro_enable_coroutines()
 
 find_package(KF6KirigamiAddons ${KIRIGAMI_ADDONS_MIN_VERSION} REQUIRED)
@@ -69,7 +69,7 @@ if(BUILD_TESTING)
 endif()
 
 install(FILES dev.alcarazzam.chessament.desktop DESTINATION ${KDE_INSTALL_APPDIR})
-install(FILES dev.alcarazzam.chessament.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+install(FILES dev.alcarazzam.chessament.appdata.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 install(FILES dev.alcarazzam.chessament.svg DESTINATION ${KDE_INSTALL_FULL_ICONDIR}/hicolor/scalable/apps)
 ki18n_install(po)
 

@@ -39,3 +39,24 @@ jobs:
         run: ctest -T Test --output-on-failure --no-compress-output -j 4
         working-directory: build
 
+  flatpak:
+    needs: build
+    runs-on: ubuntu-24.04
+    container: alcarazzam/kde
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: flatpak-builder build --force-clean --user --install-deps-from=flathub --repo repo --install .flatpak-manifest.json
+
+      - name: Create package
+        run: flatpak build-bundle repo chessament.flatpak dev.alcarazzam.chessament --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chessament.flatpak
+          path: chessament.flatpak
+          if-no-files-found: error
+
