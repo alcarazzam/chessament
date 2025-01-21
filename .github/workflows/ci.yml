@@ -42,10 +42,15 @@ jobs:
   flatpak:
     needs: build
     runs-on: ubuntu-24.04
-    container: alcarazzam/kde
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Flatpak
+        run: sudo apt install -y flatpak flatpak-builder
+
+      - name: Add Flathub repository
+        run: flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
       - name: Build
         run: flatpak-builder build --force-clean --user --install-deps-from=flathub --repo repo --install .flatpak-manifest.json
