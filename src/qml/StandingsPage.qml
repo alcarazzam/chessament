@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls as QQC2
+import QtQml.Models as Models
 
 import org.kde.kirigami as Kirigami
 
@@ -18,7 +19,7 @@ Kirigami.Page {
     QQC2.HorizontalHeaderView {
         id: header
         syncView: tableView
-        selectionModel: ItemSelectionModel {}
+        selectionModel: Models.ItemSelectionModel {}
 
         anchors {
             left: parent.left
@@ -40,8 +41,8 @@ Kirigami.Page {
 
             alternatingRows: true
 
-            selectionBehavior: TableView.SelectCells
-            selectionModel: ItemSelectionModel {}
+            selectionBehavior: TableView.SelectRows
+            selectionModel: Models.ItemSelectionModel {}
             selectionMode: TableView.SingleSelection
             interactive: true
 
@@ -52,8 +53,8 @@ Kirigami.Page {
                     return explicitWidth;
                 }
                 const columnWidths = [];
-                columnWidths[0] = 50;
-                columnWidths[1] = 50;
+                columnWidths[0] = 60;
+                columnWidths[1] = 60;
                 columnWidths[2] = 70;
                 columnWidths[3] = 300;
                 return column > 3 ? 70 : columnWidths[column];
@@ -70,7 +71,10 @@ Kirigami.Page {
                 highlighted: selected || current
 
                 onClicked: {
-                    tableView.selectionModel.setCurrentIndex(tableView.model.index(row, column), ItemSelectionModel.ClearAndSelect);
+                    tableView.selectionModel.clearSelection();
+                    for (let c = 0; c <= 5; c++) {
+                        tableView.selectionModel.select(tableView.model.index(row, c), ItemSelectionModel.Select);
+                    }
                 }
             }
         }

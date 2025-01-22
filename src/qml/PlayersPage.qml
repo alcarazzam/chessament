@@ -5,7 +5,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls as QQC2
 import Qt.labs.qmlmodels
-import QtQml.Models
+import QtQml.Models as Models
 
 import org.kde.kitemmodels
 import org.kde.kirigami as Kirigami
@@ -59,7 +59,7 @@ Kirigami.Page {
     QQC2.HorizontalHeaderView {
         id: header
         syncView: tableView
-        selectionModel: ItemSelectionModel {}
+        selectionModel: Models.ItemSelectionModel {}
 
         anchors {
             left: parent.left
@@ -82,9 +82,9 @@ Kirigami.Page {
             alternatingRows: true
 
             selectionBehavior: TableView.SelectCells
-            selectionModel: ItemSelectionModel {}
+            selectionModel: Models.ItemSelectionModel {}
             selectionMode: TableView.SingleSelection
-            interactive: true
+            interactive: false
 
             rowHeightProvider: () => Kirigami.Units.gridUnit * 2
             columnWidthProvider: column => {
@@ -115,6 +115,8 @@ Kirigami.Page {
             }
 
             delegate: QQC2.ItemDelegate {
+                id: delegate
+
                 required property var model
                 required property int row
                 required property int column
@@ -123,14 +125,30 @@ Kirigami.Page {
                 required property bool editing
 
                 text: model.display
-                highlighted: selected || current
+                highlighted: selected
 
                 onClicked: {
+                    delegate.forceActiveFocus();
                     tableView.closeEditor();
-                    tableView.selectionModel.setCurrentIndex(tableView.model.index(row, column), ItemSelectionModel.ClearAndSelect);
+                    tableView.selectionModel.select(tableView.model.index(row, column), ItemSelectionModel.ClearAndSelect);
                 }
                 onDoubleClicked: {
                     tableView.edit(tableView.model.index(row, column));
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    visible: delegate.current
+                    color: Kirigami.Theme.highlightColor
+                    border.color: Kirigami.Theme.highlightColor
+                }
+
+                contentItem: QQC2.Label {
+                    text: delegate.model.display
+                    elide: Text.ElideRight
+                    verticalAlignment: Qt.AlignVCenter
+                    leftPadding: Kirigami.Units.largeSpacing
+                    rightPadding: Kirigami.Units.largeSpacing
                 }
 
                 TableView.editDelegate: DelegateChooser {

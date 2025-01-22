@@ -4,18 +4,18 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls as QQC2
+import QtQml.Models as Models
 
 import org.kde.kitemmodels
 import org.kde.kirigami as Kirigami
-import org.kde.kirigamiaddons.tableview as Tables
 
 import dev.alcarazzam.chessament
 import dev.alcarazzam.chessament.PairingModel
 
-Kirigami.ScrollablePage {
+Kirigami.Page {
     id: root
 
-    horizontalScrollBarPolicy: QQC2.ScrollBar.AsNeeded
+    padding: 0
 
     actions: [
         Kirigami.Action {
@@ -62,52 +62,70 @@ Kirigami.ScrollablePage {
         sortOrder: Qt.AscendingOrder
     }
 
-    Tables.KTableView {
-        id: tableView
-        model: proxyModel
+    QQC2.HorizontalHeaderView {
+        id: header
+        syncView: tableView
+        selectionModel: Models.ItemSelectionModel {}
 
+        anchors {
+            left: parent.left
+            top: parent.top
+        }
+    }
+
+    QQC2.ScrollView {
         clip: true
-        sortOrder: Qt.AscendingOrder
-        selectionBehavior: TableView.SelectRows
-        selectionMode: TableView.SingleSelection
 
-        headerComponents: [
-            Tables.HeaderComponent {
-                width: 60
-                title: i18nc("@title:column", "Board")
-                textRole: "board"
-                role: PairingRoles.BoardRole
-            },
-            Tables.HeaderComponent {
-                width: 60
-                title: i18nc("@title:column", "No")
-                textRole: "whiteStartingRank"
-                role: PairingRoles.WhiteStartingRankRole
-            },
-            Tables.HeaderComponent {
-                width: 300
-                title: i18nc("@title:column", "White player")
-                textRole: "whiteName"
-                role: PairingRoles.WhiteNameRole
-            },
-            Tables.HeaderComponent {
-                width: 70
-                title: i18nc("@title:column", "Result")
-                textRole: "result"
-                role: PairingRoles.ResultRole
-            },
-            Tables.HeaderComponent {
-                width: 300
-                title: i18nc("@title:column", "Black player")
-                textRole: "blackName"
-                role: PairingRoles.BlackNameRole
-            },
-            Tables.HeaderComponent {
-                width: 60
-                title: i18nc("@title:column", "No")
-                textRole: "blackStartingRank"
-                role: PairingRoles.BlackStartingRankRole
+        anchors {
+            fill: parent
+            topMargin: header.height
+        }
+
+        TableView {
+            id: tableView
+            model: proxyModel
+
+            alternatingRows: true
+
+            selectionBehavior: TableView.SelectRows
+            selectionModel: Models.ItemSelectionModel {}
+            selectionMode: TableView.SingleSelection
+            interactive: true
+
+            rowHeightProvider: () => Kirigami.Units.gridUnit * 2
+
+            property var columnWidths: [60, 60, 300, 70, 300, 60]
+            columnWidthProvider: column => {
+                let explicitWidth = explicitColumnWidth(column);
+                if (explicitWidth > 0) {
+                    return explicitWidth;
+                }
+                return columnWidths[column];
             }
-        ]
+
+            delegate: QQC2.ItemDelegate {
+                id: delegate
+
+                required property var model
+                required property int index
+                required property int row
+                required property int column
+                required property bool current
+                required property bool selected
+
+                text: model.display
+                highlighted: selected
+
+                onClicked: {
+                    tableView.selectionModel.clearSelection();
+                    for (let c = 0; c <= 5; c++) {
+                        tableView.selectionModel.select(tableView.model.index(row, c), ItemSelectionModel.Select);
+                    }
+                }
+                onDoubleClicked: {
+                    console.log(tableView.model.index(row, column));
+                }
+            }
+        }
     }
 }

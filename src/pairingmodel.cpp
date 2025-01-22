@@ -3,6 +3,8 @@
 
 #include "pairingmodel.h"
 
+#include <KLocalizedString>
+
 PairingModel::PairingModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
