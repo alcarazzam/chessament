@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2024 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
 
-import QtQuick
-import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
@@ -12,14 +10,14 @@ import dev.alcarazzam.chessament
 
 Kirigami.Dialog {
     id: root
+
     title: i18nc("@title:window", "Add player")
     standardButtons: Kirigami.Dialog.Cancel | Kirigami.Dialog.Ok
     padding: Kirigami.Units.largeSpacing
     preferredWidth: Kirigami.Units.gridUnit * 35
 
-
     onAccepted: {
-        Controller.addPlayer(titleField.currentText, nameField.text, ratingField.value, nationalRatingField.value, playerIdField.text, birthDateField.text, originField.text, sexField.text)
+        Controller.addPlayer(titleField.currentText, nameField.text, ratingField.value, nationalRatingField.value, playerIdField.text, birthDateField.text, originField.text, sexField.text);
     }
 
     ColumnLayout {

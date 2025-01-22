@@ -17,11 +17,11 @@ FormCard.FormCardDialog {
     standardButtons: QQC2.Dialog.Save | QQC2.Dialog.Cancel
 
     onAccepted: {
-        let dialog = saveDialog.createObject(QQC2.Overlay.overlay)
+        let dialog = saveDialog.createObject(QQC2.Overlay.overlay);
         dialog.accepted.connect(() => {
-            root.create(dialog.selectedFile, name.text, rounds.value)
-        })
-        dialog.open()
+            root.create(dialog.selectedFile, name.text, rounds.value);
+        });
+        dialog.open();
     }
 
     FormCard.FormTextFieldDelegate {

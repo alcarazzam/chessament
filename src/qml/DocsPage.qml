@@ -3,7 +3,6 @@
 
 import QtCore
 import QtQuick
-import QtQuick.Controls as QQC2
 import QtQuick.Dialogs
 import QtWebEngine
 
@@ -32,7 +31,7 @@ Kirigami.Page {
         nameFilters: ["PDF Files (*.pdf)"]
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         onAccepted: {
-            webView.printToPdf(new URL(selectedFile).pathname)
+            webView.printToPdf(new URL(selectedFile).pathname);
         }
     }
 
@@ -42,6 +41,6 @@ Kirigami.Page {
     }
 
     Component.onCompleted: {
-        webView.loadHtml(Controller.getPlayersListDocument(), "http://localhost")
+        webView.loadHtml(Controller.getPlayersListDocument(), "http://localhost");
     }
 }

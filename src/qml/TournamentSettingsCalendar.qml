@@ -17,15 +17,14 @@ FormCard.FormCardPage {
         model: Controller.tournament.numberOfRounds
 
         ColumnLayout {
+            id: column
             required property int index
 
             FormCard.FormHeader {
-                title: i18nc("round number", "Round %1", index + 1)
+                title: i18nc("round number", "Round %1", column.index + 1)
             }
             FormCard.FormCard {
-                FormCard.FormDateTimeDelegate {
-
-                }
+                FormCard.FormDateTimeDelegate {}
             }
         }
     }

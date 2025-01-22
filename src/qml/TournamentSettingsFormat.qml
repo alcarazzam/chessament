@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2024 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
 
-import QtQuick
-
 import org.kde.kirigamiaddons.formcard as FormCard
 
 import dev.alcarazzam.chessament
@@ -27,9 +25,9 @@ FormCard.FormCardPage {
             value: Controller.tournament.numberOfRounds
             onValueChanged: {
                 if (Controller.tournament.numberOfRounds === value) {
-                    return
+                    return;
                 }
-                Controller.tournament.numberOfRounds = value
+                Controller.tournament.numberOfRounds = value;
             }
         }
     }
@@ -40,7 +38,7 @@ FormCard.FormCardPage {
     FormCard.FormCard {
         FormCard.FormTextDelegate {
             text: i18n("Pairing engine")
-            description: i18n("bppPairings")
+            description: i18n("bbpPairings")
         }
         FormCard.FormComboBoxDelegate {
             id: pairingBye

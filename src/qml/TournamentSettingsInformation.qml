@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2024 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
 
-import QtQuick
-
 import org.kde.kirigamiaddons.formcard as FormCard
 
 import dev.alcarazzam.chessament
@@ -21,16 +19,16 @@ FormCard.FormCardPage {
             label: i18nc("@label:textbox", "Tournament name")
             text: Controller.tournament.name
             onEditingFinished: {
-                Controller.tournament.name = text
+                Controller.tournament.name = text;
             }
         }
-        
+
         FormCard.FormTextFieldDelegate {
             id: city
             label: i18nc("@label:textbox", "City")
             text: Controller.tournament.city
             onEditingFinished: {
-                Controller.tournament.city = text
+                Controller.tournament.city = text;
             }
         }
 
@@ -39,7 +37,7 @@ FormCard.FormCardPage {
             label: i18nc("@label:textbox", "Federation")
             text: Controller.tournament.federation
             onEditingFinished: {
-                Controller.tournament.federation = text
+                Controller.tournament.federation = text;
             }
         }
 
@@ -48,7 +46,7 @@ FormCard.FormCardPage {
             label: i18nc("@label:textbox", "Chief arbiter")
             text: Controller.tournament.chiefArbiter
             onEditingFinished: {
-                Controller.tournament.chiefArbiter = text
+                Controller.tournament.chiefArbiter = text;
             }
         }
 
@@ -57,7 +55,7 @@ FormCard.FormCardPage {
             label: i18nc("@label:textbox", "Deputy chief arbiter")
             text: Controller.tournament.deputyChiefArbiter
             onEditingFinished: {
-                Controller.tournament.deputyChiefArbiter = text
+                Controller.tournament.deputyChiefArbiter = text;
             }
         }
     }
