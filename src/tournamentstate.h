@@ -12,6 +12,7 @@ public:
 
     QList<Pairing *> getPairings(Player *player);
     uint getPoints(Player *player);
+    uint getPointsForTiebreaks(Player *player);
 
 private:
     Tournament *m_tournament;

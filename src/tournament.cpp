@@ -9,6 +9,7 @@
 #include <QSqlRecord>
 
 #include <algorithm>
+#include <iostream>
 
 #include "db.h"
 #include "tiebreaks.h"
@@ -333,15 +334,16 @@ QList<PlayerTiebreaks> Tournament::getStandings(uint round)
     }
 
     // Print standings for debugging
-    /*for (int i = 0; i < standings.size(); i++) {
+    for (int i = 0; i < standings.size(); i++) {
         const auto s = standings.at(i);
-        QString t;
+        QStringList l;
         for (const auto x : s.second) {
-            t += QString::number(x);
-            t += QStringLiteral(" ");
+            l << QString::number(x);
         }
-        qDebug() << i + 1 << s.first->name() << t;
-    }*/
+        QString t = u"{\"id\": "_s + QString::number(s.first->startingRank()) + u", \"tiebreaks\": ["_s + l.join(u", "_s) + u"]}"_s;
+        // qDebug() << i + 1 << s.first->name() << t;
+        std::cout << t.toStdString() << std::endl;
+    }
 
     return standings;
 }

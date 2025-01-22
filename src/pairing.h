@@ -297,6 +297,18 @@ public:
         }
     }
 
+    static bool isRequestedBye(Result result)
+    {
+        switch (result) {
+        case Result::HalfBye:
+        case Result::FullBye:
+        case Result::ZeroBye:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     inline uint getPointsOfPlayer(Player *p)
     {
         if (p == m_whitePlayer) {
