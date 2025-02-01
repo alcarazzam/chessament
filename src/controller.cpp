@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "controller.h"
+#include "pairing.h"
 
 Controller::Controller(QObject *parent)
     : QObject(parent)
@@ -171,6 +172,36 @@ void Controller::addPlayer(const QString &title,
 void Controller::savePlayer()
 {
     m_playersModel->updatePlayer(m_currentPlayerIndex, m_currentPlayer);
+}
+
+bool Controller::setResult(int board, Qt::Key key)
+{
+    auto round = m_tournament->rounds().at(m_currentRound - 1);
+    auto pairing = round->getPairing(board);
+
+    Pairing::Result result;
+
+    switch (key) {
+    case Qt::Key_0:
+        result = Pairing::Result::BlackWins;
+        break;
+    case Qt::Key_1:
+        result = Pairing::Result::WhiteWins;
+        break;
+    case Qt::Key_5:
+        result = Pairing::Result::Draw;
+        break;
+    default:
+        result = Pairing::Result::Unknown;
+    }
+
+    if (result != Pairing::Result::Unknown) {
+        m_tournament->setResult(pairing, result);
+        m_pairingModel->updatePairing(board);
+        return true;
+    }
+
+    return false;
 }
 
 void Controller::newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds)

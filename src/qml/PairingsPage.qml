@@ -6,7 +6,6 @@ import QtQuick
 import QtQuick.Controls as QQC2
 import QtQml.Models as Models
 
-import org.kde.kitemmodels
 import org.kde.kirigami as Kirigami
 
 import dev.alcarazzam.chessament
@@ -49,17 +48,11 @@ Kirigami.Page {
                 checked: Controller.currentRound == index + 1
                 onClicked: {
                     Controller.currentRound = index + 1;
+                    tableView.selectionModel.clearSelection();
                     roundDialog.close();
                 }
             }
         }
-    }
-
-    KSortFilterProxyModel {
-        id: proxyModel
-        sourceModel: Controller.pairingModel
-        sortColumn: 0
-        sortOrder: Qt.AscendingOrder
     }
 
     QQC2.HorizontalHeaderView {
@@ -83,7 +76,7 @@ Kirigami.Page {
 
         TableView {
             id: tableView
-            model: proxyModel
+            model: Controller.pairingModel
 
             alternatingRows: true
 
@@ -103,6 +96,16 @@ Kirigami.Page {
                 return columnWidths[column];
             }
 
+            Keys.onPressed: event => {
+                let selection = tableView.selectionModel.selection;
+                if (selection) {
+                    let board = selection[0]?.topLeft.row + 1;
+                    if (board && Controller.setResult(board, event.key)) {
+                        root.selectBoard((board % tableView.model.rowCount()) + 1);
+                    }
+                }
+            }
+
             delegate: QQC2.ItemDelegate {
                 id: delegate
 
@@ -117,15 +120,20 @@ Kirigami.Page {
                 highlighted: selected
 
                 onClicked: {
-                    tableView.selectionModel.clearSelection();
-                    for (let c = 0; c <= 5; c++) {
-                        tableView.selectionModel.select(tableView.model.index(row, c), ItemSelectionModel.Select);
-                    }
+                    delegate.forceActiveFocus();
+                    root.selectBoard(row + 1);
                 }
                 onDoubleClicked: {
                     console.log(tableView.model.index(row, column));
                 }
             }
+        }
+    }
+
+    function selectBoard(board: int) {
+        tableView.selectionModel.clearSelection();
+        for (let c = 0; c <= 5; c++) {
+            tableView.selectionModel.select(tableView.model.index(board - 1, c), ItemSelectionModel.Select);
         }
     }
 }

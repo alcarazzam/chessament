@@ -33,6 +33,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void setPairings(QList<Pairing *> pairings);
+    void updatePairing(int board);
 
 private:
     QList<Pairing *> m_pairings;

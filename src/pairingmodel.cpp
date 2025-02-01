@@ -95,3 +95,8 @@ void PairingModel::setPairings(QList<Pairing *> pairings)
 
     Q_EMIT dataChanged(index(0, 0), index(rowCount() - 1, columnCount() - 1), {});
 }
+
+void PairingModel::updatePairing(int board)
+{
+    Q_EMIT dataChanged(index(board - 1, 0), index(board - 1, columnCount() - 1), {});
+}

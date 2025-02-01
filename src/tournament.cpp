@@ -418,6 +418,12 @@ void Tournament::savePairing(Pairing *pairing)
     }
 }
 
+void Tournament::setResult(Pairing *pairing, Pairing::Result result)
+{
+    pairing->setResult(result);
+    savePairing(pairing);
+}
+
 QList<Pairing *> Tournament::getPairings(int round) const
 {
     if (round <= m_rounds.size()) {

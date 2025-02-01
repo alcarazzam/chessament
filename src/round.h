@@ -22,6 +22,7 @@ public:
     explicit Round();
 
     QList<Pairing *> pairings();
+    Pairing *getPairing(int board);
 
     void addPairing(Pairing *pairing);
     void sortPairings();

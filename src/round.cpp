@@ -22,6 +22,17 @@ void Round::setPairings(QList<Pairing *> pairings)
     Q_EMIT pairingsChanged();
 }
 
+Pairing *Round::getPairing(int board)
+{
+    const auto it = std::find_if(m_pairings.begin(), m_pairings.end(), [board](Pairing *p) {
+        return p->board() == board;
+    });
+
+    Q_ASSERT(it != m_pairings.end());
+
+    return *it;
+}
+
 void Round::addPairing(Pairing *pairing)
 {
     m_pairings.append(pairing);
