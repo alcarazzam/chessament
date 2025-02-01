@@ -128,27 +128,11 @@ Kirigami.Page {
                 highlighted: selected
 
                 onClicked: {
-                    delegate.forceActiveFocus();
                     tableView.closeEditor();
                     tableView.selectionModel.select(tableView.model.index(row, column), ItemSelectionModel.ClearAndSelect);
                 }
                 onDoubleClicked: {
                     tableView.edit(tableView.model.index(row, column));
-                }
-
-                Rectangle {
-                    anchors.fill: parent
-                    visible: delegate.current
-                    color: Kirigami.Theme.highlightColor
-                    border.color: Kirigami.Theme.highlightColor
-                }
-
-                contentItem: QQC2.Label {
-                    text: delegate.model.display
-                    elide: Text.ElideRight
-                    verticalAlignment: Qt.AlignVCenter
-                    leftPadding: Kirigami.Units.largeSpacing
-                    rightPadding: Kirigami.Units.largeSpacing
                 }
 
                 TableView.editDelegate: DelegateChooser {
@@ -171,6 +155,31 @@ Kirigami.Page {
 
                             TableView.onCommit: {
                                 model.display = text;
+                            }
+                        }
+                    }
+
+                    DelegateChoice {
+                        column: PlayerRoles.TitleRole
+
+                        QQC2.ComboBox {
+                            id: comboBox
+
+                            anchors.fill: parent
+                            model: [" ", "GM", "IM", "FM", "WGM", "CM", "WIM", "WFM", "WCM"]
+
+                            popup.onClosed: tableView.closeEditor()
+
+                            onActivated: {
+                                let index = tableView.model.index(delegate.row, delegate.column);
+                                tableView.model.setData(index, comboBox.currentText);
+                                tableView.closeEditor();
+                            }
+
+                            Component.onCompleted: {
+                                let data = tableView.model.data(tableView.model.index(delegate.row, delegate.column));
+                                comboBox.currentIndex = comboBox.indexOfValue(data);
+                                comboBox.popup.open();
                             }
                         }
                     }
