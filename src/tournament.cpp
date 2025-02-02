@@ -268,11 +268,9 @@ QMap<Player *, QList<Pairing *>> Tournament::getPairingsByPlayer(int maxRound)
     return pairings;
 }
 
-QList<PlayerTiebreaks> Tournament::getStandings(uint round)
+QList<PlayerTiebreaks> Tournament::getStandings(int round)
 {
-    Q_UNUSED(round) // TODO: round
-
-    TournamentState state(this);
+    TournamentState state(this, round);
     QList<PlayerTiebreaks> standings;
 
     // Sort by tiebreaks
@@ -447,11 +445,77 @@ int Tournament::numberOfRatedPlayers()
 void Tournament::sortPairings()
 {
     for (int i = 0; i < m_rounds.size(); i++) {
-        m_rounds.at(i)->sortPairings();
+        auto pairings = m_rounds.at(i)->pairings();
 
-        for (const auto &pairing : m_rounds.at(i)->pairings()) {
-            savePairing(pairing);
+        TournamentState state(this, i);
+
+        std::sort(pairings.begin(), pairings.end(), [i, &state](Pairing *a, Pairing *b) -> bool {
+            int aRank;
+            if (a->blackPlayer() == nullptr) {
+                aRank = 0;
+            } else {
+                aRank = std::min(a->whitePlayer()->startingRank(), a->blackPlayer()->startingRank());
+            }
+
+            int bRank;
+            if (b->blackPlayer() == nullptr) {
+                bRank = 0;
+            } else {
+                bRank = std::min(b->whitePlayer()->startingRank(), b->blackPlayer()->startingRank());
+            }
+
+            if (aRank == 0 && bRank == 0) {
+                if (std::to_underlying(a->result()) == std::to_underlying(b->result())) {
+                    return a->whitePlayer()->startingRank() < b->whitePlayer()->startingRank();
+                } else {
+                    return std::to_underlying(a->result()) > std::to_underlying(b->result());
+                }
+            } else if (aRank == 0) {
+                return false;
+            } else if (bRank == 0) {
+                return true;
+            }
+
+            int aScore;
+            int aTotal;
+            if (a->whitePlayer()->startingRank() < a->blackPlayer()->startingRank()) {
+                aScore = state.getPoints(a->whitePlayer());
+                aTotal = aScore + state.getPoints(a->blackPlayer());
+            } else {
+                aScore = state.getPoints(a->blackPlayer());
+                aTotal = aScore + state.getPoints(a->whitePlayer());
+            }
+            int bScore;
+            int bTotal;
+            if (b->whitePlayer()->startingRank() < b->blackPlayer()->startingRank()) {
+                bScore = state.getPoints(b->whitePlayer());
+                bTotal = bScore + state.getPoints(b->blackPlayer());
+            } else {
+                bScore = state.getPoints(b->blackPlayer());
+                bTotal = bScore + state.getPoints(b->whitePlayer());
+            }
+
+            if (i > 0) {
+                if (aScore != bScore) {
+                    return aScore > bScore;
+                }
+
+                //
+                if (aTotal != bTotal) {
+                    return aTotal > bTotal;
+                }
+            }
+
+            return aRank < bRank;
+        });
+
+        for (int i = 0; i < pairings.size(); i++) {
+            pairings.at(i)->setBoard(i + 1);
+
+            savePairing(pairings.at(i));
         }
+
+        m_rounds.at(i)->setPairings(pairings);
     }
 }
 

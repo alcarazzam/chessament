@@ -3,10 +3,11 @@
 
 #include "tournamentstate.h"
 
-TournamentState::TournamentState(Tournament *tournament)
+TournamentState::TournamentState(Tournament *tournament, int maxRound)
 {
     m_tournament = tournament;
-    m_pairingsByPlayer = m_tournament->getPairingsByPlayer();
+    m_maxRound = maxRound;
+    m_pairingsByPlayer = m_tournament->getPairingsByPlayer(m_maxRound);
 }
 
 QList<Pairing *> TournamentState::getPairings(Player *player)

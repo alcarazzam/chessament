@@ -445,8 +445,6 @@ public:
 
     QString toTrf(Player *player);
 
-    bool operator<(Pairing other);
-
     friend QDebug operator<<(QDebug dbg, Pairing &pairing);
 
 public Q_SLOTS:

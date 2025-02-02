@@ -8,7 +8,7 @@
 class TournamentState
 {
 public:
-    explicit TournamentState(Tournament *tournament);
+    explicit TournamentState(Tournament *tournament, int maxRound = -1);
 
     QList<Pairing *> getPairings(Player *player);
     uint getPoints(Player *player);
@@ -16,6 +16,7 @@ public:
 
 private:
     Tournament *m_tournament;
+    int m_maxRound;
 
     QMap<Player *, QList<Pairing *>> m_pairingsByPlayer;
 };

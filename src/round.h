@@ -25,7 +25,6 @@ public:
     Pairing *getPairing(int board);
 
     void addPairing(Pairing *pairing);
-    void sortPairings();
 
 public Q_SLOTS:
     void setPairings(QList<Pairing *> pairings);

@@ -62,7 +62,7 @@ public:
     QMap<uint, Player *> getPlayersByStartingRank();
     QMap<uint, Player *> getPlayersById();
     QMap<Player *, QList<Pairing *>> getPairingsByPlayer(int maxRound = -1);
-    QList<PlayerTiebreaks> getStandings(uint round = 0);
+    QList<PlayerTiebreaks> getStandings(int round = 0);
 
     QList<Round *> rounds() const;
     void addPairing(int round, Pairing *pairing);
