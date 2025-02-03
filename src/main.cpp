@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QtGlobal>
 
 #include <QIcon>
@@ -80,6 +81,15 @@ int main(int argc, char *argv[])
     aboutData.setTranslator(i18nc("NAME OF TRANSLATORS", "Your names"), i18nc("EMAIL OF TRANSLATORS", "Your emails"));
     KAboutData::setApplicationData(aboutData);
     QGuiApplication::setWindowIcon(QIcon::fromTheme(u"dev.alcarazzam.chessament"_s));
+
+    QCommandLineParser parser;
+
+    QCommandLineOption trfFile("import"_L1, i18n("Import TRF file"), u"file"_s);
+    parser.addOption(trfFile);
+
+    aboutData.setupCommandLine(&parser);
+    parser.process(app);
+    aboutData.processCommandLine(&parser);
 
     Q_IMPORT_QML_PLUGIN(dev_alcarazzam_chessament_settingsPlugin)
 
