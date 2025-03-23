@@ -24,6 +24,8 @@ Q_SIGNALS:
     void importTrf();
     void exportTrf();
 
+    void connectAccount();
+
 private:
     void setupActions() override;
 };

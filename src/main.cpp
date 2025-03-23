@@ -18,7 +18,6 @@
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
 
-#include "chessamentconfig.h"
 #include "pairingmodel.h"
 #include "playersmodel.h"
 #include "standingsmodel.h"
@@ -101,10 +100,6 @@ int main(int argc, char *argv[])
                                                QStringLiteral("Cannot create instances of StandingsModel"));
 
     QQmlApplicationEngine engine;
-
-    auto config = ChessamentConfig::self();
-
-    qmlRegisterSingletonInstance("dev.alcarazzam.chessament.private", 1, 0, "Config", config);
 
     KLocalization::setupLocalizedContext(&engine);
     engine.loadFromModule("dev.alcarazzam.chessament", u"Main"_s);

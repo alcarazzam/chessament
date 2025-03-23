@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QQmlEngine>
 
+#include "account.h"
 #include "pairingmodel.h"
 #include "playersmodel.h"
 #include "standingsmodel.h"
@@ -27,6 +28,8 @@ class Controller : public QObject
     Q_PROPERTY(PlayersModel *playersModel READ playersModel CONSTANT)
     Q_PROPERTY(PairingModel *pairingModel READ pairingModel CONSTANT)
     Q_PROPERTY(StandingsModel *standingsModel READ standingsModel CONSTANT)
+
+    Q_PROPERTY(Account *account READ account CONSTANT)
 
     Q_PROPERTY(QString currentView READ currentView WRITE setCurrentView NOTIFY currentViewChanged)
     Q_PROPERTY(QString error READ error WRITE setError NOTIFY errorChanged)
@@ -64,6 +67,10 @@ public:
     PairingModel *pairingModel() const;
     StandingsModel *standingsModel() const;
 
+    Account *account() const;
+
+    Q_INVOKABLE void connectAccount();
+
     QString currentView() const;
     QString error() const;
 
@@ -98,6 +105,8 @@ private:
     PlayersModel *m_playersModel;
     PairingModel *m_pairingModel;
     StandingsModel *m_standingsModel;
+
+    Account *m_account;
 
     QString m_currentView;
     QString m_error;

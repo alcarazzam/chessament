@@ -26,7 +26,9 @@ StatefulApp.StatefulWindow {
     minimumHeight: Kirigami.Units.gridUnit * 20
 
     application: ChessamentApplication {
-        configurationView: Settings.ChessamentConfigurationView {}
+        configurationView: Settings.ChessamentConfigurationView {
+            application: root.application
+        }
     }
 
     Connections {
@@ -72,6 +74,14 @@ StatefulApp.StatefulWindow {
                 Controller.exportTrf(dialog.selectedFile);
             });
             dialog.open();
+        }
+
+        function onConnectAccount() {
+            console.log("connect account");
+            Controller.connectAccount();
+        // root.pageStack.pushDialogLayer(Qt.createComponent("dev.alcarazzam.chessament", "ConnectAccountPage"), {
+        //     application: root.application
+        // });
         }
     }
 

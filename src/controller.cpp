@@ -9,6 +9,7 @@ Controller::Controller(QObject *parent)
     , m_playersModel(new PlayersModel(this))
     , m_pairingModel(new PairingModel(this))
     , m_standingsModel(new StandingsModel(this))
+    , m_account(new Account)
 {
     connect(m_playersModel, &PlayersModel::playerChanged, this, [this](Player *player) {
         m_tournament->savePlayer(player);
@@ -243,6 +244,16 @@ PairingModel *Controller::pairingModel() const
 StandingsModel *Controller::standingsModel() const
 {
     return m_standingsModel;
+}
+
+Account *Controller::account() const
+{
+    return m_account;
+}
+
+void Controller::connectAccount()
+{
+    m_account->login();
 }
 
 QString Controller::currentView() const
