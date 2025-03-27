@@ -44,7 +44,7 @@ ecm_set_disabled_deprecation_versions(
     KF ${KF6_MIN_VERSION}
 )
 
-find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Sql Svg WebEngineQuick Widgets)
+find_package(Qt6 ${QT6_MIN_VERSION} REQUIRED COMPONENTS Core Gui Qml QuickControls2 Sql Svg Network NetworkAuth WebEngineQuick Widgets)
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS Kirigami CoreAddons Config IconThemes I18n ItemModels)
 
 find_package(QCoro6 0.11 REQUIRED COMPONENTS Core)
@@ -54,6 +54,12 @@ find_package(KF6KirigamiAddons ${KIRIGAMI_ADDONS_MIN_VERSION} REQUIRED)
 set_package_properties(KF6KirigamiAddons PROPERTIES
     TYPE REQUIRED
     PURPOSE "Required application components and runtime dependency"
+)
+
+find_package(Qt6Keychain)
+set_package_properties(Qt6Keychain PROPERTIES
+    TYPE REQUIRED
+    PURPOSE "Store authentication credentials"
 )
 
 qt_policy(SET QTP0001 NEW)

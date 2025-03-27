@@ -29,6 +29,8 @@ ecm_add_qml_module(chessament_static
         QtCore
         QtQuick
     SOURCES
+        account.cpp
+        account.h
         db.h
         controller.cpp
         documents.cpp
@@ -76,6 +78,8 @@ target_link_libraries(chessament_static PUBLIC
     Qt6::Svg
     Qt6::WebEngineQuick
     Qt6::Widgets
+    Qt6::Network
+    Qt6::NetworkAuth
     KF6::I18n
     KF6::I18nQml
     KF6::CoreAddons
@@ -85,10 +89,11 @@ target_link_libraries(chessament_static PUBLIC
     KF6::ItemModels
     KirigamiAddonsStatefulApp
     QCoro6::Core
+    ${QTKEYCHAIN_LIBRARIES}
 )
 target_include_directories(chessament_static PUBLIC ${CMAKE_BINARY_DIR})
 
-kconfig_add_kcfg_files(chessament_static GENERATE_MOC chessamentconfig.kcfgc)
+kconfig_target_kcfg_file(chessament_static FILE config.kcfg CLASS_NAME Config MUTATORS GENERATE_PROPERTIES GENERATE_MOC DEFAULT_VALUE_GETTERS PARENT_IN_CONSTRUCTOR SINGLETON QML_REGISTRATION)
 
 add_executable(chessament main.cpp)
 target_link_libraries(chessament PRIVATE
