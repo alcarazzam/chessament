@@ -34,7 +34,7 @@ QVariant StandingsModel::data(const QModelIndex &index, int role) const
     case TitleRole:
         return Player::titleString(standing.first->title());
     case NameRole:
-        return standing.first->name();
+        return standing.first->fullName();
     default:
         return standing.second.at(index.column() - 4);
     }

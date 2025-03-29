@@ -33,6 +33,8 @@ QVariant PlayersModel::data(const QModelIndex &index, int role) const
         return Player::titleString(player->title());
     case NameRole:
         return player->name();
+    case SurnameRole:
+        return player->surname();
     case RatingRole:
         return player->rating();
     case NationalRatingRole:
@@ -70,6 +72,9 @@ bool PlayersModel::setData(const QModelIndex &index, const QVariant &value, int 
         break;
     case NameRole:
         player->setName(value.toString());
+        break;
+    case SurnameRole:
+        player->setSurname(value.toString());
         break;
     case RatingRole:
         player->setRating(value.toInt());
@@ -122,6 +127,8 @@ QVariant PlayersModel::headerData(int section, Qt::Orientation orientation, int 
         return i18nc("@title:column", "Title");
     case NameRole:
         return i18nc("@title:column", "Name");
+    case SurnameRole:
+        return i18nc("@title:column", "Surname");
     case RatingRole:
         return i18nc("@title:column", "Rating");
     case NationalRatingRole:
@@ -152,13 +159,11 @@ void PlayersModel::addPlayer(Player *player)
     Q_UNUSED(player);
 
     beginInsertRows({}, m_players->size() - 1, m_players->size() - 1);
-    // m_players << player;
     endInsertRows();
 }
 
 void PlayersModel::updatePlayer(int i, Player *player)
 {
     Q_UNUSED(player);
-    // m_players[i] = player;
     Q_EMIT dataChanged(index(i, 0), index(i, columnCount() - 1), {});
 }

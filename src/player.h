@@ -20,6 +20,7 @@ class Player : public QObject
     Q_PROPERTY(int startingRank READ startingRank NOTIFY startingRankChanged)
     Q_PROPERTY(Title title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString surname READ surname WRITE setSurname NOTIFY surnameChanged)
     Q_PROPERTY(int rating READ rating WRITE setRating NOTIFY ratingChanged)
     Q_PROPERTY(int nationalRating READ nationalRating WRITE setNationalRating NOTIFY nationalRatingChanged)
     Q_PROPERTY(QString playerId READ playerId WRITE setPlayerId NOTIFY playerIdChanged)
@@ -101,6 +102,7 @@ public:
     explicit Player(int startingRank,
                     Title title,
                     const QString &name,
+                    const QString &surname,
                     int rating,
                     int nationalRating,
                     const QString &playerId,
@@ -113,6 +115,7 @@ public:
     int startingRank();
     Title title() const;
     QString name() const;
+    QString surname() const;
     int rating();
     int nationalRating();
     QString playerId() const;
@@ -126,6 +129,8 @@ public:
         return Player::titleString(m_title);
     };
 
+    QString fullName() const;
+
     QJsonObject toJson() const;
     static Player *fromJson(const QJsonObject &json);
 
@@ -137,6 +142,7 @@ public Q_SLOTS:
     void setTitle(Title title);
     void setTitle(const QString &titleString);
     void setName(const QString &name);
+    void setSurname(const QString &surname);
     void setRating(int rating);
     void setNationalRating(int nationalRating);
     void setPlayerId(const QString &playerId);
@@ -150,6 +156,7 @@ Q_SIGNALS:
     void startingRankChanged();
     void titleChanged();
     void nameChanged();
+    void surnameChanged();
     void ratingChanged();
     void nationalRatingChanged();
     void playerIdChanged();
@@ -163,6 +170,7 @@ private:
     int m_startingRank = 1;
     Title m_title;
     QString m_name;
+    QString m_surname;
     int m_rating = 0;
     int m_nationalRating = 0;
     QString m_playerId;

@@ -95,14 +95,15 @@ Kirigami.Page {
                 const columnWidths = [];
                 columnWidths[0] = 50;
                 columnWidths[1] = 70;
-                columnWidths[2] = 300;
-                columnWidths[3] = 100;
+                columnWidths[2] = 200;
+                columnWidths[3] = 150;
                 columnWidths[4] = 100;
-                columnWidths[5] = 150;
+                columnWidths[5] = 100;
                 columnWidths[6] = 150;
-                columnWidths[7] = 100;
-                columnWidths[8] = 200;
-                columnWidths[9] = 60;
+                columnWidths[7] = 150;
+                columnWidths[8] = 100;
+                columnWidths[9] = 200;
+                columnWidths[10] = 60;
                 return columnWidths[column];
             }
 

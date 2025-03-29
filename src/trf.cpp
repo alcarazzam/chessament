@@ -48,7 +48,16 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
             auto playerId = line.sliced(57, 11).trimmed();
             auto birthDate = line.sliced(69, 10).trimmed();
 
-            auto player = new Player(startingRank, title, name, rating, 0, playerId, birthDate, federation, {}, sex);
+            QString surname;
+            if (name.contains(','_L1)) {
+                const auto parts = name.split(u","_s);
+                if (parts.length() == 2) {
+                    surname = parts[0];
+                    name = parts[1];
+                }
+            }
+
+            auto player = new Player(startingRank, title, name, surname, rating, 0, playerId, birthDate, federation, {}, sex);
             players[startingRank] = player;
 
             // Read round

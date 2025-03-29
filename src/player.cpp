@@ -19,6 +19,7 @@ Player::Player(int startingRank, const QString &name, int rating)
 Player::Player(int startingRank,
                Title title,
                const QString &name,
+               const QString &surname,
                int rating,
                int nationalRating,
                const QString &playerId,
@@ -31,6 +32,7 @@ Player::Player(int startingRank,
     setStartingRank(startingRank);
     setTitle(title);
     setName(name);
+    setSurname(surname);
     setRating(rating);
     setNationalRating(nationalRating);
     setPlayerId(playerId);
@@ -100,6 +102,20 @@ void Player::setName(const QString &name)
     }
     m_name = name;
     Q_EMIT nameChanged();
+}
+
+QString Player::surname() const
+{
+    return m_surname;
+}
+
+void Player::setSurname(const QString &surname)
+{
+    if (m_surname == surname) {
+        return;
+    }
+    m_surname = surname;
+    Q_EMIT surnameChanged();
 }
 
 int Player::rating()
@@ -200,6 +216,14 @@ void Player::setSex(const QString &sex)
     Q_EMIT sexChanged();
 }
 
+QString Player::fullName() const
+{
+    if (!m_surname.isEmpty()) {
+        return m_surname + u", "_s + m_name;
+    }
+    return m_name;
+}
+
 QJsonObject Player::toJson() const
 {
     QJsonObject json;
@@ -207,6 +231,7 @@ QJsonObject Player::toJson() const
     json[QStringLiteral("starting_rank")] = m_startingRank;
     json[QStringLiteral("title")] = Player::titleString(m_title);
     json[QStringLiteral("name")] = m_name;
+    json[QStringLiteral("surname")] = m_surname;
     json[QStringLiteral("rating")] = m_rating;
     json[QStringLiteral("national_rating")] = m_nationalRating;
     json[QStringLiteral("player_id")] = m_playerId;
@@ -227,6 +252,9 @@ Player *Player::fromJson(const QJsonObject &json)
     }
     if (const auto v = json[QStringLiteral("title")]; v.isString()) {
         player->m_title = Player::titleForString(v.toString());
+    }
+    if (const auto v = json[QStringLiteral("surname")]; v.isString()) {
+        player->m_surname = v.toString();
     }
     if (const auto v = json[QStringLiteral("name")]; v.isString()) {
         player->m_name = v.toString();

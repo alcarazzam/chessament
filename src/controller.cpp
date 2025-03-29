@@ -164,7 +164,7 @@ void Controller::addPlayer(const QString &title,
                            const QString &sex)
 {
     auto startingRank = m_tournament->players()->size() + 1;
-    auto player = new Player(startingRank, Player::titleForString(title), name, rating, nationalRating, playerId, birthDate, {}, origin, sex);
+    auto player = new Player(startingRank, Player::titleForString(title), name, {}, rating, nationalRating, playerId, birthDate, {}, origin, sex);
 
     m_tournament->addPlayer(player);
     m_playersModel->addPlayer(player);

@@ -187,6 +187,7 @@ void Tournament::addPlayer(Player *player)
     query.bindValue(u":startingRank"_s, player->startingRank());
     query.bindValue(u":title"_s, Player::titleString(player->title()));
     query.bindValue(u":name"_s, player->name());
+    query.bindValue(u":surname"_s, player->surname());
     query.bindValue(u":rating"_s, player->rating());
     query.bindValue(u":nationalRating"_s, player->nationalRating());
     query.bindValue(u":playerId"_s, player->playerId());
@@ -211,6 +212,7 @@ void Tournament::savePlayer(Player *player)
     query.bindValue(u":startingRank"_s, player->startingRank());
     query.bindValue(u":title"_s, Player::titleString(player->title()));
     query.bindValue(u":name"_s, player->name());
+    query.bindValue(u":surname"_s, player->surname());
     query.bindValue(u":rating"_s, player->rating());
     query.bindValue(u":nationalRating"_s, player->nationalRating());
     query.bindValue(u":playerId"_s, player->playerId());
@@ -864,6 +866,7 @@ void Tournament::loadPlayers()
     int stRankNo = query.record().indexOf("startingRank");
     int titleNo = query.record().indexOf("title");
     int nameNo = query.record().indexOf("name");
+    int surnameNo = query.record().indexOf("surname");
     int ratingNo = query.record().indexOf("rating");
     int nationalRatingNo = query.record().indexOf("nationalRating");
     int playerIdNo = query.record().indexOf("playerId");
@@ -876,6 +879,7 @@ void Tournament::loadPlayers()
         auto player = new Player(query.value(stRankNo).toInt(),
                                  Player::titleForString(query.value(titleNo).toString()),
                                  query.value(nameNo).toString(),
+                                 query.value(surnameNo).toString(),
                                  query.value(ratingNo).toInt(),
                                  query.value(nationalRatingNo).toInt(),
                                  query.value(playerIdNo).toString(),

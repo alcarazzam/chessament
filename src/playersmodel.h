@@ -18,6 +18,7 @@ public:
         StartingRankRole = 0,
         TitleRole,
         NameRole,
+        SurnameRole,
         RatingRole,
         NationalRatingRole,
         PlayerIdRole,
