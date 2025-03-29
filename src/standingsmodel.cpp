@@ -3,6 +3,8 @@
 
 #include "standingsmodel.h"
 
+#include <limits>
+
 StandingsModel::StandingsModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
@@ -71,6 +73,6 @@ void StandingsModel::setTournament(Tournament *tournament)
 {
     beginResetModel();
     m_tournament = tournament;
-    m_standings = m_tournament->getStandings();
+    m_standings = m_tournament->getStandings(std::numeric_limits<int>::max());
     endResetModel();
 }
