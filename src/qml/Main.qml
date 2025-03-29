@@ -134,7 +134,7 @@ StatefulApp.StatefulWindow {
             ListElement {
                 name: "Standings"
                 viewName: "StandingsPage"
-                iconName: "system-users-symbolic"
+                iconName: "games-highscores-symbolic"
             }
         }
 
