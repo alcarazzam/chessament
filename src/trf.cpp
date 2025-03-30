@@ -104,7 +104,7 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
         }
     }
 
-    for (const auto &player : players) {
+    for (const auto &player : std::as_const(players)) {
         addPlayer(player);
     }
 

@@ -231,7 +231,7 @@ QMap<uint, Player *> Tournament::getPlayersByStartingRank()
 {
     QMap<uint, Player *> players;
 
-    for (const auto &player : *m_players) {
+    for (const auto &player : std::as_const(*m_players)) {
         players[player->startingRank()] = player;
     }
 
@@ -242,16 +242,16 @@ QMap<uint, Player *> Tournament::getPlayersById()
 {
     QMap<uint, Player *> players;
 
-    for (const auto &player : *m_players) {
+    for (const auto &player : std::as_const(*m_players)) {
         players[player->id()] = player;
     }
 
     return players;
 }
 
-QMap<Player *, QList<Pairing *>> Tournament::getPairingsByPlayer(int maxRound)
+QHash<Player *, QList<Pairing *>> Tournament::getPairingsByPlayer(int maxRound)
 {
-    QMap<Player *, QList<Pairing *>> pairings;
+    QHash<Player *, QList<Pairing *>> pairings;
 
     auto r = maxRound < 0 ? m_rounds.size() : maxRound;
     for (int i = 0; i < r; i++) {
@@ -294,7 +294,7 @@ QList<PlayerTiebreaks> Tournament::getStandings(int round)
 
     // Calculate tiebreaks
     QList<Player *> players;
-    for (const auto &tiebreak : m_tiebreaks) {
+    for (const auto &tiebreak : std::as_const(m_tiebreaks)) {
         int i = 0;
         players.clear();
         while (i < m_players->size()) {
@@ -618,7 +618,7 @@ QJsonObject Tournament::toJson() const
     tournament[QStringLiteral("number_of_rounds")] = m_numberOfRounds;
 
     QJsonArray players;
-    for (const auto &player : *m_players) {
+    for (const auto &player : std::as_const(*m_players)) {
         players << player->toJson();
     }
 
@@ -660,7 +660,7 @@ void Tournament::read(const QJsonObject &json)
         auto players = v.toArray();
         m_players->clear();
         m_players->reserve(players.size());
-        for (const auto &player : players) {
+        for (const auto &player : std::as_const(players)) {
             *m_players << Player::fromJson(player.toObject());
         }
     }
@@ -695,7 +695,7 @@ QString Tournament::toTrf(TrfOptions options, int maxRound)
     const auto pairings = getPairingsByPlayer(maxRound);
     const auto r = maxRound < 0 ? m_numberOfRounds : maxRound;
 
-    for (const auto player : *m_players) {
+    for (const auto player : std::as_const(*m_players)) {
         const auto title = Player::titleString(player->title());
         const auto result = std::format("001 {:4} {:1}{:3} {:33} {:4} {:3} {:>11} {:10} {:4.1f} {:4}",
                                         player->startingRank(),

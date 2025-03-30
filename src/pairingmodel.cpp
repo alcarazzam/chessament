@@ -37,12 +37,12 @@ QVariant PairingModel::data(const QModelIndex &index, int role) const
         return Pairing::resultString(pairing->result());
     case BlackNameRole:
         if (pairing->blackPlayer() == nullptr) {
-            return QStringLiteral("");
+            return QLatin1String("");
         }
         return pairing->blackPlayer()->fullName();
     case BlackStartingRankRole:
         if (pairing->blackPlayer() == nullptr) {
-            return QStringLiteral("");
+            return QLatin1String("");
         }
         return pairing->blackPlayer()->startingRank();
     }

@@ -18,5 +18,5 @@ private:
     Tournament *m_tournament;
     int m_maxRound;
 
-    QMap<Player *, QList<Pairing *>> m_pairingsByPlayer;
+    QHash<Player *, QList<Pairing *>> m_pairingsByPlayer;
 };
