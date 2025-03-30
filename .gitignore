@@ -16,3 +16,5 @@ cmake-build-*
 *.log
 repo/
 *.flatpak
+*.pot
+
