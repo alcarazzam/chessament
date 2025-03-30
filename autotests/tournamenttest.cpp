@@ -7,6 +7,8 @@
 
 #include "tournament.h"
 
+using namespace Qt::Literals::StringLiterals;
+
 class TournamentTest : public QObject
 {
     Q_OBJECT
@@ -21,27 +23,27 @@ private Q_SLOTS:
 void TournamentTest::testNewTournament()
 {
     auto t = new Tournament();
-    QCOMPARE(t->name(), QStringLiteral(""));
+    QCOMPARE(t->name(), u""_s);
 }
 
 void TournamentTest::testToJson()
 {
     auto t = new Tournament();
-    t->setName(QStringLiteral("Test tournament"));
+    t->setName(u"Test tournament"_s);
 
     auto json = t->toJson();
 
-    QCOMPARE(json[QStringLiteral("tournament")].toObject()[QStringLiteral("name")], QStringLiteral("Test tournament"));
+    QCOMPARE(json[u"tournament"_s].toObject()[u"name"_s], u"Test tournament"_s);
 }
 
 void TournamentTest::testTrf()
 {
     auto t = new Tournament();
-    t->setName(QStringLiteral("Test tournament"));
+    t->setName(u"Test tournament"_s);
 
     auto trf = t->toTrf();
 
-    QVERIFY(trf.contains(QStringLiteral("012 Test tournament")));
+    QVERIFY(trf.contains(u"012 Test tournament"_s));
 
     t = new Tournament();
     auto ok = t->readTrf(QTextStream(&trf));

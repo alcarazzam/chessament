@@ -4,6 +4,8 @@
 #include "controller.h"
 #include "pairing.h"
 
+using namespace Qt::Literals::StringLiterals;
+
 Controller::Controller(QObject *parent)
     : QObject(parent)
     , m_playersModel(new PlayersModel(this))
@@ -124,7 +126,7 @@ void Controller::importTrf(const QUrl &fileUrl)
         setTournament(tournament);
         setTournamentPath({});
 
-        setCurrentView(QStringLiteral("PlayersPage"));
+        setCurrentView(u"PlayersPage"_s);
     } else {
         setError(error.error());
     }
@@ -213,7 +215,7 @@ void Controller::newTournament(const QUrl &fileUrl, const QString &name, int num
 
     setTournament(tournament);
     setTournamentPath(fileUrl.toLocalFile());
-    setCurrentView(QStringLiteral("PlayersPage"));
+    setCurrentView(u"PlayersPage"_s);
 }
 
 void Controller::openTournament(const QUrl &fileUrl)
@@ -222,7 +224,7 @@ void Controller::openTournament(const QUrl &fileUrl)
 
     setTournament(tournament);
     setTournamentPath(fileUrl.toLocalFile());
-    setCurrentView(QStringLiteral("PlayersPage"));
+    setCurrentView(u"PlayersPage"_s);
 }
 
 void Controller::saveTournamentAs(const QUrl &fileUrl)

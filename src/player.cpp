@@ -3,6 +3,8 @@
 
 #include "player.h"
 
+using namespace Qt::Literals::StringLiterals;
+
 Player::Player()
     : QObject()
 {
@@ -228,17 +230,17 @@ QJsonObject Player::toJson() const
 {
     QJsonObject json;
 
-    json[QStringLiteral("starting_rank")] = m_startingRank;
-    json[QStringLiteral("title")] = Player::titleString(m_title);
-    json[QStringLiteral("name")] = m_name;
-    json[QStringLiteral("surname")] = m_surname;
-    json[QStringLiteral("rating")] = m_rating;
-    json[QStringLiteral("national_rating")] = m_nationalRating;
-    json[QStringLiteral("player_id")] = m_playerId;
-    json[QStringLiteral("birth_date")] = m_birthDate;
-    json[QStringLiteral("federation")] = m_federation;
-    json[QStringLiteral("origin")] = m_origin;
-    json[QStringLiteral("sex")] = m_sex;
+    json[u"starting_rank"_s] = m_startingRank;
+    json[u"title"_s] = Player::titleString(m_title);
+    json[u"name"_s] = m_name;
+    json[u"surname"_s] = m_surname;
+    json[u"rating"_s] = m_rating;
+    json[u"national_rating"_s] = m_nationalRating;
+    json[u"player_id"_s] = m_playerId;
+    json[u"birth_date"_s] = m_birthDate;
+    json[u"federation"_s] = m_federation;
+    json[u"origin"_s] = m_origin;
+    json[u"sex"_s] = m_sex;
 
     return json;
 }
@@ -247,37 +249,37 @@ Player *Player::fromJson(const QJsonObject &json)
 {
     auto *player = new Player();
 
-    if (const auto v = json[QStringLiteral("starting_rank")]; v.isDouble()) {
+    if (const auto v = json[u"starting_rank"_s]; v.isDouble()) {
         player->m_startingRank = v.toInt();
     }
-    if (const auto v = json[QStringLiteral("title")]; v.isString()) {
+    if (const auto v = json[u"title"_s]; v.isString()) {
         player->m_title = Player::titleForString(v.toString());
     }
-    if (const auto v = json[QStringLiteral("surname")]; v.isString()) {
+    if (const auto v = json[u"surname"_s]; v.isString()) {
         player->m_surname = v.toString();
     }
-    if (const auto v = json[QStringLiteral("name")]; v.isString()) {
+    if (const auto v = json[u"name"_s]; v.isString()) {
         player->m_name = v.toString();
     }
-    if (const auto v = json[QStringLiteral("rating")]; v.isDouble()) {
+    if (const auto v = json[u"rating"_s]; v.isDouble()) {
         player->m_rating = v.toInt();
     }
-    if (const auto v = json[QStringLiteral("national_rating")]; v.isDouble()) {
+    if (const auto v = json[u"national_rating"_s]; v.isDouble()) {
         player->m_nationalRating = v.toInt();
     }
-    if (const auto v = json[QStringLiteral("player_id")]; v.isString()) {
+    if (const auto v = json[u"player_id"_s]; v.isString()) {
         player->m_playerId = v.toString();
     }
-    if (const auto v = json[QStringLiteral("birth_date")]; v.isString()) {
+    if (const auto v = json[u"birth_date"_s]; v.isString()) {
         player->m_birthDate = v.toString();
     }
-    if (const auto v = json[QStringLiteral("federation")]; v.isString()) {
+    if (const auto v = json[u"federation"_s]; v.isString()) {
         player->m_federation = v.toString();
     }
-    if (const auto v = json[QStringLiteral("origin")]; v.isString()) {
+    if (const auto v = json[u"origin"_s]; v.isString()) {
         player->m_origin = v.toString();
     }
-    if (const auto v = json[QStringLiteral("sex")]; v.isString()) {
+    if (const auto v = json[u"sex"_s]; v.isString()) {
         player->m_sex = v.toString();
     }
 
