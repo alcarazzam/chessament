@@ -23,37 +23,25 @@ Kirigami.Page {
             onTriggered: Controller.pairRound()
         },
         Kirigami.Action {
-            text: i18n("Round %1", Controller.currentRound)
-            onTriggered: roundDialog.open()
-        }
-    ]
+            displayComponent: QQC2.ComboBox {
+                id: roundSelector
+                model: Controller.tournament.numberOfRounds
+                currentIndex: Controller.currentRound - 1
+                displayText: i18n("Round %1", currentIndex + 1)
+                delegate: QQC2.ItemDelegate {
+                    required property int index
 
-    Kirigami.Dialog {
-        id: roundDialog
-        title: i18nc("@title", "Select round")
-
-        ListView {
-            id: listView
-            implicitWidth: Kirigami.Units.gridUnit * 12
-            implicitHeight: Kirigami.Units.gridUnit * 16
-
-            model: Controller.tournament.numberOfRounds
-            delegate: QQC2.RadioDelegate {
-                required property int index
-
-                topPadding: Kirigami.Units.smallSpacing * 2
-                bottomPadding: Kirigami.Units.smallSpacing * 2
-                implicitWidth: listView.width
-                text: i18n("Round %1", index + 1)
-                checked: Controller.currentRound == index + 1
-                onClicked: {
+                    text: index + 1
+                    width: roundSelector.width
+                    highlighted: roundSelector.highlightedIndex === index
+                }
+                onActivated: index => {
                     Controller.currentRound = index + 1;
                     tableView.selectionModel.clearSelection();
-                    roundDialog.close();
                 }
             }
         }
-    }
+    ]
 
     QQC2.HorizontalHeaderView {
         id: header
