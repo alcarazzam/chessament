@@ -1,4 +1,6 @@
 #!/usr/bin/bash
+# SPDX-FileCopyrightText: 2025 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
 
 set -e
 
