@@ -3,6 +3,8 @@
 
 enable_testing()
 
+add_definitions(-DDATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data" )
+
 ecm_add_test(
     tournamenttest.cpp
     LINK_LIBRARIES chessament_static Qt::Test

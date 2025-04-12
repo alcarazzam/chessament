@@ -17,4 +17,5 @@ cmake-build-*
 repo/
 *.flatpak
 *.pot
+/Testing/
 
