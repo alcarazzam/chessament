@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the chessament package.
 #
 # SPDX-FileCopyrightText: 2025 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
 msgid ""
 msgstr ""
 "Project-Id-Version: chessament\n"
