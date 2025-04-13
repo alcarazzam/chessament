@@ -107,7 +107,7 @@ bool PlayersModel::setData(const QModelIndex &index, const QVariant &value, int 
 
 QHash<int, QByteArray> PlayersModel::roleNames() const
 {
-    return {{Qt::DisplayRole, "display"}};
+    return {{Qt::DisplayRole, "displayName"}};
 }
 
 Qt::ItemFlags PlayersModel::flags(const QModelIndex &index) const

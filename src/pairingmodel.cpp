@@ -51,7 +51,7 @@ QVariant PairingModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> PairingModel::roleNames() const
 {
-    return {{Qt::DisplayRole, "display"}};
+    return {{Qt::DisplayRole, "displayName"}};
 }
 
 QVariant PairingModel::headerData(int section, Qt::Orientation orientation, int role) const

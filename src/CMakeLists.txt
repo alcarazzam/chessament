@@ -11,6 +11,8 @@ ecm_add_qml_module(chessament_static
     VERSION 1.0
     QML_FILES
         qml/Main.qml
+        qml/TablePage.qml
+        qml/TableDelegate.qml
         qml/AddPlayerDialog.qml
         qml/DocsPage.qml
         qml/NavigationButtonDelegate.qml

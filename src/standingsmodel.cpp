@@ -42,7 +42,7 @@ QVariant StandingsModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> StandingsModel::roleNames() const
 {
-    return {{Qt::DisplayRole, "display"}};
+    return {{Qt::DisplayRole, "displayName"}};
 }
 
 Qt::ItemFlags StandingsModel::flags(const QModelIndex &index) const
