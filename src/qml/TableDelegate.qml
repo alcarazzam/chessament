@@ -14,6 +14,7 @@ T.ItemDelegate {
     id: root
 
     required property int row
+    required property int column
     required property bool selected
     required property bool current
     property Components.ConvergentContextMenu contextMenu: null
@@ -37,7 +38,8 @@ T.ItemDelegate {
     onClicked: {
         const selectionModel = root.tableView.selectionModel;
         selectionModel.clear();
-        selectionModel.setCurrentIndex(root.tableView.model.index(root.row, 0), ItemSelectionModel.SelectCurrent | ItemSelectionModel.Rows);
+        selectionModel.setCurrentIndex(root.tableView.model.index(root.row, root.column), ItemSelectionModel.SelectCurrent);
+        root.forceActiveFocus();
     }
 
     icon {
@@ -55,7 +57,7 @@ T.ItemDelegate {
     }
 
     background: Rectangle {
-        color: if (root.highlighted || root.selected || root.current || (root.down && !root.checked) || root.visualFocus) {
+        color: if (root.highlighted || root.selected || root.current || (root.down && !root.checked) || root.visualFocus || (root.row == root.tableView.currentRow && root.tableView.selectionBehavior == TableView.SelectRows)) {
             const highlight = Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.backgroundColor, Kirigami.Theme.highlightColor, 0.3);
             if (root.rowHovered) {
                 return Kirigami.ColorUtils.tintWithAlpha(highlight, Kirigami.Theme.textColor, 0.10);
@@ -72,7 +74,7 @@ T.ItemDelegate {
 
         border {
             color: Kirigami.Theme.highlightColor
-            width: root.visualFocus || root.activeFocus ? 1 : 0
+            width: 0 // root.visualFocus || root.activeFocus ? 1 : 0
         }
     }
 

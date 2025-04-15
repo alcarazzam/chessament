@@ -17,6 +17,8 @@ Kirigami.Page {
     required property Component delegate
     readonly property alias tableView: tableView
 
+    property var selectionBehavior: TableView.SelectCells
+
     leftPadding: 0
     rightPadding: 0
     topPadding: 0
@@ -57,8 +59,8 @@ Kirigami.Page {
                 pixelAligned: true
                 boundsBehavior: Flickable.StopAtBounds
 
-                selectionBehavior: TableView.SelectRows
-                selectionMode: TableView.ExtendedSelection
+                selectionBehavior: root.selectionBehavior
+                selectionMode: TableView.SingleSelection
 
                 selectionModel: ItemSelectionModel {
                     id: selectionModel

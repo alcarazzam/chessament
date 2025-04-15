@@ -17,6 +17,8 @@ TablePage {
 
     model: Controller.pairingModel
 
+    selectionBehavior: TableView.SelectRows
+
     actions: [
         Kirigami.Action {
             text: i18n("Pair round %1", Controller.tournament.currentRound + 1)
@@ -37,8 +39,8 @@ TablePage {
                     highlighted: roundSelector.highlightedIndex === index
                 }
                 onActivated: index => {
+                    root.tableView.selectionModel.clear();
                     Controller.currentRound = index + 1;
-                    root.tableView.selectionModel.clearSelection();
                 }
             }
         }
@@ -49,22 +51,17 @@ TablePage {
 
         required property int index
         required property string displayName
-        required property int column
         required property bool editing
         required selected
         required current
 
         text: displayName
-
-        onClicked: {
-            root.selectBoard(row + 1);
-        }
     }
 
     Keys.onPressed: event => {
-        let selection = tableView.selectionModel.selection;
+        let selection = tableView.selectionModel.currentIndex;
         if (selection) {
-            let board = selection[0]?.topLeft.row + 1;
+            let board = selection.row + 1;
             if (board && Controller.setResult(board, event.key)) {
                 event.accepted = true;
                 root.selectBoard((board % root.model.rowCount()) + 1);
@@ -75,5 +72,9 @@ TablePage {
     function selectBoard(board: int) {
         tableView.selectionModel.clear();
         tableView.selectionModel.setCurrentIndex(root.tableView.model.index(board - 1, 0), ItemSelectionModel.SelectCurrent | ItemSelectionModel.Rows);
+        if (board != 1) {
+            // FIXME: column size streches to fit when moving to the first row
+            tableView.positionViewAtRow(board - 1, TableView.Contain);
+        }
     }
 }

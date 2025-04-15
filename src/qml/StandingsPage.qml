@@ -15,12 +15,13 @@ TablePage {
 
     model: Controller.standingsModel
 
+    selectionBehavior: TableView.SelectRows
+
     delegate: TableDelegate {
         id: delegate
 
         required property int index
         required property string displayName
-        required property int column
         required property bool editing
         required selected
         required current

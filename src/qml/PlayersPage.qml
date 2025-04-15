@@ -68,7 +68,6 @@ TablePage {
 
         required property int index
         required property string displayName
-        required property int column
         required property bool editing
         required selected
         required current
@@ -76,7 +75,7 @@ TablePage {
         text: displayName
 
         onDoubleClicked: {
-            root.tableView.edit(proxyModel.index(row, column));
+            root.tableView.edit(proxyModel.index(delegate.row, delegate.column));
         }
 
         TableView.editDelegate: DelegateChooser {

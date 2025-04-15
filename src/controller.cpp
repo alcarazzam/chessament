@@ -204,7 +204,8 @@ bool Controller::setResult(int board, Qt::Key key)
         return true;
     }
 
-    return false;
+    // Enter key changes to the next pairing
+    return key == Qt::Key_Enter;
 }
 
 void Controller::newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds)
