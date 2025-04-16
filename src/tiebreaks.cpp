@@ -29,11 +29,11 @@ double Buchholz::calculate(Tournament *tournament, TournamentState state, QList<
         }
 
         // Handle unplayed rounds of player
-        if (Pairing::isUnplayed(pairing->result())) {
+        if (Pairing::isUnplayed(pairing->whiteResult())) {
             // 16.4: dummy opponent with the same points as the player
-            p = state.getPoints(player) / 10.;
+            p = state.getPoints(player);
         } else {
-            p = state.getPointsForTiebreaks(opponent) / 10.;
+            p = state.getPointsForTiebreaks(opponent);
         }
 
         result += p;

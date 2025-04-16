@@ -54,6 +54,7 @@ public:
                                const QString &sex);
     Q_INVOKABLE void savePlayer();
     Q_INVOKABLE bool setResult(int board, Qt::Key key);
+    Q_INVOKABLE bool setResult(int board, Pairing::PartialResult whiteResult, Pairing::PartialResult blackResult);
     Q_INVOKABLE void newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds);
     Q_INVOKABLE void openTournament(const QUrl &fileUrl);
     Q_INVOKABLE void saveTournamentAs(const QUrl &fileUrl);

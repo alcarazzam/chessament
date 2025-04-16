@@ -11,8 +11,8 @@ public:
     explicit TournamentState(Tournament *tournament, int maxRound = -1);
 
     QList<Pairing *> getPairings(Player *player);
-    uint getPoints(Player *player);
-    uint getPointsForTiebreaks(Player *player);
+    double getPoints(Player *player);
+    double getPointsForTiebreaks(Player *player);
 
 private:
     Tournament *m_tournament;

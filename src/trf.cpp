@@ -81,7 +81,7 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
                 }
 
                 auto color = Pairing::colorForString(round.at(5));
-                auto result = Pairing::partialResultForString(round.at(7));
+                auto result = Pairing::partialResultForTRF(round.at(7));
                 if (result == Pairing::PartialResult::Unknown) {
                     return std::unexpected(i18n("Unknown result for pairing \"%1\"", round));
                 }
@@ -124,11 +124,10 @@ std::expected<bool, QString> Tournament::readTrf(QTextStream trf)
             blackPlayer = players.value(b);
         }
 
-        auto result = Pairing::resultFromPartialResults(pairing.value().first, pairing.value().second);
-        if (result == Pairing::Result::Unknown) {
+        if (pairing.value().first == Pairing::PartialResult::Unknown && pairing.value().second == Pairing::PartialResult::Unknown) {
             return std::unexpected(i18n("Unknown result on pairing %1 with %2", w, b));
         }
-        auto par = new Pairing(1, whitePlayer, blackPlayer, result);
+        auto par = new Pairing(1, whitePlayer, blackPlayer, pairing.value().first, pairing.value().second);
 
         addPairing(r, par);
     }

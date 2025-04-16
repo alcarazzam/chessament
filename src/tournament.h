@@ -67,7 +67,7 @@ public:
     QList<Round *> rounds() const;
     void addPairing(int round, Pairing *pairing);
     void savePairing(Pairing *pairing);
-    void setResult(Pairing *pairing, Pairing::Result result);
+    void setResult(Pairing *pairing, std::pair<Pairing::PartialResult, Pairing::PartialResult> result);
     QList<Pairing *> getPairings(int round) const;
     void sortPairings();
     Q_INVOKABLE bool isRoundFinished(int round);

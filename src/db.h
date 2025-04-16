@@ -55,7 +55,8 @@ const QString PAIRINGS_TABLE_SCHEMA =
     u"board INTEGER NOT NULL,"_s
     u"whitePlayer INTEGER NOT NULL,"_s
     u"blackPlayer INTEGER,"_s
-    u"result INTEGER NOT NULL,"_s
+    u"whiteResult INTEGER NOT NULL,"_s
+    u"blackResult INTEGER NOT NULL,"_s
     u"round INTEGER NOT NULL,"_s
     u"FOREIGN KEY(whitePlayer) REFERENCES players(id),"_s
     u"FOREIGN KEY(blackPlayer) REFERENCES players(id),"_s
@@ -63,12 +64,12 @@ const QString PAIRINGS_TABLE_SCHEMA =
     u");"_s;
 
 const QString ADD_PAIRING_QUERY =
-    u"INSERT INTO pairings(board, whitePlayer, blackPlayer, result, round) "_s
-    u"VALUES (:board, :whitePlayer, :blackPlayer, :result, :round);"_s;
+    u"INSERT INTO pairings(board, whitePlayer, blackPlayer, whiteResult, blackResult, round) "_s
+    u"VALUES (:board, :whitePlayer, :blackPlayer, :whiteResult, :blackResult, :round);"_s;
 
 const QString GET_PAIRINGS_QUERY = u"SELECT * FROM pairings;"_s;
 
 const QString UPDATE_PAIRING_QUERY =
-    u"UPDATE pairings SET (board, whitePlayer, blackPlayer, result) = "_s
-    u"(:board, :whitePlayer, :blackPlayer, :result) "
+    u"UPDATE pairings SET (board, whitePlayer, blackPlayer, whiteResult, blackResult) = "_s
+    u"(:board, :whitePlayer, :blackPlayer, :whiteResult, :blackResult) "
     u"WHERE id = :id;"_s;

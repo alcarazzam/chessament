@@ -15,30 +15,30 @@ QList<Pairing *> TournamentState::getPairings(Player *player)
     return m_pairingsByPlayer.value(player);
 }
 
-uint TournamentState::getPoints(Player *player)
+double TournamentState::getPoints(Player *player)
 {
-    uint points = 0;
+    double points = 0.;
     for (const auto &pairing : m_pairingsByPlayer.value(player)) {
         points += pairing->getPointsOfPlayer(player);
     }
     return points;
 }
 
-uint TournamentState::getPointsForTiebreaks(Player *player)
+double TournamentState::getPointsForTiebreaks(Player *player)
 {
-    uint points = 0;
+    double points = 0.;
     bool hadVUR = false;
     const auto pairings = m_pairingsByPlayer.value(player);
     for (auto pairing = pairings.rbegin(), rend = pairings.rend(); pairing != rend; ++pairing) {
-        if (Pairing::isUnplayed((*pairing)->result())) {
-            if (Pairing::isRequestedBye((*pairing)->result()) && (hadVUR || pairing == pairings.rbegin())) {
-                points += 5;
+        if (Pairing::isUnplayed((*pairing)->whiteResult())) {
+            if (Pairing::isRequestedBye((*pairing)->whiteResult()) && (hadVUR || pairing == pairings.rbegin())) {
+                points += .5;
                 hadVUR = true;
             } else {
                 points += (*pairing)->getPointsOfPlayer(player);
-                hadVUR = ((*pairing)->result() == Pairing::Result::BothForfeit)
-                    || ((*pairing)->result() == Pairing::Result::WhiteWinsForfeit && (*pairing)->blackPlayer() == player)
-                    || ((*pairing)->result() == Pairing::Result::BlackWinsForfeit && (*pairing)->whitePlayer() == player);
+                hadVUR = ((*pairing)->whiteResult() == Pairing::PartialResult::LostForfeit && (*pairing)->blackResult() == Pairing::PartialResult::LostForfeit)
+                    || ((*pairing)->whiteResult() == Pairing::PartialResult::LostForfeit && (*pairing)->whitePlayer() == player)
+                    || ((*pairing)->blackResult() == Pairing::PartialResult::LostForfeit && (*pairing)->blackPlayer() == player);
             }
         } else {
             points += (*pairing)->getPointsOfPlayer(player);

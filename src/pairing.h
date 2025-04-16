@@ -13,14 +13,16 @@
 class Pairing : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
     QML_ELEMENT
     QML_UNCREATABLE("")
 
     Q_PROPERTY(int id READ id NOTIFY idChanged)
     Q_PROPERTY(int board READ board NOTIFY boardChanged)
     Q_PROPERTY(Player *whitePlayer READ whitePlayer NOTIFY whitePlayerChanged)
+    Q_PROPERTY(PartialResult whiteResult READ whiteResult NOTIFY whiteResultChanged)
     Q_PROPERTY(Player *blackPlayer READ blackPlayer NOTIFY blackPlayerChanged)
-    Q_PROPERTY(Result result READ result NOTIFY resultChanged)
+    Q_PROPERTY(PartialResult blackResult READ blackResult NOTIFY blackResultChanged)
 
 public:
     enum class Color {
@@ -55,274 +57,19 @@ public:
         return Color::Unknown;
     }
 
-    enum class Result {
-        Unknown,
-        // Normal results
-        WhiteWins,
-        BlackWins,
-        Draw,
-        BothLost,
-        // Forfeit results
-        WhiteWinsForfeit,
-        BlackWinsForfeit,
-        BothForfeit,
-        // Unusual results
-        WhiteDraws,
-        BlackDraws,
-        // Unrated
-        WhiteWinsUnrated,
-        BlackWinsUnrated,
-        DrawUnrated,
-        // Byes
-        HalfBye,
-        FullBye,
-        ZeroBye,
-        PairingBye,
-    };
-    Q_ENUM(Result)
-
-    static QString resultString(Result result)
-    {
-        switch (result) {
-        case Result::WhiteWins:
-            return QStringLiteral("1-0");
-        case Result::BlackWins:
-            return QStringLiteral("0-1");
-        case Result::Draw:
-            return QStringLiteral("½-½");
-        case Result::BothLost:
-            return QStringLiteral("0-0");
-        case Result::WhiteWinsForfeit:
-            return QStringLiteral("+/-");
-        case Result::BlackWinsForfeit:
-            return QStringLiteral("-/+");
-        case Result::BothForfeit:
-            return QStringLiteral("-/-");
-        case Result::WhiteDraws:
-            return QStringLiteral("½/0");
-        case Result::BlackDraws:
-            return QStringLiteral("0/½");
-        case Result::WhiteWinsUnrated:
-            return QStringLiteral("1U-0U");
-        case Result::BlackWinsUnrated:
-            return QStringLiteral("0U-1U");
-        case Result::DrawUnrated:
-            return QStringLiteral("½U-½U");
-        case Result::HalfBye:
-            return QStringLiteral("½");
-        case Result::FullBye:
-            return QStringLiteral("1");
-        case Result::ZeroBye:
-            return QStringLiteral("0");
-        case Result::PairingBye:
-            return QStringLiteral("Bye");
-        default:
-            return QStringLiteral("Unknown");
-        }
-    }
-
-    static QString whiteResultString(Result result)
-    {
-        switch (result) {
-        case Result::WhiteWins:
-            return QStringLiteral("1");
-        case Result::BlackWins:
-            return QStringLiteral("0");
-        case Result::Draw:
-            return QStringLiteral("=");
-        case Result::BothLost:
-            return QStringLiteral("0");
-        case Result::WhiteWinsForfeit:
-            return QStringLiteral("+");
-        case Result::BlackWinsForfeit:
-            return QStringLiteral("-");
-        case Result::BothForfeit:
-            return QStringLiteral("-");
-        case Result::WhiteDraws:
-            return QStringLiteral("=");
-        case Result::BlackDraws:
-            return QStringLiteral("0");
-        case Result::WhiteWinsUnrated:
-            return QStringLiteral("W");
-        case Result::BlackWinsUnrated:
-            return QStringLiteral("L");
-        case Result::DrawUnrated:
-            return QStringLiteral("D");
-        case Result::HalfBye:
-            return QStringLiteral("H");
-        case Result::FullBye:
-            return QStringLiteral("F");
-        case Result::ZeroBye:
-            return QStringLiteral("Z");
-        case Result::PairingBye:
-            return QStringLiteral("U");
-        default:
-            return QStringLiteral("X");
-        }
-    }
-
-    static QString blackResultString(Result result)
-    {
-        switch (result) {
-        case Result::WhiteWins:
-            return QStringLiteral("0");
-        case Result::BlackWins:
-            return QStringLiteral("1");
-        case Result::Draw:
-            return QStringLiteral("=");
-        case Result::BothLost:
-            return QStringLiteral("0");
-        case Result::WhiteWinsForfeit:
-            return QStringLiteral("-");
-        case Result::BlackWinsForfeit:
-            return QStringLiteral("+");
-        case Result::BothForfeit:
-            return QStringLiteral("-");
-        case Result::WhiteDraws:
-            return QStringLiteral("0");
-        case Result::BlackDraws:
-            return QStringLiteral("=");
-        case Result::WhiteWinsUnrated:
-            return QStringLiteral("L");
-        case Result::BlackWinsUnrated:
-            return QStringLiteral("W");
-        case Result::DrawUnrated:
-            return QStringLiteral("D");
-        case Result::HalfBye:
-            return QStringLiteral("H");
-        case Result::FullBye:
-            return QStringLiteral("F");
-        case Result::ZeroBye:
-            return QStringLiteral("Z");
-        case Result::PairingBye:
-            return QStringLiteral("U");
-        default:
-            return QStringLiteral("X");
-        }
-    }
-
-    static int whitePointsForResult(Result result)
-    {
-        switch (result) {
-        case Result::WhiteWins:
-            return 10;
-        case Result::BlackWins:
-            return 0;
-        case Result::Draw:
-            return 5;
-        case Result::BothLost:
-            return 0;
-        case Result::WhiteWinsForfeit:
-            return 10;
-        case Result::BlackWinsForfeit:
-            return 0;
-        case Result::BothForfeit:
-            return 0;
-        case Result::WhiteDraws:
-            return 5;
-        case Result::BlackDraws:
-            return 5;
-        case Result::WhiteWinsUnrated:
-            return 10;
-        case Result::BlackWinsUnrated:
-            return 0;
-        case Result::DrawUnrated:
-            return 5;
-        case Result::HalfBye:
-            return 5;
-        case Result::FullBye:
-            return 10;
-        case Result::ZeroBye:
-            return 0;
-        case Result::PairingBye:
-            return 10; // TODO: by tournament
-        default:
-            return 0;
-        }
-    }
-
-    static int blackPointsForResult(Result result)
-    {
-        switch (result) {
-        case Result::WhiteWins:
-            return 0;
-        case Result::BlackWins:
-            return 10;
-        case Result::Draw:
-            return 5;
-        case Result::BothLost:
-            return 0;
-        case Result::WhiteWinsForfeit:
-            return 0;
-        case Result::BlackWinsForfeit:
-            return 10;
-        case Result::BothForfeit:
-            return 0;
-        case Result::WhiteDraws:
-            return 5;
-        case Result::BlackDraws:
-            return 5;
-        case Result::WhiteWinsUnrated:
-            return 0;
-        case Result::BlackWinsUnrated:
-            return 10;
-        case Result::DrawUnrated:
-            return 5;
-        case Result::HalfBye:
-            return 5;
-        case Result::FullBye:
-            return 10;
-        case Result::ZeroBye:
-            return 0;
-        case Result::PairingBye:
-            return 10; // TODO: by tournament
-        default:
-            return 0;
-        }
-    }
-
-    static bool isUnplayed(Result result)
-    {
-        switch (result) {
-        case Result::WhiteWinsForfeit:
-        case Result::BlackWinsForfeit:
-        case Result::BothForfeit:
-        case Result::HalfBye:
-        case Result::FullBye:
-        case Result::ZeroBye:
-        case Result::PairingBye:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    static bool isRequestedBye(Result result)
-    {
-        switch (result) {
-        case Result::HalfBye:
-        case Result::FullBye:
-        case Result::ZeroBye:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    inline uint getPointsOfPlayer(Player *p)
+    inline double getPointsOfPlayer(Player *p)
     {
         if (p == m_whitePlayer) {
-            return Pairing::whitePointsForResult(m_result);
+            return Pairing::pointsForResult(m_whiteResult);
         } else if (p == m_blackPlayer) {
-            return Pairing::blackPointsForResult(m_result);
+            return Pairing::pointsForResult(m_blackResult);
         }
-        Q_ASSERT(false); // unreachable
-        return -100000;
+        Q_UNREACHABLE();
     }
 
     enum class PartialResult {
         Unknown,
-        // Normal results
+        // Regular results
         Win,
         Lost,
         Draw,
@@ -341,7 +88,139 @@ public:
     };
     Q_ENUM(PartialResult)
 
-    static PartialResult partialResultForString(const QString &partialResult)
+    using Result = std::pair<PartialResult, PartialResult>;
+
+    inline static const QList<Result> ValidResults{
+        // Regular results
+        {PartialResult::Win, PartialResult::Lost},
+        {PartialResult::Lost, PartialResult::Win},
+        {PartialResult::Draw, PartialResult::Draw},
+        // Forfeit results
+        {PartialResult::WinForfeit, PartialResult::LostForfeit},
+        {PartialResult::LostForfeit, PartialResult::WinForfeit},
+        {PartialResult::LostForfeit, PartialResult::LostForfeit},
+        // Unrated
+        {PartialResult::WinUnrated, PartialResult::LostUnrated},
+        {PartialResult::DrawUnrated, PartialResult::DrawUnrated},
+        {PartialResult::LostUnrated, PartialResult::WinUnrated},
+        {PartialResult::DrawUnrated, PartialResult::LostUnrated},
+        {PartialResult::LostUnrated, PartialResult::DrawUnrated},
+        {PartialResult::LostUnrated, PartialResult::LostUnrated},
+        // Other
+        {PartialResult::Draw, PartialResult::Lost},
+        {PartialResult::Lost, PartialResult::Draw},
+        {PartialResult::Lost, PartialResult::Lost},
+        // Byes
+        {PartialResult::HalfBye, PartialResult::Unknown},
+        {PartialResult::FullBye, PartialResult::Unknown},
+        {PartialResult::ZeroBye, PartialResult::Unknown},
+        {PartialResult::PairingBye, PartialResult::Unknown},
+    };
+
+    inline static const QList<std::pair<QString, QList<Result>>> Results{
+        {u"Normal"_s, {ValidResults[0], ValidResults[1], ValidResults[2]}},
+        {u"Forfeit"_s, {ValidResults[3], ValidResults[4], ValidResults[5]}},
+        {u"Unrated"_s, {ValidResults[6], ValidResults[7], ValidResults[8], ValidResults[9], ValidResults[10], ValidResults[11]}},
+        {u"Other"_s, {ValidResults[12], ValidResults[13], ValidResults[14]}},
+    };
+
+    static bool isValidResult(std::pair<PartialResult, PartialResult> result)
+    {
+        return Pairing::ValidResults.contains(result);
+    }
+
+    static bool isUnplayed(PartialResult result)
+    {
+        switch (result) {
+        case PartialResult::WinForfeit:
+        case PartialResult::LostForfeit:
+        case PartialResult::HalfBye:
+        case PartialResult::FullBye:
+        case PartialResult::ZeroBye:
+        case PartialResult::PairingBye:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    static bool isBye(PartialResult result)
+    {
+        switch (result) {
+        case PartialResult::HalfBye:
+        case PartialResult::FullBye:
+        case PartialResult::ZeroBye:
+        case PartialResult::PairingBye:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    static bool isRequestedBye(PartialResult result)
+    {
+        switch (result) {
+        case PartialResult::HalfBye:
+        case PartialResult::FullBye:
+        case PartialResult::ZeroBye:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    static double pointsForResult(PartialResult result)
+    {
+        switch (result) {
+        case PartialResult::Win:
+        case PartialResult::WinForfeit:
+        case PartialResult::WinUnrated:
+        case PartialResult::FullBye:
+        case PartialResult::PairingBye:
+            return 1.;
+        case PartialResult::Draw:
+        case PartialResult::DrawUnrated:
+        case PartialResult::HalfBye:
+            return 0.5;
+        default:
+            return 0.;
+        }
+    }
+
+    static QString partialResultToString(PartialResult result)
+    {
+        switch (result) {
+        case PartialResult::Win:
+            return QStringLiteral("1");
+        case PartialResult::Draw:
+            return QStringLiteral("½");
+        case PartialResult::Lost:
+            return QStringLiteral("0");
+        case PartialResult::WinForfeit:
+            return QStringLiteral("+");
+        case PartialResult::LostForfeit:
+            return QStringLiteral("-");
+        case PartialResult::WinUnrated:
+            return QStringLiteral("1U");
+        case PartialResult::LostUnrated:
+            return QStringLiteral("0U");
+        case PartialResult::DrawUnrated:
+            return QStringLiteral("½");
+        case PartialResult::HalfBye:
+            return QStringLiteral("Bye (½)");
+        case PartialResult::FullBye:
+            return QStringLiteral("Bye (1)");
+        case PartialResult::ZeroBye:
+            return QStringLiteral("Bye (0)");
+        case PartialResult::PairingBye:
+            return QStringLiteral("Bye (Pairing)");
+        case PartialResult::Unknown:
+            return QStringLiteral("?");
+        }
+        Q_UNREACHABLE();
+    }
+
+    static PartialResult partialResultForTRF(const QString &partialResult)
     {
         if (partialResult == QStringLiteral("1")) {
             return PartialResult::Win;
@@ -382,67 +261,49 @@ public:
         return PartialResult::Unknown;
     }
 
-    static Result resultFromPartialResults(PartialResult white, PartialResult black)
+    static QString partialResultToTRF(PartialResult result)
     {
-        if (white == PartialResult::Win && black == PartialResult::Lost) {
-            return Result::WhiteWins;
+        switch (result) {
+        case PartialResult::Win:
+            return QStringLiteral("1");
+        case PartialResult::Draw:
+            return QStringLiteral("=");
+        case PartialResult::Lost:
+            return QStringLiteral("0");
+        case PartialResult::WinForfeit:
+            return QStringLiteral("+");
+        case PartialResult::LostForfeit:
+            return QStringLiteral("-");
+        case PartialResult::WinUnrated:
+            return QStringLiteral("W");
+        case PartialResult::LostUnrated:
+            return QStringLiteral("L");
+        case PartialResult::DrawUnrated:
+            return QStringLiteral("D");
+        case PartialResult::HalfBye:
+            return QStringLiteral("H");
+        case PartialResult::FullBye:
+            return QStringLiteral("F");
+        case PartialResult::ZeroBye:
+            return QStringLiteral("Z");
+        case PartialResult::PairingBye:
+            return QStringLiteral("U");
+        case PartialResult::Unknown:
+            return QStringLiteral("X"); // TODO: export unfinished games
         }
-        if (white == PartialResult::Lost && black == PartialResult::Win) {
-            return Result::BlackWins;
-        }
-        if (white == PartialResult::Draw && black == PartialResult::Draw) {
-            return Result::Draw;
-        }
-        if (white == PartialResult::Lost && black == PartialResult::Lost) {
-            return Result::BothLost;
-        }
-        if (white == PartialResult::WinForfeit && black == PartialResult::LostForfeit) {
-            return Result::WhiteWinsForfeit;
-        }
-        if (white == PartialResult::LostForfeit && black == PartialResult::WinForfeit) {
-            return Result::BlackWinsForfeit;
-        }
-        if (white == PartialResult::LostForfeit && black == PartialResult::WinForfeit) {
-            return Result::BothForfeit;
-        }
-        if (white == PartialResult::Draw && black == PartialResult::Lost) {
-            return Result::WhiteDraws;
-        }
-        if (white == PartialResult::Lost && black == PartialResult::Draw) {
-            return Result::BlackDraws;
-        }
-        if (white == PartialResult::WinUnrated && black == PartialResult::LostUnrated) {
-            return Result::WhiteWinsUnrated;
-        }
-        if (white == PartialResult::LostUnrated && black == PartialResult::WinUnrated) {
-            return Result::BlackWinsUnrated;
-        }
-        if (white == PartialResult::DrawUnrated && black == PartialResult::DrawUnrated) {
-            return Result::DrawUnrated;
-        }
-        if (white == PartialResult::HalfBye && black == PartialResult::Unknown) {
-            return Result::HalfBye;
-        }
-        if (white == PartialResult::FullBye && black == PartialResult::Unknown) {
-            return Result::FullBye;
-        }
-        if (white == PartialResult::ZeroBye && black == PartialResult::Unknown) {
-            return Result::ZeroBye;
-        }
-        if (white == PartialResult::PairingBye && black == PartialResult::Unknown) {
-            return Result::PairingBye;
-        }
-        return Result::Unknown;
+        Q_UNREACHABLE();
     }
 
-    explicit Pairing(int board, Player *whitePlayer, Player *blackPlayer, Result result);
+    explicit Pairing(int board, Player *whitePlayer, Player *blackPlayer, PartialResult whiteResult, PartialResult blackResult);
 
     int id();
     int board();
     Player *whitePlayer();
+    PartialResult whiteResult();
     Player *blackPlayer();
-    Result result();
+    PartialResult blackResult();
 
+    QString resultString();
     QString toTrf(Player *player);
 
     friend QDebug operator<<(QDebug dbg, Pairing &pairing);
@@ -451,20 +312,25 @@ public Q_SLOTS:
     void setId(int id);
     void setBoard(int board);
     void setWhitePlayer(Player *whitePlayer);
+    void setWhiteResult(PartialResult whiteResult);
     void setBlackPlayer(Player *blackPlayer);
+    void setBlackResult(PartialResult blackResult);
     void setResult(Result result);
+    void setResult(PartialResult whiteResult, PartialResult blackResult);
 
 Q_SIGNALS:
     void idChanged();
     void boardChanged();
     void whitePlayerChanged();
+    void whiteResultChanged();
     void blackPlayerChanged();
-    void resultChanged();
+    void blackResultChanged();
 
 private:
     int m_id = 0;
     int m_board;
     Player *m_whitePlayer;
+    PartialResult m_whiteResult = PartialResult::Unknown;
     Player *m_blackPlayer;
-    Result m_result;
+    PartialResult m_blackResult = PartialResult::Unknown;
 };

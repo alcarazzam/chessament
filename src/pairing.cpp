@@ -3,13 +3,14 @@
 
 #include "pairing.h"
 
-Pairing::Pairing(int board, Player *whitePlayer, Player *blackPlayer, Result result)
+Pairing::Pairing(int board, Player *whitePlayer, Player *blackPlayer, PartialResult whiteResult, PartialResult blackResult)
     : QObject()
 {
     m_board = board;
     m_whitePlayer = whitePlayer;
     m_blackPlayer = blackPlayer;
-    m_result = result;
+    m_whiteResult = whiteResult;
+    m_blackResult = blackResult;
 }
 
 int Pairing::id()
@@ -54,6 +55,20 @@ void Pairing::setWhitePlayer(Player *whitePlayer)
     Q_EMIT whitePlayerChanged();
 }
 
+Pairing::PartialResult Pairing::whiteResult()
+{
+    return m_whiteResult;
+}
+
+void Pairing::setWhiteResult(Pairing::PartialResult whiteResult)
+{
+    if (m_whiteResult == whiteResult) {
+        return;
+    }
+    m_whiteResult = whiteResult;
+    Q_EMIT whiteResultChanged();
+}
+
 Player *Pairing::blackPlayer()
 {
     return m_blackPlayer;
@@ -68,18 +83,38 @@ void Pairing::setBlackPlayer(Player *blackPlayer)
     Q_EMIT blackPlayerChanged();
 }
 
-Pairing::Result Pairing::result()
+Pairing::PartialResult Pairing::blackResult()
 {
-    return m_result;
+    return m_blackResult;
 }
 
-void Pairing::setResult(Result result)
+void Pairing::setBlackResult(Pairing::PartialResult blackResult)
 {
-    if (m_result == result) {
+    if (m_blackResult == blackResult) {
         return;
     }
-    m_result = result;
-    Q_EMIT resultChanged();
+    m_blackResult = blackResult;
+    Q_EMIT blackResultChanged();
+}
+
+void Pairing::setResult(Pairing::Result result)
+{
+    setWhiteResult(result.first);
+    setBlackResult(result.second);
+}
+
+void Pairing::setResult(PartialResult whiteResult, PartialResult blackResult)
+{
+    setWhiteResult(whiteResult);
+    setBlackResult(blackResult);
+}
+
+QString Pairing::resultString()
+{
+    if (!Pairing::isBye(m_whiteResult)) {
+        return Pairing::partialResultToString(m_whiteResult) + u"-"_s + Pairing::partialResultToString(m_blackResult);
+    }
+    return Pairing::partialResultToString(m_whiteResult);
 }
 
 QString Pairing::toTrf(Player *player)
@@ -95,11 +130,11 @@ QString Pairing::toTrf(Player *player)
             opponent = QString::number(m_blackPlayer->startingRank());
             color = Pairing::colorString(Pairing::Color::White);
         }
-        r = Pairing::whiteResultString(m_result);
+        r = Pairing::partialResultToTRF(m_whiteResult);
     } else if (m_blackPlayer == player) {
         opponent = QString::number(m_whitePlayer->startingRank());
         color = Pairing::colorString(Pairing::Color::Black);
-        r = Pairing::blackResultString(m_result);
+        r = Pairing::partialResultToTRF(m_blackResult);
     }
 
     auto result = QString::fromStdString(std::format("  {:>4s} {} {}", opponent.toStdString(), color.toStdString(), r.toStdString()));

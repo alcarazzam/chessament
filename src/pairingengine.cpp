@@ -56,17 +56,17 @@ QCoro::Task<std::expected<QList<Pairing *>, QString>> PairingEngine::pair(int ro
         const auto whiteId = playerIds[0].toUInt();
         const auto blackId = playerIds[1].toUInt();
 
-        Pairing::Result result = Pairing::Result::PairingBye;
+        Pairing::Result result = std::make_pair(Pairing::PartialResult::PairingBye, Pairing::PartialResult::Unknown);
 
         const auto white = players[whiteId];
         Player *black = nullptr;
 
         if (blackId != 0) {
             black = players[blackId];
-            result = Pairing::Result::Unknown;
+            result.first = Pairing::PartialResult::Unknown;
         }
 
-        pairings << new Pairing(board++, white, black, result);
+        pairings << new Pairing(board++, white, black, result.first, result.second);
     }
 
     co_return pairings;

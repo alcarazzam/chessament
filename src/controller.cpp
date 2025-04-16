@@ -179,33 +179,37 @@ void Controller::savePlayer()
 
 bool Controller::setResult(int board, Qt::Key key)
 {
-    auto round = m_tournament->rounds().at(m_currentRound - 1);
-    auto pairing = round->getPairing(board);
-
     Pairing::Result result;
 
     switch (key) {
     case Qt::Key_0:
-        result = Pairing::Result::BlackWins;
+        result = {Pairing::PartialResult::Lost, Pairing::PartialResult::Win};
         break;
     case Qt::Key_1:
-        result = Pairing::Result::WhiteWins;
+        result = {Pairing::PartialResult::Win, Pairing::PartialResult::Lost};
         break;
     case Qt::Key_5:
-        result = Pairing::Result::Draw;
+        result = {Pairing::PartialResult::Draw, Pairing::PartialResult::Draw};
         break;
     default:
-        result = Pairing::Result::Unknown;
+        // Enter key changes to the next pairing
+        return key == Qt::Key_Enter;
     }
 
-    if (result != Pairing::Result::Unknown) {
-        m_tournament->setResult(pairing, result);
-        m_pairingModel->updatePairing(board);
-        return true;
-    }
+    return setResult(board, result.first, result.second);
+}
 
-    // Enter key changes to the next pairing
-    return key == Qt::Key_Enter;
+bool Controller::setResult(int board, Pairing::PartialResult whiteResult, Pairing::PartialResult blackResult)
+{
+    auto round = m_tournament->rounds().at(m_currentRound - 1);
+    auto pairing = round->getPairing(board);
+
+    Pairing::Result result = {whiteResult, blackResult};
+
+    m_tournament->setResult(pairing, result);
+    m_pairingModel->updatePairing(board);
+
+    return true;
 }
 
 void Controller::newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds)

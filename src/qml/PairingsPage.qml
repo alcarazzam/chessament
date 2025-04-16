@@ -3,6 +3,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Layouts as Layouts
 import QtQuick.Controls as QQC2
 
 import org.kde.kirigami as Kirigami
@@ -46,6 +47,18 @@ TablePage {
         }
     ]
 
+    footer: ResultsFooter {
+        id: footer
+
+        pairing: root.model.getPairing(root.tableView.selectionModel.currentIndex.row)
+
+        onSaveResult: (pairing, whiteResult, blackResult) => {
+            if (Controller.setResult(pairing.board, whiteResult, blackResult)) {
+                root.selectBoard(pairing.board + 1);
+            }
+        }
+    }
+
     delegate: TableDelegate {
         id: delegate
 
@@ -64,14 +77,18 @@ TablePage {
             let board = selection.row + 1;
             if (board && Controller.setResult(board, event.key)) {
                 event.accepted = true;
-                root.selectBoard((board % root.model.rowCount()) + 1);
+                root.selectBoard(board + 1);
             }
         }
     }
 
     function selectBoard(board: int) {
+        const row = (board - 1) % root.model.rowCount();
+        const index = root.tableView.model.index(row, 0);
+
         tableView.selectionModel.clear();
-        tableView.selectionModel.setCurrentIndex(root.tableView.model.index(board - 1, 0), ItemSelectionModel.SelectCurrent | ItemSelectionModel.Rows);
+        tableView.selectionModel.setCurrentIndex(index, ItemSelectionModel.SelectCurrent | ItemSelectionModel.Rows);
+        tableView.itemAtIndex(index)?.forceActiveFocus();
         if (board != 1) {
             // FIXME: column size streches to fit when moving to the first row
             tableView.positionViewAtRow(board - 1, TableView.Contain);

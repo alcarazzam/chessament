@@ -24,6 +24,8 @@ QVariant PairingModel::data(const QModelIndex &index, int role) const
 {
     Q_UNUSED(role)
 
+    Q_ASSERT(index.row() >= 0 && index.row() < m_pairings.size());
+
     auto pairing = m_pairings.at(index.row());
 
     switch (index.column()) {
@@ -34,7 +36,7 @@ QVariant PairingModel::data(const QModelIndex &index, int role) const
     case WhiteNameRole:
         return pairing->whitePlayer()->fullName();
     case ResultRole:
-        return Pairing::resultString(pairing->result());
+        return pairing->resultString();
     case BlackNameRole:
         if (pairing->blackPlayer() == nullptr) {
             return QLatin1String("");
@@ -99,4 +101,15 @@ void PairingModel::setPairings(QList<Pairing *> pairings)
 void PairingModel::updatePairing(int board)
 {
     Q_EMIT dataChanged(index(board - 1, 0), index(board - 1, columnCount() - 1), {});
+}
+
+Pairing *PairingModel::getPairing(int board)
+{
+    if (board < 0) {
+        return nullptr;
+    }
+    Q_ASSERT(board < m_pairings.size());
+    auto pairing = m_pairings.at(board);
+    QQmlEngine::setObjectOwnership(pairing, QJSEngine::CppOwnership);
+    return pairing;
 }

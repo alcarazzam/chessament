@@ -387,7 +387,8 @@ void Tournament::addPairing(int round, Pairing *pairing)
     } else {
         query.bindValue(u":blackPlayer"_s, QVariant(QMetaType::fromType<int>()));
     }
-    query.bindValue(u":result"_s, std::to_underlying(pairing->result()));
+    query.bindValue(u":whiteResult"_s, std::to_underlying(pairing->whiteResult()));
+    query.bindValue(u":blackResult"_s, std::to_underlying(pairing->blackResult()));
     query.bindValue(u":round"_s, round);
     query.exec();
 
@@ -410,7 +411,8 @@ void Tournament::savePairing(Pairing *pairing)
     } else {
         query.bindValue(u":blackPlayer"_s, QVariant(QMetaType::fromType<int>()));
     }
-    query.bindValue(u":result"_s, std::to_underlying(pairing->result()));
+    query.bindValue(u":whiteResult"_s, std::to_underlying(pairing->whiteResult()));
+    query.bindValue(u":blackResult"_s, std::to_underlying(pairing->blackResult()));
     query.exec();
 
     if (query.lastError().isValid()) {
@@ -467,10 +469,10 @@ void Tournament::sortPairings()
             }
 
             if (aRank == 0 && bRank == 0) {
-                if (std::to_underlying(a->result()) == std::to_underlying(b->result())) {
+                if (std::to_underlying(a->whiteResult()) == std::to_underlying(b->whiteResult())) {
                     return a->whitePlayer()->startingRank() < b->whitePlayer()->startingRank();
                 } else {
-                    return std::to_underlying(a->result()) > std::to_underlying(b->result());
+                    return std::to_underlying(a->whiteResult()) > std::to_underlying(b->whiteResult());
                 }
             } else if (aRank == 0) {
                 return false;
@@ -537,7 +539,7 @@ bool Tournament::isRoundFinished(int round)
     }
 
     auto finished = std::count_if(pairings.cbegin(), pairings.cend(), [](Pairing *p) {
-        return p->result() != Pairing::Result::Unknown;
+        return p->whiteResult() != Pairing::PartialResult::Unknown && p->blackResult() != Pairing::PartialResult::Unknown;
     });
 
     return finished == pairings.size();
@@ -902,7 +904,8 @@ void Tournament::loadPairings()
     int boardNo = query.record().indexOf("board");
     int whitePlayerNo = query.record().indexOf("whitePlayer");
     int blackPlayerNo = query.record().indexOf("blackPlayer");
-    int resultNo = query.record().indexOf("result");
+    int whiteResultNo = query.record().indexOf("whiteResult");
+    int blackResultNo = query.record().indexOf("blackResult");
     int roundNo = query.record().indexOf("round");
 
     while (query.next()) {
@@ -910,7 +913,8 @@ void Tournament::loadPairings()
         auto pairing = new Pairing(query.value(boardNo).toInt(),
                                    players.value(query.value(whitePlayerNo).toInt()),
                                    players.value(query.value(blackPlayerNo).toInt()),
-                                   Pairing::Result(query.value(resultNo).toInt()));
+                                   Pairing::PartialResult(query.value(whiteResultNo).toInt()),
+                                   Pairing::PartialResult(query.value(blackResultNo).toInt()));
         pairing->setId(query.value(idNo).toInt());
         while (m_rounds.size() < round) {
             m_rounds << new Round();
