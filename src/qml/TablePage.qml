@@ -35,6 +35,7 @@ Kirigami.Page {
         Controls.HorizontalHeaderView {
             id: heading
 
+            visible: tableView.rows !== 0
             width: scrollView.width
 
             syncView: tableView

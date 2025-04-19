@@ -145,4 +145,17 @@ TablePage {
             }
         }
     }
+
+    Kirigami.PlaceholderMessage {
+        parent: root.tableView
+        anchors.centerIn: parent
+        width: parent.width - Kirigami.Units.gridUnit * 4
+        text: i18nc("@info:placeholder", "No players yet")
+        visible: root.tableView.rows === 0
+        helpfulAction: Kirigami.Action {
+            icon.name: "list-add"
+            text: i18nc("@action:button", "Add player")
+            onTriggered: addPlayerDialog.open()
+        }
+    }
 }

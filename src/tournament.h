@@ -74,7 +74,7 @@ public:
     QCoro::Task<std::expected<QList<Pairing *>, QString>> calculatePairings(int round);
     QCoro::Task<std::expected<bool, QString>> pairNextRound();
 
-    int numberOfPlayers();
+    Q_INVOKABLE int numberOfPlayers();
     int numberOfRatedPlayers();
 
     QString getPlayersListDocument();

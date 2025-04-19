@@ -23,7 +23,7 @@ TablePage {
     actions: [
         Kirigami.Action {
             text: i18n("Pair round %1", Controller.tournament.currentRound + 1)
-            visible: (Controller.tournament.currentRound + 1 <= Controller.tournament.numberOfRounds) && Controller.tournament.isRoundFinished(Controller.tournament.currentRound)
+            visible: Controller.tournament.numberOfPlayers() > 0 && (Controller.tournament.currentRound + 1 <= Controller.tournament.numberOfRounds) && Controller.tournament.isRoundFinished(Controller.tournament.currentRound)
             onTriggered: Controller.pairRound()
         },
         Kirigami.Action {
@@ -49,6 +49,7 @@ TablePage {
 
     footer: ResultsFooter {
         id: footer
+        visible: root.tableView.rows !== 0
 
         pairing: root.model.getPairing(root.tableView.selectionModel.currentIndex.row)
 
@@ -69,6 +70,14 @@ TablePage {
         required current
 
         text: displayName
+    }
+
+    Kirigami.PlaceholderMessage {
+        parent: root.tableView
+        anchors.centerIn: parent
+        width: parent.width - Kirigami.Units.gridUnit * 4
+        text: i18nc("@info:placeholder", "No pairings for round %1 yet", Controller.currentRound)
+        visible: root.tableView.rows === 0
     }
 
     Keys.onPressed: event => {

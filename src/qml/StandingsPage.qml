@@ -28,4 +28,12 @@ TablePage {
 
         text: displayName
     }
+
+    Kirigami.PlaceholderMessage {
+        parent: root.tableView
+        anchors.centerIn: parent
+        width: parent.width - Kirigami.Units.gridUnit * 4
+        text: i18nc("@info:placeholder", "No standings yet")
+        visible: root.tableView.rows === 0
+    }
 }
