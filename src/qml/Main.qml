@@ -110,33 +110,13 @@ StatefulApp.StatefulWindow {
         id: drawer
 
         modal: false
-        width: 80
+        width: 100
         leftPadding: 0
         rightPadding: 0
         topPadding: 0
         bottomPadding: 0
 
         Kirigami.Theme.colorSet: Kirigami.Theme.Window
-
-        ListModel {
-            id: navigationModel
-
-            ListElement {
-                name: "Players"
-                viewName: "PlayersPage"
-                iconName: "user-symbolic"
-            }
-            ListElement {
-                name: "Pairings"
-                viewName: "PairingsPage"
-                iconName: "system-users-symbolic"
-            }
-            ListElement {
-                name: "Standings"
-                viewName: "StandingsPage"
-                iconName: "games-highscores-symbolic"
-            }
-        }
 
         contentItem: ColumnLayout {
             QQC2.ToolBar {
@@ -152,7 +132,7 @@ StatefulApp.StatefulWindow {
                         icon.name: "application-menu"
                         onClicked: optionPopup.popup()
 
-                        x: 40 - width / 2
+                        x: 50 - width / 2
 
                         QQC2.Menu {
                             id: optionPopup
@@ -198,18 +178,37 @@ StatefulApp.StatefulWindow {
         }
 
         QQC2.ScrollView {
+            id: scrollView
+
             visible: Controller.hasOpenTournament
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            QQC2.ScrollBar.vertical.interactive: false
-
-            ListView {
+            ColumnLayout {
+                width: scrollView.width
                 spacing: 0
-                clip: true
 
-                model: navigationModel
-                delegate: NavigationButtonDelegate {}
+                Kirigami.NavigationTabButton {
+                    Layout.fillWidth: true
+                    text: i18n("Players")
+                    icon.name: "user-symbolic"
+                    checked: Controller.currentView === "PlayersPage"
+                    onClicked: root.goToPage("PlayersPage")
+                }
+                Kirigami.NavigationTabButton {
+                    Layout.fillWidth: true
+                    text: i18n("Pairings")
+                    icon.name: "system-users-symbolic"
+                    checked: Controller.currentView === "PairingsPage"
+                    onClicked: root.goToPage("PairingsPage")
+                }
+                Kirigami.NavigationTabButton {
+                    Layout.fillWidth: true
+                    text: i18n("Standings")
+                    icon.name: "games-highscores-symbolic"
+                    checked: Controller.currentView === "StandingsPage"
+                    onClicked: root.goToPage("StandingsPage")
+                }
             }
         }
 
@@ -217,6 +216,27 @@ StatefulApp.StatefulWindow {
         ColumnLayout {
             visible: !Controller.hasOpenTournament
         }
+
+        Kirigami.Separator {
+            Layout.fillWidth: true
+            Layout.rightMargin: Kirigami.Units.smallSpacing
+            Layout.leftMargin: Kirigami.Units.smallSpacing
+            visible: Controller.hasOpenTournament
+        }
+
+        Kirigami.NavigationTabButton {
+            Layout.fillWidth: true
+            visible: Controller.hasOpenTournament
+            action: Kirigami.Action {
+                icon.name: "settings-configure"
+                text: i18nc("@action:button", "Settings")
+                onTriggered: tournamentSettings.open()
+            }
+        }
+    }
+
+    TournamentSettings {
+        id: tournamentSettings
     }
 
     pageStack.defaultColumnWidth: root.width
@@ -228,6 +248,13 @@ StatefulApp.StatefulWindow {
             pageCache[view] = Qt.createComponent("dev.alcarazzam.chessament", view).createObject(root);
         }
         return pageCache[view];
+    }
+
+    function goToPage(viewName: string): void {
+        if (applicationWindow().pageStack.depth > 1) {
+            applicationWindow().pageStack.pop(null);
+        }
+        Controller.currentView = viewName;
     }
 
     Component {

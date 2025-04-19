@@ -15,7 +15,6 @@ ecm_add_qml_module(chessament_static
         qml/TableDelegate.qml
         qml/AddPlayerDialog.qml
         qml/DocsPage.qml
-        qml/NavigationButtonDelegate.qml
         qml/NewTournamentDialog.qml
         qml/ResultsFooter.qml
         qml/StandingsPage.qml

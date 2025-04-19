@@ -20,10 +20,6 @@ TablePage {
         id: addPlayerDialog
     }
 
-    TournamentSettings {
-        id: tournamentSettings
-    }
-
     model: KSortFilterProxyModel {
         id: proxyModel
 
@@ -46,12 +42,6 @@ TablePage {
             icon.name: "list-add"
             text: i18nc("@action:button", "Add player")
             onTriggered: addPlayerDialog.open()
-        },
-        Kirigami.Action {
-            id: settingsAction
-            icon.name: "settings-configure"
-            text: i18nc("@action:button", "Settings")
-            onTriggered: tournamentSettings.open()
         },
         Kirigami.Action {
             id: printAction
