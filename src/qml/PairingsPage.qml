@@ -3,13 +3,11 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Layouts as Layouts
 import QtQuick.Controls as QQC2
 
 import org.kde.kirigami as Kirigami
 
 import dev.alcarazzam.chessament
-import dev.alcarazzam.chessament.PairingModel
 
 TablePage {
     id: root

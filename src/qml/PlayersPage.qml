@@ -9,7 +9,6 @@ import org.kde.kitemmodels
 import org.kde.kirigami as Kirigami
 
 import dev.alcarazzam.chessament
-import dev.alcarazzam.chessament.PlayersModel
 
 TablePage {
     id: root
@@ -70,7 +69,7 @@ TablePage {
 
         TableView.editDelegate: DelegateChooser {
             DelegateChoice {
-                column: PlayerRoles.RatingRole
+                column: PlayersModel.RatingRole
 
                 QQC2.TextField {
                     required property var model
@@ -93,7 +92,7 @@ TablePage {
             }
 
             DelegateChoice {
-                column: PlayerRoles.TitleRole
+                column: PlayersModel.TitleRole
 
                 QQC2.ComboBox {
                     id: comboBox

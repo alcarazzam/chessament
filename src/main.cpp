@@ -83,21 +83,6 @@ int main(int argc, char *argv[])
     Q_IMPORT_QML_PLUGIN(dev_alcarazzam_chessament_settingsPlugin)
 
     qml_register_types_dev_alcarazzam_chessament();
-    qmlRegisterUncreatableType<PlayersModel>("dev.alcarazzam.chessament.PlayersModel",
-                                             1,
-                                             0,
-                                             "PlayerRoles",
-                                             QStringLiteral("Cannot create instances of PlayersModel"));
-    qmlRegisterUncreatableType<PairingModel>("dev.alcarazzam.chessament.PairingModel",
-                                             1,
-                                             0,
-                                             "PairingRoles",
-                                             QStringLiteral("Cannot create instances of PairingModel"));
-    qmlRegisterUncreatableType<StandingsModel>("dev.alcarazzam.chessament.StandingsModel",
-                                               1,
-                                               0,
-                                               "StandingsRoles",
-                                               QStringLiteral("Cannot create instances of StandingsModel"));
 
     QQmlApplicationEngine engine;
 
