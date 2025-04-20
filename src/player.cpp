@@ -288,6 +288,6 @@ Player *Player::fromJson(const QJsonObject &json)
 
 QDebug operator<<(QDebug dbg, const Player &player)
 {
-    dbg.nospace() << "Player(" << player.name() << ")";
+    dbg.nospace() << "Player(" << player.fullName() << ")";
     return dbg;
 }

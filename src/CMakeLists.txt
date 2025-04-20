@@ -36,6 +36,8 @@ ecm_add_qml_module(chessament_static
         db.h
         controller.cpp
         documents.cpp
+        event.cpp
+        event.h
         pairing.cpp
         pairing.h
         pairingengine.cpp

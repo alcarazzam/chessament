@@ -5,7 +5,7 @@
 #include <QString>
 #include <QTest>
 
-#include "tournament.h"
+#include "event.h"
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -23,13 +23,15 @@ private Q_SLOTS:
 
 void TournamentTest::testNewTournament()
 {
-    auto t = new Tournament();
+    auto e = new Event();
+    auto t = e->createTournament();
     QCOMPARE(t->name(), u""_s);
 }
 
 void TournamentTest::testToJson()
 {
-    auto t = new Tournament();
+    auto e = new Event();
+    auto t = e->createTournament();
     t->setName(u"Test tournament"_s);
 
     auto json = t->toJson();
@@ -39,14 +41,16 @@ void TournamentTest::testToJson()
 
 void TournamentTest::testTrf()
 {
-    auto t = new Tournament();
+    auto e = new Event();
+    auto t = e->createTournament();
     t->setName(u"Test tournament"_s);
 
     auto trf = t->toTrf();
 
     QVERIFY(trf.contains(u"012 Test tournament"_s));
 
-    t = new Tournament();
+    e = new Event();
+    t = e->createTournament();
     auto ok = t->readTrf(QTextStream(&trf));
 
     QVERIFY(ok.has_value() && ok);
@@ -54,10 +58,12 @@ void TournamentTest::testTrf()
 
 void TournamentTest::testImportTrf()
 {
-    auto t = new Tournament();
-    auto ok = t->loadTrf(QLatin1String(DATA_DIR) + u"/tournament_1.txt"_s);
+    auto e = new Event();
+    auto tournament = e->importTournament(QLatin1String(DATA_DIR) + u"/tournament_1.txt"_s);
 
-    QVERIFY(*ok);
+    QVERIFY(tournament.has_value());
+
+    auto t = *tournament;
 
     QCOMPARE(t->name(), u"Test Tournament"_s);
     QCOMPARE(t->city(), u"Place"_s);

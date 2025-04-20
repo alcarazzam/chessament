@@ -2,8 +2,6 @@
 // SPDX-FileCopyrightText: 2024 Manuel Alcaraz Zambrano <manuelalcarazzam@gmail.com>
 
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls as QQC2
 
 import dev.alcarazzam.chessament
 import org.kde.kirigami as Kirigami

@@ -45,7 +45,7 @@ StatefulApp.StatefulWindow {
         function onOpenTournament() {
             const dialog = fileDialog.createObject(QQC2.Overlay.overlay);
             dialog.accepted.connect(() => {
-                Controller.openTournament(dialog.selectedFile);
+                Controller.openEvent(dialog.selectedFile);
             });
             dialog.open();
         }
@@ -54,7 +54,7 @@ StatefulApp.StatefulWindow {
             const dialog = fileDialog.createObject(QQC2.Overlay.overlay);
             dialog.fileMode = Dialogs.FileDialog.SaveFile;
             dialog.accepted.connect(() => {
-                Controller.saveTournamentAs(dialog.selectedFile);
+                Controller.saveEventAs(dialog.selectedFile);
             });
             dialog.open();
         }
@@ -244,7 +244,6 @@ StatefulApp.StatefulWindow {
         initialPage: WelcomePage {
             application: root.application
         }
-
     }
 
     function pageForView(view: string): var {

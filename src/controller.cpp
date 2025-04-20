@@ -18,6 +18,20 @@ Controller::Controller(QObject *parent)
     });
 }
 
+Event *Controller::getEvent() const
+{
+    return m_event;
+}
+
+void Controller::setEvent(Event *event)
+{
+    if (m_event == event) {
+        return;
+    }
+    m_event = event;
+    Q_EMIT eventChanged();
+}
+
 Tournament *Controller::tournament() const
 {
     return m_tournament;
@@ -38,20 +52,6 @@ void Controller::setTournament(Tournament *tournament)
     setCurrentPlayerByIndex(-1);
 
     Q_EMIT tournamentChanged();
-}
-
-QString Controller::tournamentPath() const
-{
-    return m_tournamentPath;
-}
-
-void Controller::setTournamentPath(const QString &tournamentPath)
-{
-    if (m_tournamentPath == tournamentPath) {
-        return;
-    }
-    m_tournamentPath = tournamentPath;
-    Q_EMIT tournamentPathChanged();
 }
 
 bool Controller::hasOpenTournament()
@@ -119,16 +119,16 @@ void Controller::setCurrentRound(int currentRound)
 
 void Controller::importTrf(const QUrl &fileUrl)
 {
-    auto tournament = new Tournament();
-    auto error = tournament->loadTrf(fileUrl.toLocalFile());
+    auto event = new Event();
+    auto tournament = event->importTournament(fileUrl.toLocalFile());
 
-    if (error.has_value()) {
-        setTournament(tournament);
-        setTournamentPath({});
+    if (tournament.has_value()) {
+        setEvent(event);
+        setTournament(*tournament);
 
         setCurrentView(u"PlayersPage"_s);
     } else {
-        setError(error.error());
+        setError(tournament.error());
     }
 }
 
@@ -214,28 +214,29 @@ bool Controller::setResult(int board, Pairing::PartialResult whiteResult, Pairin
 
 void Controller::newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds)
 {
-    auto tournament = new Tournament(fileUrl.toLocalFile());
+    auto event = new Event(fileUrl.toLocalFile());
+    auto tournament = event->createTournament();
     tournament->setName(name);
     tournament->setNumberOfRounds(numberOfRounds);
 
+    setEvent(event);
     setTournament(tournament);
-    setTournamentPath(fileUrl.toLocalFile());
     setCurrentView(u"PlayersPage"_s);
 }
 
-void Controller::openTournament(const QUrl &fileUrl)
+void Controller::openEvent(const QUrl &fileUrl)
 {
-    auto tournament = new Tournament(fileUrl.toLocalFile());
+    auto event = new Event(fileUrl.toLocalFile());
 
-    setTournament(tournament);
-    setTournamentPath(fileUrl.toLocalFile());
+    setEvent(event);
+    setTournament(event->tournaments().first());
     setCurrentView(u"PlayersPage"_s);
 }
 
-void Controller::saveTournamentAs(const QUrl &fileUrl)
+void Controller::saveEventAs(const QUrl &fileUrl)
 {
-    m_tournament->saveCopy(fileUrl.toLocalFile());
-    openTournament(fileUrl);
+    m_event->saveAs(fileUrl.toLocalFile());
+    openEvent(fileUrl);
 }
 
 PlayersModel *Controller::playersModel() const

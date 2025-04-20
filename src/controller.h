@@ -7,6 +7,7 @@
 #include <QQmlEngine>
 
 #include "account.h"
+#include "event.h"
 #include "pairingmodel.h"
 #include "playersmodel.h"
 #include "standingsmodel.h"
@@ -18,8 +19,8 @@ class Controller : public QObject
     QML_ELEMENT
     QML_SINGLETON
 
+    Q_PROPERTY(Event *event READ getEvent WRITE setEvent NOTIFY eventChanged)
     Q_PROPERTY(Tournament *tournament READ tournament WRITE setTournament NOTIFY tournamentChanged)
-    Q_PROPERTY(QString tournamentPath READ tournamentPath WRITE setTournamentPath NOTIFY tournamentPathChanged)
     Q_PROPERTY(bool hasOpenTournament READ hasOpenTournament WRITE setHasOpenTournament NOTIFY hasOpenTournamentChanged)
     Q_PROPERTY(int currentPlayerIndex READ currentPlayerIndex WRITE setCurrentPlayerByIndex NOTIFY currentPlayerChanged)
     Q_PROPERTY(Player *currentPlayer READ currentPlayer WRITE setCurrentPlayer NOTIFY currentPlayerChanged)
@@ -37,8 +38,8 @@ class Controller : public QObject
 public:
     explicit Controller(QObject *parent = nullptr);
 
+    Event *getEvent() const;
     Tournament *tournament() const;
-    QString tournamentPath() const;
     bool hasOpenTournament();
     int currentPlayerIndex();
     Player *currentPlayer() const;
@@ -56,8 +57,8 @@ public:
     Q_INVOKABLE bool setResult(int board, Qt::Key key);
     Q_INVOKABLE bool setResult(int board, Pairing::PartialResult whiteResult, Pairing::PartialResult blackResult);
     Q_INVOKABLE void newTournament(const QUrl &fileUrl, const QString &name, int numberOfRounds);
-    Q_INVOKABLE void openTournament(const QUrl &fileUrl);
-    Q_INVOKABLE void saveTournamentAs(const QUrl &fileUrl);
+    Q_INVOKABLE void openEvent(const QUrl &fileUrl);
+    Q_INVOKABLE void saveEventAs(const QUrl &fileUrl);
     Q_INVOKABLE void importTrf(const QUrl &fileUrl);
     Q_INVOKABLE void exportTrf(const QUrl &fileUrl);
     Q_INVOKABLE QCoro::Task<void> pairRound();
@@ -76,8 +77,8 @@ public:
     QString error() const;
 
 public Q_SLOTS:
+    void setEvent(Event *event);
     void setTournament(Tournament *tournament);
-    void setTournamentPath(const QString &tournamentPath);
     void setHasOpenTournament(bool hasOpenTournament);
     void setCurrentPlayer(Player *currentPlayer);
     void setCurrentPlayerByIndex(int currentPlayer);
@@ -86,8 +87,8 @@ public Q_SLOTS:
     void setError(const QString &error);
 
 Q_SIGNALS:
+    void eventChanged();
     void tournamentChanged();
-    void tournamentPathChanged();
     void hasOpenTournamentChanged();
     void currentPlayerChanged();
     void currentRoundChanged();
@@ -95,9 +96,9 @@ Q_SIGNALS:
     void errorChanged();
 
 private:
+    Event *m_event;
     Tournament *m_tournament;
 
-    QString m_tournamentPath;
     bool m_hasOpenTournament = false;
     int m_currentPlayerIndex = -1;
     int m_currentRound = 1;

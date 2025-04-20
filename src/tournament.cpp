@@ -12,18 +12,21 @@
 #include <iostream>
 
 #include "db.h"
+#include "event.h"
 #include "tiebreaks.h"
 #include "tournamentstate.h"
 
-Tournament::Tournament(const QString &fileName)
-    : m_players(new QList<Player *>())
+Tournament::Tournament(Event *event, const QString &id)
+    : m_event(event)
+    , m_id(id)
+    , m_players(new QList<Player *>())
     , m_rounds(QList<Round *>())
 {
     m_tiebreaks = {new Points(), new Buchholz()};
 
-    openDatabase(fileName);
-
-    if (!fileName.isEmpty()) {
+    if (m_id.isEmpty()) {
+        createNewTournament();
+    } else {
         loadTournament();
     }
 }
@@ -31,6 +34,20 @@ Tournament::Tournament(const QString &fileName)
 Tournament::~Tournament()
 {
     qDebug() << "delete tournament";
+}
+
+QString Tournament::id() const
+{
+    return m_id;
+}
+
+void Tournament::setId(const QString &id)
+{
+    if (m_id == id) {
+        return;
+    }
+    m_id = id;
+    Q_EMIT idChanged();
 }
 
 QString Tournament::name() const
@@ -182,7 +199,7 @@ void Tournament::addPlayer(Player *player)
 {
     m_players->append(player);
 
-    QSqlQuery query(getDB());
+    QSqlQuery query(m_event->getDB());
     query.prepare(ADD_PLAYER_QUERY);
     query.bindValue(u":startingRank"_s, player->startingRank());
     query.bindValue(u":title"_s, Player::titleString(player->title()));
@@ -195,6 +212,7 @@ void Tournament::addPlayer(Player *player)
     query.bindValue(u":federation"_s, player->federation());
     query.bindValue(u":origin"_s, player->origin());
     query.bindValue(u":sex"_s, player->sex());
+    query.bindValue(u":tournament"_s, m_id);
     query.exec();
 
     if (query.lastError().isValid()) {
@@ -206,7 +224,7 @@ void Tournament::addPlayer(Player *player)
 
 void Tournament::savePlayer(Player *player)
 {
-    QSqlQuery query(getDB());
+    QSqlQuery query(m_event->getDB());
     query.prepare(UPDATE_PLAYER_QUERY);
     query.bindValue(u":id"_s, player->id());
     query.bindValue(u":startingRank"_s, player->startingRank());
@@ -220,6 +238,7 @@ void Tournament::savePlayer(Player *player)
     query.bindValue(u":federation"_s, player->federation());
     query.bindValue(u":origin"_s, player->origin());
     query.bindValue(u":sex"_s, player->sex());
+    query.bindValue(u":tournament"_s, m_id);
     query.exec();
 
     if (query.lastError().isValid()) {
@@ -369,16 +388,17 @@ void Tournament::addPairing(int round, Pairing *pairing)
     }
     m_rounds.at(round - 1)->addPairing(pairing);
 
-    QSqlQuery query(getDB());
+    QSqlQuery query(m_event->getDB());
     query.prepare(ADD_ROUND_QUERY);
-    query.bindValue(u":id"_s, round);
+    query.bindValue(u":number"_s, round);
+    query.bindValue(u":tournament"_s, m_id);
     query.exec();
 
     if (query.lastError().isValid()) {
         qDebug() << "add pairing : round" << query.lastError();
     }
 
-    query = QSqlQuery(getDB());
+    query = QSqlQuery(m_event->getDB());
     query.prepare(ADD_PAIRING_QUERY);
     query.bindValue(u":board"_s, pairing->board());
     query.bindValue(u":whitePlayer"_s, pairing->whitePlayer()->id());
@@ -401,7 +421,7 @@ void Tournament::addPairing(int round, Pairing *pairing)
 
 void Tournament::savePairing(Pairing *pairing)
 {
-    QSqlQuery query(getDB());
+    QSqlQuery query(m_event->getDB());
     query.prepare(UPDATE_PAIRING_QUERY);
     query.bindValue(u":id"_s, pairing->id());
     query.bindValue(u":board"_s, pairing->board());
@@ -577,8 +597,9 @@ QCoro::Task<std::expected<bool, QString>> Tournament::pairNextRound()
 
 QVariant Tournament::getOption(const QString &name)
 {
-    QSqlQuery query(getDB());
-    query.prepare(u"SELECT value FROM options WHERE name = :name LIMIT 1;"_s);
+    QSqlQuery query(m_event->getDB());
+    query.prepare(GET_OPTION_QUERY);
+    query.bindValue(u":tournament"_s, m_id);
     query.bindValue(u":name"_s, name);
     query.exec();
 
@@ -595,14 +616,15 @@ QVariant Tournament::getOption(const QString &name)
 
 void Tournament::setOption(const QString &name, QVariant value)
 {
-    QSqlQuery query(getDB());
-    query.prepare(u"INSERT OR REPLACE INTO options(name, value) VALUES (:name, :value);"_s);
+    QSqlQuery query(m_event->getDB());
+    query.prepare(UPDATE_OPTION_QUERY);
+    query.bindValue(u":tournament"_s, m_id);
     query.bindValue(u":name"_s, name);
     query.bindValue(u":value"_s, value);
     query.exec();
 
     if (query.lastError().isValid()) {
-        qDebug() << "set option" << query.lastError();
+        qDebug() << "set option" << name << value << query.lastError();
     }
 }
 
@@ -611,6 +633,7 @@ QJsonObject Tournament::toJson() const
     QJsonObject json;
 
     QJsonObject tournament;
+    tournament[u"id"_s] = m_id;
     tournament[QStringLiteral("name")] = m_name;
     tournament[QStringLiteral("city")] = m_city;
     tournament[QStringLiteral("federation")] = m_federation;
@@ -635,6 +658,9 @@ void Tournament::read(const QJsonObject &json)
     if (auto v = json[QStringLiteral("tournament")]; v.isObject()) {
         auto tournament = v.toObject();
 
+        if (const auto v = tournament[QStringLiteral("id")]; v.isString()) {
+            m_id = v.toString();
+        }
         if (const auto v = tournament[QStringLiteral("name")]; v.isString()) {
             m_name = v.toString();
         }
@@ -728,18 +754,6 @@ QString Tournament::toTrf(TrfOptions options, int maxRound)
     return result;
 }
 
-void Tournament::saveCopy(const QString &fileName)
-{
-    QSqlQuery query(getDB());
-    query.prepare(u"VACUUM INTO :fileName;"_s);
-    query.bindValue(u":fileName"_s, fileName);
-    query.exec();
-
-    if (query.lastError().isValid()) {
-        qDebug() << "save copy" << query.lastError();
-    }
-}
-
 std::expected<bool, QString> Tournament::loadTrf(const QString &filename)
 {
     QFile file(filename);
@@ -766,29 +780,21 @@ bool Tournament::exportTrf(const QString &fileName)
     return true;
 }
 
-bool Tournament::openDatabase(const QString &fileName)
+bool Tournament::createNewTournament()
 {
-    QString dbName;
+    const auto newId = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
-    if (fileName.isEmpty()) {
-        m_connName = QUuid::createUuid().toString(QUuid::WithoutBraces);
-        dbName = u":memory:"_s;
-    } else {
-        m_connName = fileName;
-        dbName = fileName;
-    }
-    qDebug() << m_connName;
+    QSqlQuery query(m_event->getDB());
+    query.prepare(ADD_TOURNAMENT_QUERY);
+    query.bindValue(u":id"_s, newId);
+    query.exec();
 
-    auto db = QSqlDatabase::addDatabase(u"QSQLITE"_s, m_connName);
-    db.setDatabaseName(dbName);
-
-    if (!db.open()) {
-        qDebug() << "error while opening database";
+    if (query.lastError().isValid()) {
+        qDebug() << "create tournament" << query.lastError();
         return false;
     }
 
-    createTables();
-
+    setId(newId);
     return true;
 }
 
@@ -799,51 +805,6 @@ bool Tournament::loadTournament()
     loadPairings();
 
     return true;
-}
-
-QSqlDatabase Tournament::getDB()
-{
-    return QSqlDatabase::database(m_connName);
-}
-
-int Tournament::getDBVersion()
-{
-    QSqlQuery query(u"PRAGMA user_version;"_s, getDB());
-    return query.value(0).toInt();
-}
-
-void Tournament::setDBVersion(int version)
-{
-    QSqlQuery query(getDB());
-    query.prepare(u"PRAGMA user_version = %1;"_s.arg(version)); // Can't bind in a PRAGMA statement
-    query.exec();
-
-    if (query.lastError().isValid()) {
-        qDebug() << "set db version" << query.lastError();
-    }
-}
-
-void Tournament::createTables()
-{
-    QSqlQuery query(u"PRAGMA foreign_keys = ON;"_s, getDB());
-
-    query = QSqlQuery(getDB());
-    query.prepare(OPTIONS_TABLE_SCHEMA);
-    query.exec();
-
-    query = QSqlQuery(getDB());
-    query.prepare(PLAYERS_TABLE_SCHEMA);
-    query.exec();
-
-    query = QSqlQuery(getDB());
-    query.prepare(ROUNDS_TABLE_SCHEMA);
-    query.exec();
-
-    query = QSqlQuery(getDB());
-    query.prepare(PAIRINGS_TABLE_SCHEMA);
-    query.exec();
-
-    setDBVersion(1);
 }
 
 void Tournament::loadOptions()
@@ -862,7 +823,10 @@ void Tournament::loadPlayers()
 {
     m_players->clear();
 
-    QSqlQuery query(GET_PLAYERS_QUERY, getDB());
+    QSqlQuery query(m_event->getDB());
+    query.prepare(GET_PLAYERS_QUERY);
+    query.bindValue(u":tournament"_s, m_id);
+    query.exec();
 
     int idNo = query.record().indexOf("id");
     int stRankNo = query.record().indexOf("startingRank");
@@ -898,7 +862,10 @@ void Tournament::loadPairings()
 {
     auto players = getPlayersById();
 
-    QSqlQuery query(GET_PAIRINGS_QUERY, getDB());
+    QSqlQuery query(m_event->getDB());
+    query.prepare(GET_PAIRINGS_QUERY);
+    query.bindValue(u":tournament"_s, m_id);
+    query.exec();
 
     int idNo = query.record().indexOf("id");
     int boardNo = query.record().indexOf("board");

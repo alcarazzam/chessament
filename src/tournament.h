@@ -10,7 +10,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QObject>
-#include <QSqlDatabase>
 #include <QString>
 #include <QTextStream>
 
@@ -21,6 +20,8 @@
 #include "round.h"
 #include "tiebreak.h"
 
+class Event;
+
 using namespace Qt::StringLiterals;
 
 class Tournament : public QObject
@@ -30,6 +31,7 @@ class Tournament : public QObject
     QML_UNCREATABLE("")
 
 public:
+    Q_PROPERTY(QString id READ id WRITE setId NOTIFY idChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString city READ city WRITE setCity NOTIFY cityChanged)
     Q_PROPERTY(QString federation READ federation WRITE setFederation NOTIFY federationChanged)
@@ -43,9 +45,9 @@ public:
     Q_PROPERTY(QList<Player *> *players READ players WRITE setPlayers NOTIFY playersChanged)
     Q_PROPERTY(QList<Round *> rounds READ rounds WRITE setRounds NOTIFY roundsChanged)
 
-    explicit Tournament(const QString &fileName = u""_s);
     ~Tournament();
 
+    QString id() const;
     QString name() const;
     QString city() const;
     QString federation() const;
@@ -55,6 +57,8 @@ public:
     int numberOfRounds();
     int currentRound();
     QList<Tiebreak *> tiebreaks();
+
+    Event *getEvent() const;
 
     QList<Player *> *players();
     void addPlayer(Player *player);
@@ -180,7 +184,6 @@ public:
 
     QJsonObject toJson() const;
     void read(const QJsonObject &json);
-    void saveCopy(const QString &fileName);
 
     QString toTrf(TrfOptions options = {}, int maxRound = -1);
     std::expected<bool, QString> readTrf(QTextStream trf);
@@ -188,6 +191,7 @@ public:
     bool exportTrf(const QString &fileName);
 
 public Q_SLOTS:
+    void setId(const QString &id);
     void setName(const QString &name);
     void setCity(const QString &city);
     void setFederation(const QString &federation);
@@ -202,6 +206,7 @@ public Q_SLOTS:
     void setRounds(QList<Round *> rounds);
 
 Q_SIGNALS:
+    void idChanged();
     void nameChanged();
     void cityChanged();
     void federationChanged();
@@ -216,18 +221,17 @@ Q_SIGNALS:
     void roundsChanged();
 
 private:
-    bool openDatabase(const QString &fileName = u""_s);
+    explicit Tournament(Event *event, const QString &id = {});
+
+    bool createNewTournament();
     bool loadTournament();
-    QSqlDatabase getDB();
-    int getDBVersion();
-    void setDBVersion(int version);
-    void createTables();
     void loadOptions();
     void loadPlayers();
     void loadPairings();
 
-    QString m_connName;
+    Event *m_event;
 
+    QString m_id;
     QString m_name;
     QString m_city;
     QString m_federation;
@@ -240,6 +244,8 @@ private:
 
     QList<Player *> *m_players;
     QList<Round *> m_rounds;
+
+    friend class Event;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Tournament::TrfOptions)
