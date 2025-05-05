@@ -107,17 +107,17 @@ QQC2.Dialog {
 
     Kirigami.Separator {
         anchors {
-            left: contentItem.left
-            right: contentItem.right
-            top: contentItem.top
+            left: root.contentItem.left
+            right: root.contentItem.right
+            top: root.contentItem.top
         }
     }
 
     Kirigami.Separator {
         anchors {
-            left: contentItem.left
-            right: contentItem.right
-            bottom: contentItem.bottom
+            left: root.contentItem.left
+            right: root.contentItem.right
+            bottom: root.contentItem.bottom
         }
     }
 }
