@@ -239,9 +239,13 @@ StatefulApp.StatefulWindow {
         id: tournamentSettings
     }
 
-    pageStack.defaultColumnWidth: root.width
+    pageStack {
+        defaultColumnWidth: root.width
+        initialPage: WelcomePage {
+            application: root.application
+        }
 
-    pageStack.initialPage: Qt.createComponent("dev.alcarazzam.chessament", "WelcomePage")
+    }
 
     function pageForView(view: string): var {
         if (!pageCache[view]) {
