@@ -3,6 +3,9 @@
     SPDX-License-Identifier: CC0-1.0
 -->
 
+> [!NOTE]
+> Project has been moved to [KDE Invent](https://invent.kde.org/games/chessament).
+
 # Chessament
 
 A chess tournament manager.
